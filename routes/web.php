@@ -26,16 +26,27 @@ Route::get('/dashboard', function () {
 
 Route::middleware(['auth', 'verified'])->prefix('maps')->name('maps.')->group(function () {
     Route::get('/', function () {
-        return Inertia::render('Map', [
+        $markers = Marker::all()->map(function ($marker) {
+            return [
+                'id' => $marker->id,
+                'name' => $marker->name,
+                'description' => $marker->description,
+                'latitude' => $marker->latitude,
+                'longitude' => $marker->longitude,
+            ];
+        });
+
+        return Inertia::render('MapOverview', [
             'currentPath' => Request::path(),
+            'markers' => $markers,
         ]);
     })->name('index');
 
-    Route::get('/', function () {
-        return Inertia::render('Map', [
-            'currentPath' => Request::path(),
-        ]);
-    })->name('index');
+    // Route::get('/', function () {
+    //     return Inertia::render('Map', [
+    //         'currentPath' => Request::path(),
+    //     ]);
+    // })->name('index');
 
     Route::get('/marker', function () {
         $markers = Marker::all()->map(function ($marker) {

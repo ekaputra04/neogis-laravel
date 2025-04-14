@@ -109,11 +109,9 @@ export default function MapEditMarkerComponent({
     }
 
     const handleCreated = (e: DrawCreatedEvent) => {
-        console.log("Marker ditambahkan:", e);
         const { layer } = e;
         if (layer instanceof L.Marker) {
             const { lat, lng } = layer.getLatLng();
-            console.log("Marker coordinates:", lat, lng);
             const newMarker: MarkerCoordinatesInterface = {
                 latitude: lat,
                 longitude: lng,
@@ -124,12 +122,10 @@ export default function MapEditMarkerComponent({
 
     const handleEdited = (e: any) => {
         const event = e as DrawEditedEvent;
-        console.log("Edited layers:", event.layers);
 
         event.layers.eachLayer((layer) => {
             if (layer instanceof L.Marker) {
                 const { lat, lng } = layer.getLatLng();
-                console.log("Marker coordinates:", lat, lng);
                 const newMarker: MarkerCoordinatesInterface = {
                     latitude: lat,
                     longitude: lng,
@@ -140,11 +136,8 @@ export default function MapEditMarkerComponent({
     };
 
     const handleDeleted = (e: any) => {
-        console.log("Deleted layers:", e.layers);
-
         e.layers.eachLayer((layer: any) => {
             if (layer instanceof L.Marker) {
-                console.log("Deleted marker:", layer.getLatLng());
                 setMarkerCoordinates(null);
             }
         });
