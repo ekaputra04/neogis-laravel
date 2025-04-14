@@ -22,6 +22,8 @@ import L from "leaflet";
 import { useEffect, useState } from "react";
 import { MarkerCoordinatesInterface } from "@/types/types";
 import { toast } from "sonner";
+import FormSkeleton from "@/Components/FormSkeleton";
+import { Skeleton } from "@/Components/ui/skeleton";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -154,80 +156,93 @@ export default function MapAddMarkerComponent({
                 <h2 className="mb-4 font-bold text-slate-900 text-3xl">
                     Add Marker
                 </h2>
-                {loading ? "Loading..." : ""}
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
-                        <Form {...form}>
-                            <form
-                                onSubmit={form.handleSubmit(onSubmit)}
-                                className="space-y-4"
-                            >
-                                <FormField
-                                    control={form.control}
-                                    name="name"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Name</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Name..."
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="description"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Description</FormLabel>
-                                            <FormControl>
-                                                <Textarea
-                                                    placeholder="Description"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <Button type="submit">Submit</Button>
-                            </form>
-                        </Form>
+                        {loading ? (
+                            <>
+                                <FormSkeleton count={2} />
+                            </>
+                        ) : (
+                            <Form {...form}>
+                                <form
+                                    onSubmit={form.handleSubmit(onSubmit)}
+                                    className="space-y-4"
+                                >
+                                    <FormField
+                                        control={form.control}
+                                        name="name"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Name</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Name..."
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="description"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Description
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        placeholder="Description"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <Button type="submit">Submit</Button>
+                                </form>
+                            </Form>
+                        )}
                     </div>
                     <div className="md:col-span-2">
-                        <MapContainer
-                            key={mapKey}
-                            center={[-8.65, 115.21]}
-                            zoom={13}
-                            style={{ height: "500px", width: "100%" }}
-                            className="z-10"
-                        >
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            />
-
-                            <FeatureGroup>
-                                <EditControl
-                                    position="topright"
-                                    onCreated={handleCreated}
-                                    onEdited={handleEdited}
-                                    onDeleted={handleDeleted}
-                                    draw={{
-                                        rectangle: false,
-                                        polygon: false,
-                                        circle: false,
-                                        marker: marker == null,
-                                        polyline: false,
-                                        circlemarker: false,
-                                    }}
+                        {loading ? (
+                            <>
+                                <Skeleton className="w-full h-screen" />
+                            </>
+                        ) : (
+                            <MapContainer
+                                key={mapKey}
+                                center={[-8.65, 115.21]}
+                                zoom={13}
+                                style={{ height: "500px", width: "100%" }}
+                                className="z-10"
+                            >
+                                <TileLayer
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                 />
-                            </FeatureGroup>
-                        </MapContainer>
+
+                                <FeatureGroup>
+                                    <EditControl
+                                        position="topright"
+                                        onCreated={handleCreated}
+                                        onEdited={handleEdited}
+                                        onDeleted={handleDeleted}
+                                        draw={{
+                                            rectangle: false,
+                                            polygon: false,
+                                            circle: false,
+                                            marker: marker == null,
+                                            polyline: false,
+                                            circlemarker: false,
+                                        }}
+                                    />
+                                </FeatureGroup>
+                            </MapContainer>
+                        )}
                     </div>
                 </div>
             </DashboardMapLayout>
