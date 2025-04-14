@@ -4,18 +4,7 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { MarkerInterface } from "@/types/types";
-import L from "leaflet";
-import iconUrl from "@/leaflet/images/marker-icon.png";
-import iconRetinaUrl from "@/leaflet/images/marker-icon-2x.png";
-import shadowUrl from "@/leaflet/images/marker-shadow.png";
-
-const customIcon = new L.Icon({
-    iconUrl,
-    iconRetinaUrl,
-    shadowUrl,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-});
+import { customIcon } from "@/Components/CustomMarkerIcon";
 
 export default function MapOverviewMarkerComponent({
     currentPath,

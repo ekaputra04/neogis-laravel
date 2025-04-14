@@ -59,9 +59,22 @@ Route::middleware(['auth', 'verified'])->prefix('maps')->name('maps.')->group(fu
         ]);
     })->name('marker.add');
 
-    Route::get('/marker/edit-delete', function () {
-        return Inertia::render('MapEditOrDeleteMarker', [
+    Route::get('/marker/edit/{id}', function ($id) {
+        $marker = Marker::find($id);
+
+        if (!$marker) {
+            return Inertia::render('NotFound');
+        }
+
+        return Inertia::render('MapEditMarker', [
             'currentPath' => Request::path(),
+            'marker' => [
+                'id' => $marker->id,
+                'name' => $marker->name,
+                'description' => $marker->description,
+                'latitude' => $marker->latitude,
+                'longitude' => $marker->longitude,
+            ],
         ]);
     })->name('marker.editdelete');
 });
