@@ -32,9 +32,11 @@ export default function Map() {
     return (
         <DashboardMapLayout currentPath={currentPath as string}>
             <Head title="Maps" />
-            <div className="z-10 p-8 md:p-16">
-                <div id="map" style={{ height: "500px", width: "100%" }}></div>
-            </div>
+            <div
+                id="map"
+                className="z-0"
+                style={{ height: "500px", width: "100%" }}
+            ></div>
         </DashboardMapLayout>
     );
 }

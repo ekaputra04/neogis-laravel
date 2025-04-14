@@ -23,7 +23,7 @@ export default function DashboardMapLayout({
             <AppSidebar currentPath={currentPath} />
             <SidebarInset>
                 <header className="flex items-center gap-2 border-b h-16 shrink-0">
-                    <div className="flex justify-between items-center w-full">
+                    <div className="z-50 flex justify-between items-center w-full">
                         <div className="flex items-center gap-2 px-3">
                             <SidebarTrigger />
                             <Separator

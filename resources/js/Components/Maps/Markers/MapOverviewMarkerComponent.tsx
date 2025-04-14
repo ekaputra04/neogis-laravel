@@ -141,7 +141,7 @@ export default function MapOverviewMarkerComponent({
                             </TableBody>
                         </Table>
                     </div>
-                    <div className="md:col-span-3">
+                    <div className="z-0 md:col-span-3">
                         <MapContainer
                             center={[mapCenter.latitude, mapCenter.longitude]}
                             zoom={16}

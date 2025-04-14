@@ -1,4 +1,4 @@
-import { LayoutDashboard, Map, Pencil, PlusCircle } from "lucide-react";
+import { LayoutDashboard, Map, Pencil, PlusCircle, User } from "lucide-react";
 
 export const sidebarData = {
     navMain: [
@@ -56,11 +56,11 @@ export const sidebarData = {
                     url: "/maps/line/add",
                     icon: <PlusCircle className="size-4" />,
                 },
-                {
-                    title: "Edit & Delete Line",
-                    url: "/maps/line/edit-delete",
-                    icon: <Pencil className="size-4" />,
-                },
+                // {
+                //     title: "Edit & Delete Line",
+                //     url: "/maps/line/edit-delete",
+                //     icon: <Pencil className="size-4" />,
+                // },
             ],
         },
         {
@@ -77,11 +77,11 @@ export const sidebarData = {
                     url: "/maps/rectangle/add",
                     icon: <PlusCircle className="size-4" />,
                 },
-                {
-                    title: "Edit & Delete Rectangle",
-                    url: "/maps/rectangle/edit-delete",
-                    icon: <Pencil className="size-4" />,
-                },
+                // {
+                //     title: "Edit & Delete Rectangle",
+                //     url: "/maps/rectangle/edit-delete",
+                //     icon: <Pencil className="size-4" />,
+                // },
             ],
         },
         {
@@ -98,11 +98,11 @@ export const sidebarData = {
                     url: "/maps/polygon/add",
                     icon: <PlusCircle className="size-4" />,
                 },
-                {
-                    title: "Edit & Delete Polygon",
-                    url: "/maps/polygon/edit-delete",
-                    icon: <Pencil className="size-4" />,
-                },
+                // {
+                //     title: "Edit & Delete Polygon",
+                //     url: "/maps/polygon/edit-delete",
+                //     icon: <Pencil className="size-4" />,
+                // },
             ],
         },
         {
@@ -119,11 +119,11 @@ export const sidebarData = {
                     url: "/maps/circle/add",
                     icon: <PlusCircle className="size-4" />,
                 },
-                {
-                    title: "Edit & Delete Circle",
-                    url: "/maps/circle/edit-delete",
-                    icon: <Pencil className="size-4" />,
-                },
+                // {
+                //     title: "Edit & Delete Circle",
+                //     url: "/maps/circle/edit-delete",
+                //     icon: <Pencil className="size-4" />,
+                // },
             ],
         },
         // {
@@ -156,6 +156,17 @@ export const sidebarData = {
         //     { title: "Export Data", url: "#" },
         //   ],
         // },
+        {
+            title: "Profile",
+            url: "/profile",
+            items: [
+                {
+                    title: "Profile",
+                    url: "/profile",
+                    icon: <User className="size-4" />,
+                },
+            ],
+        },
         // {
         //   title: "Settings",
         //   url: "#",
