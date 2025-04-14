@@ -41,19 +41,34 @@ class MarkerController extends Controller
         return response()->json($response, 201);
     }
 
+    public function destroy($id)
+    {
+        $marker = Marker::find($id);
+
+        if (!$marker) {
+            return response()->json([
+                'message' => 'Marker not found.'
+            ], 404);
+        }
+
+        $marker->delete();
+
+        return response()->json([
+            'message' => 'Marker deleted successfully.'
+        ]);
+    }
+
     public function getMarkers()
     {
-        $markers = Marker::all()->map(function ($marker) {
-            $location = DB::selectOne("SELECT ST_X(coordinates) AS longitude, ST_Y(coordinates) AS latitude FROM markers WHERE id = ?", [$marker->id]);
-
-            return [
-                'id' => $marker->id,
-                'name' => $marker->name,
-                'description' => $marker->description,
-                'latitude' => $location->latitude,
-                'longitude' => $location->longitude,
-            ];
-        });
+        $markers = DB::table('markers')
+            ->select(
+                'id',
+                'name',
+                'description',
+                DB::raw('ST_Y(coordinates) AS latitude'),
+                DB::raw('ST_X(coordinates) AS longitude')
+            )
+            ->get();
 
         return response()->json($markers);
     }
