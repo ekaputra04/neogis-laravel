@@ -1,18 +1,12 @@
 import { AppSidebar } from "@/Components/AppSidebar";
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/Components/ui/breadcrumb";
+import BreadCrumbMaps from "@/Components/BreadCrumb";
 import { Separator } from "@/Components/ui/separator";
 import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
 } from "@/Components/ui/sidebar";
+import { Toaster } from "sonner";
 
 export default function DashboardMapLayout({
     currentPath,
@@ -32,24 +26,11 @@ export default function DashboardMapLayout({
                             orientation="vertical"
                             className="mr-2 h-4"
                         />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="#">
-                                        Building Your Application
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>
-                                        Data Fetching
-                                    </BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
+                        <BreadCrumbMaps currentPath={currentPath} />
                     </div>
                 </header>
-                <div className="">{children}</div>
+                <div className="p-8">{children}</div>
+                <Toaster />
             </SidebarInset>
         </SidebarProvider>
     );

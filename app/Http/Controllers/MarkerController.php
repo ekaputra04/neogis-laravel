@@ -15,29 +15,46 @@ class MarkerController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'coordinates' => 'required|array', // Harus berupa array [lng, lat]
-            'coordinates.*' => 'numeric',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
-        // Menyimpan marker
+        // Simpan marker
         $marker = Marker::create([
             'name' => $validated['name'],
             'description' => $validated['description'],
-            'coordinates' => DB::raw("ST_GeomFromText('POINT({$validated['coordinates'][0]} {$validated['coordinates'][1]})')"),
+            'coordinates' => DB::raw("ST_GeomFromText('POINT({$validated['longitude']} {$validated['latitude']})')"),
         ]);
 
-        return response()->json($marker, 201);
+        // Ambil coordinates dengan query
+        $location = DB::selectOne("SELECT ST_X(coordinates) AS longitude, ST_Y(coordinates) AS latitude FROM markers WHERE id = ?", [$marker->id]);
+
+        // Gabungkan data marker dengan koordinat
+        $response = [
+            'id' => $marker->id,
+            'name' => $marker->name,
+            'description' => $marker->description,
+            'latitude' => $location->latitude,
+            'longitude' => $location->longitude,
+        ];
+
+        return response()->json($response, 201);
     }
 
     public function getMarkers()
     {
-        $markers = Marker::all(); // Ambil semua marker
-        return response()->json($markers);
-    }
+        $markers = Marker::all()->map(function ($marker) {
+            $location = DB::selectOne("SELECT ST_X(coordinates) AS longitude, ST_Y(coordinates) AS latitude FROM markers WHERE id = ?", [$marker->id]);
 
-    public function showMap()
-    {
-        $markers = Marker::all(); // Ambil semua data marker
-        return view('map', compact('markers'));
+            return [
+                'id' => $marker->id,
+                'name' => $marker->name,
+                'description' => $marker->description,
+                'latitude' => $location->latitude,
+                'longitude' => $location->longitude,
+            ];
+        });
+
+        return response()->json($markers);
     }
 }

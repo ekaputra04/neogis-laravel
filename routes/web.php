@@ -18,43 +18,31 @@ Route::get('/', function () {
 
 // Di routes/api.php
 Route::post('/markers', [MarkerController::class, 'store']);
-// Route::get('/markers', [MarkerController::class, 'getMarkers']);
 
-
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/maps', function () {
+Route::middleware(['auth', 'verified'])->prefix('maps')->name('maps.')->group(function () {
+    Route::get('/', function () {
         return Inertia::render('Map', [
             'currentPath' => Request::path(),
         ]);
-    })->name('maps');
-});
+    })->name('index');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/maps/marker', function () {
+    Route::get('/marker', function () {
         return Inertia::render('MapOverviewMarker', [
             'currentPath' => Request::path(),
         ]);
-    })->name('maps.marker');
-});
+    })->name('marker');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/maps/marker/add', function () {
+    Route::get('/marker/add', function () {
         return Inertia::render('MapAddMarker', [
             'currentPath' => Request::path(),
         ]);
-    })->name('maps.marker.add');
-});
+    })->name('marker.add');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/maps/marker/edit-delete', function () {
+    Route::get('/marker/edit-delete', function () {
         return Inertia::render('MapEditOrDeleteMarker', [
             'currentPath' => Request::path(),
         ]);
-    })->name('maps.marker.editdelete');
+    })->name('marker.editdelete');
 });
 
 Route::middleware('auth')->group(function () {

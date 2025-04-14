@@ -10,7 +10,7 @@ export default function MapOverviewMarkerComponent({
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
                 <Head title="Maps" />
-                <div className="p-8 md:p-16">Overview Marker</div>
+                <div>Overview Marker</div>
             </DashboardMapLayout>
         </>
     );

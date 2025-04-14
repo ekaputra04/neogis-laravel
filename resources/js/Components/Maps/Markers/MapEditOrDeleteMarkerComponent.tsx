@@ -10,7 +10,7 @@ export default function MapEditOrDeleteMarkerComponent({
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
                 <Head title="Maps" />
-                <div className="p-8 md:p-16">EditOrDelete Marker</div>
+                <div>EditOrDelete Marker</div>
             </DashboardMapLayout>
         </>
     );

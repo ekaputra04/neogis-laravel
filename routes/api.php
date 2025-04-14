@@ -8,4 +8,5 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/markers', [MarkerController::class, 'getMarkers']);
+Route::get('/maps/markers', [MarkerController::class, 'getMarkers']);
+Route::post('/maps/markers', [MarkerController::class, 'store']);
