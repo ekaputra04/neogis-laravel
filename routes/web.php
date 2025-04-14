@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Marker;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,10 @@ Route::get('/', function () {
 // Di routes/api.php
 Route::post('/markers', [MarkerController::class, 'store']);
 
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::middleware(['auth', 'verified'])->prefix('maps')->name('maps.')->group(function () {
     Route::get('/', function () {
         return Inertia::render('Map', [
@@ -26,9 +31,25 @@ Route::middleware(['auth', 'verified'])->prefix('maps')->name('maps.')->group(fu
         ]);
     })->name('index');
 
+    Route::get('/', function () {
+        return Inertia::render('Map', [
+            'currentPath' => Request::path(),
+        ]);
+    })->name('index');
+
     Route::get('/marker', function () {
+        $markers = Marker::all()->map(function ($marker) {
+            return [
+                'id' => $marker->id,
+                'name' => $marker->name,
+                'description' => $marker->description,
+                'latitude' => $marker->latitude,
+                'longitude' => $marker->longitude,
+            ];
+        });
         return Inertia::render('MapOverviewMarker', [
             'currentPath' => Request::path(),
+            'markers' => $markers,
         ]);
     })->name('marker');
 
