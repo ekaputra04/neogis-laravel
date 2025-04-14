@@ -20,9 +20,9 @@ Route::get('/', function () {
 // Di routes/api.php
 // Route::post('/markers', [MarkerController::class, 'store']);
 
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->prefix('maps')->name('maps.')->group(function () {
     Route::get('/', function () {
