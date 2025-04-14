@@ -17,8 +17,6 @@ Route::get('/', function () {
     ]);
 });
 
-// Di routes/api.php
-// Route::post('/markers', [MarkerController::class, 'store']);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -41,12 +39,6 @@ Route::middleware(['auth', 'verified'])->prefix('maps')->name('maps.')->group(fu
             'markers' => $markers,
         ]);
     })->name('index');
-
-    // Route::get('/', function () {
-    //     return Inertia::render('Map', [
-    //         'currentPath' => Request::path(),
-    //     ]);
-    // })->name('index');
 
     Route::get('/marker', function () {
         $markers = Marker::all()->map(function ($marker) {
