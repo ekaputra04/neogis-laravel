@@ -35,11 +35,11 @@ export const sidebarData = {
                     url: "/maps/marker/add",
                     icon: <PlusCircle className="size-4" />,
                 },
-                {
-                    title: "Edit & Delete Marker",
-                    url: "/maps/marker/edit-delete",
-                    icon: <Pencil className="size-4" />,
-                },
+                // {
+                //     title: "Edit & Delete Marker",
+                //     url: "/maps/marker/edit-delete",
+                //     icon: <Pencil className="size-4" />,
+                // },
             ],
         },
         {

@@ -34,7 +34,6 @@ export default function MapOverviewMarkerComponent({
         try {
             const response = await axios.get(`/api/maps/markers`);
             setMarkers(response.data);
-            toast.success("Marker berhasil dihapus!");
         } catch (error: any) {
             console.error(
                 "Error deleting marker:",
@@ -67,8 +66,8 @@ export default function MapOverviewMarkerComponent({
                 <Head title="Maps" />
                 <div className="">
                     <MapContainer
-                        center={[-8.65, 115.21]}
-                        zoom={13}
+                        center={[markers[0].latitude, markers[0].longitude]}
+                        zoom={15}
                         style={{ height: "500px", width: "100%" }}
                         className="z-10"
                     >

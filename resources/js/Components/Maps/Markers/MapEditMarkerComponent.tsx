@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import {
     FeatureGroup,
     MapContainer,
@@ -32,6 +32,7 @@ import FormSkeleton from "@/Components/FormSkeleton";
 import { Skeleton } from "@/Components/ui/skeleton";
 import { CornerDownLeft } from "lucide-react";
 import { customIcon } from "@/Components/CustomMarkerIcon";
+import axios from "axios";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -49,12 +50,11 @@ interface DrawEditedEvent {
 
 export default function MapEditMarkerComponent({
     currentPath,
-    marker: initialMarker,
+    marker,
 }: {
     currentPath: string;
     marker: MarkerInterface;
 }) {
-    const [marker, setMarker] = useState<MarkerInterface>(initialMarker);
     const [markerCoordinates, setMarkerCoordinates] =
         useState<MarkerCoordinatesInterface | null>({
             latitude: marker.latitude,
@@ -71,10 +71,6 @@ export default function MapEditMarkerComponent({
         },
     });
 
-    useEffect(() => {
-        console.log("MARKER", markerCoordinates);
-    }, [markerCoordinates]);
-
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (!markerCoordinates) {
             toast.error("Please add a marker first.");
@@ -88,24 +84,22 @@ export default function MapEditMarkerComponent({
             longitude: markerCoordinates.longitude,
         };
 
-        console.log("DATA: " + JSON.stringify(data));
-
         setLoading(true);
 
         try {
-            const response = await fetch(`${origin}/api/maps/markers`, {
-                method: "POST",
+            const response = await fetch(`/api/maps/markers/${marker.id}`, {
+                method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
             if (!response.ok) {
-                throw new Error("Failed to save location");
+                throw new Error("Failed to update location");
             }
 
-            toast.success("Location saved successfully!");
+            toast.success("Location updated successfully!");
             form.reset();
-            setMarkerCoordinates(null);
+            router.visit("/maps/marker");
         } catch (error) {
             console.error("Error saving location:", error);
             toast.error("Error saving location.");
@@ -165,9 +159,9 @@ export default function MapEditMarkerComponent({
     return (
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
-                <Head title="Add Marker" />
+                <Head title="Edit Marker" />
                 <h2 className="mb-4 font-bold text-slate-900 text-3xl">
-                    Add Marker
+                    Edit Marker
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
@@ -227,8 +221,8 @@ export default function MapEditMarkerComponent({
                             </>
                         ) : (
                             <MapContainer
-                                // key={mapKey}
-                                center={[-8.65, 115.21]}
+                                key={mapKey}
+                                center={[marker.latitude, marker.longitude]}
                                 zoom={13}
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
@@ -254,24 +248,28 @@ export default function MapEditMarkerComponent({
                                         }}
                                     />
 
-                                    <Marker
-                                        position={[
-                                            marker.latitude,
-                                            marker.longitude,
-                                        ]}
-                                        icon={customIcon}
-                                    >
-                                        <Popup>
-                                            {marker.name ? (
-                                                <strong>{marker.name}</strong>
-                                            ) : (
-                                                "Lokasi tanpa nama"
-                                            )}{" "}
-                                            <br />
-                                            {marker.description ||
-                                                "Tidak ada deskripsi"}
-                                        </Popup>
-                                    </Marker>
+                                    {markerCoordinates && (
+                                        <Marker
+                                            position={[
+                                                markerCoordinates?.latitude,
+                                                markerCoordinates?.longitude,
+                                            ]}
+                                            icon={customIcon}
+                                        >
+                                            <Popup>
+                                                {marker.name ? (
+                                                    <strong>
+                                                        {marker.name}
+                                                    </strong>
+                                                ) : (
+                                                    "Lokasi tanpa nama"
+                                                )}{" "}
+                                                <br />
+                                                {marker.description ||
+                                                    "Tidak ada deskripsi"}
+                                            </Popup>
+                                        </Marker>
+                                    )}
                                 </FeatureGroup>
                             </MapContainer>
                         )}
