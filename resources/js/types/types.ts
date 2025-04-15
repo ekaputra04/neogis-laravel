@@ -17,7 +17,8 @@ export interface MarkerInterface {
     id: number;
     name: string;
     description: string;
-    category_id: number;
+    category_id?: number;
+    category_name?: string;
     latitude: number;
     longitude: number;
 }

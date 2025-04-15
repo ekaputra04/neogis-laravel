@@ -147,15 +147,17 @@ class MarkerController extends Controller
 
     public function overviewMarker()
     {
-        $markers = Marker::all()->map(function ($marker) {
+        $markers = Marker::with('category')->get()->map(function ($marker) {
             return [
                 'id' => $marker->id,
                 'name' => $marker->name,
                 'description' => $marker->description,
                 'latitude' => $marker->latitude,
                 'longitude' => $marker->longitude,
+                'category_name' => $marker->category?->name, // pakai optional chaining
             ];
         });
+
         return Inertia::render('MapOverviewMarker', [
             'currentPath' => '/maps/marker',
             'markers' => $markers,

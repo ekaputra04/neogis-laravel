@@ -32,6 +32,7 @@ import {
 import { Input } from "@/Components/ui/input";
 import { Eye } from "lucide-react";
 import { centerPoints } from "@/Consts/centerPoints";
+import { Badge } from "@/Components/ui/badge";
 
 export default function MapOverviewMarkerComponent({
     currentPath,
@@ -178,8 +179,18 @@ export default function MapOverviewMarkerComponent({
                                                 "Lokasi tanpa nama"
                                             )}
                                             <br />
+                                            <br />
                                             {marker.description ||
                                                 "Tidak ada deskripsi"}
+                                            <br />
+                                            <br />
+                                            {marker.category_name && (
+                                                <>
+                                                    <Badge variant={"default"}>
+                                                        {marker.category_name}
+                                                    </Badge>
+                                                </>
+                                            )}
                                             <br />
                                             <br />
                                             <Button

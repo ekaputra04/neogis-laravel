@@ -10,16 +10,16 @@ class MapController extends Controller
 {
     public function mapOverview()
     {
-        $markers = Marker::all()->map(function ($marker) {
+        $markers = Marker::with('category')->get()->map(function ($marker) {
             return [
                 'id' => $marker->id,
                 'name' => $marker->name,
                 'description' => $marker->description,
                 'latitude' => $marker->latitude,
                 'longitude' => $marker->longitude,
+                'category_name' => $marker->category?->name,
             ];
         });
-
         return Inertia::render('MapOverview', [
             'currentPath' => '/maps',
             'markers' => $markers,

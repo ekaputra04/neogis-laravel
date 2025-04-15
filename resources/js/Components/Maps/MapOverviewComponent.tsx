@@ -15,9 +15,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/Components/ui/table";
-import { Input } from "@/Components/ui/input";
 import { Eye } from "lucide-react";
 import { centerPoints } from "@/Consts/centerPoints";
+import { Badge } from "../ui/badge";
 
 export default function MapOverviewComponent({
     currentPath,
@@ -26,9 +26,6 @@ export default function MapOverviewComponent({
     currentPath: string;
     markers: MarkerInterface[];
 }) {
-    // const [filteredMarkers, setFilteredMarkers] = useState<MarkerInterface[]>(
-    //     markers ?? []
-    // );
     const [mapCenter, setMapCenter] = useState<MarkerCoordinatesInterface>(
         markers && markers.length > 0
             ? {
@@ -36,22 +33,10 @@ export default function MapOverviewComponent({
                   longitude: markers[0].longitude,
               }
             : {
-                  latitude: centerPoints[0], // fallback jika markers kosong
+                  latitude: centerPoints[0],
                   longitude: centerPoints[1],
               }
     );
-    // const [searchValue, setSearchValue] = useState<string>("");
-
-    // useEffect(() => {
-    //     if (markers) {
-    //         const filtered = markers.filter((marker) =>
-    //             marker.name.toLowerCase().includes(searchValue.toLowerCase())
-    //         );
-    //         setFilteredMarkers(filtered);
-    //     } else {
-    //         setFilteredMarkers([]);
-    //     }
-    // }, [searchValue, markers]);
 
     return (
         <>
@@ -60,11 +45,6 @@ export default function MapOverviewComponent({
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
                         <>
-                            {/* <Input
-                                placeholder="Search..."
-                                className="mb-8"
-                                onChange={(e) => setSearchValue(e.target.value)}
-                            ></Input> */}
                             <Table className="">
                                 <TableHeader>
                                     <TableRow>
@@ -137,6 +117,15 @@ export default function MapOverviewComponent({
                                             <br />
                                             {marker.description ||
                                                 "Tidak ada deskripsi"}
+                                            <br />
+                                            <br />
+                                            {marker.category_name && (
+                                                <>
+                                                    <Badge variant={"default"}>
+                                                        {marker.category_name}
+                                                    </Badge>
+                                                </>
+                                            )}
                                         </Popup>
                                     </Marker>
                                 ))}
