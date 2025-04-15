@@ -24,8 +24,11 @@ class MarkerCategoryController extends Controller
      */
     public function index()
     {
+        $markerCategories = MarkerCategory::all();
+
         return Inertia::render('MarkerCategories', [
             'currentPath' => "/maps/marker/add",
+            'categories' => $markerCategories
         ]);
     }
 
@@ -74,16 +77,44 @@ class MarkerCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMarkerCategoryRequest $request, MarkerCategory $markerCategory)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $markerCategory = MarkerCategory::find($id);
+
+        if (!$markerCategory) {
+            return response()->json(['message' => 'Marker category not found'], 404);
+        }
+
+        $markerCategory->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+        ]);
+
+        return response()->json($markerCategory, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MarkerCategory $markerCategory)
+    public function destroy($id)
     {
-        //
+        $markerCategory = Markercategory::find($id);
+
+        if (!$markerCategory) {
+            return response()->json([
+                'message' => 'Marker not found.'
+            ], 404);
+        }
+
+        $markerCategory->delete();
+
+        return response()->json([
+            'message' => 'Marker category deleted successfully.'
+        ]);
     }
 }

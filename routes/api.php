@@ -15,5 +15,7 @@ Route::post('/maps/markers', [MarkerController::class, 'store']);
 Route::put('/maps/markers/{id}', [MarkerController::class, 'update']);
 Route::delete('/maps/markers/{id}', [MarkerController::class, 'destroy']);
 
-Route::get('/maps/markers/categories', [MarkerCategoryController::class, 'getAllMarkerCategories']);
-Route::post('/maps/markers/categories', [MarkerCategoryController::class, 'store']);
+Route::get('/maps/markers-categories', [MarkerCategoryController::class, 'getAllMarkerCategories']);
+Route::post('/maps/markers-categories', [MarkerCategoryController::class, 'store']);
+Route::put('/maps/markers-categories/{id}', [MarkerCategoryController::class, 'update']);
+Route::delete('/maps/markers-categories/{id}', [MarkerCategoryController::class, 'destroy']);

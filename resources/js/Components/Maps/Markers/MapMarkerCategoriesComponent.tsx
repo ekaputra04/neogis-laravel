@@ -1,5 +1,4 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -7,25 +6,17 @@ import { Button } from "@/Components/ui/button";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
+import { CategoriesInterface } from "@/types/types";
+import TableCategory from "../Categories/TableCategory";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -33,9 +24,12 @@ const formSchema = z.object({
 });
 
 export default function MapMarkerCategoriesComponent() {
+    const { categories } = usePage().props;
+    const [markerCategories, setMarkerCategories] = useState<
+        CategoriesInterface[]
+    >(categories as CategoriesInterface[]);
     const [loading, setLoading] = useState(false);
 
-    // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -44,41 +38,64 @@ export default function MapMarkerCategoriesComponent() {
         },
     });
 
-    // 2. Define a submit handler.
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values);
+    const fetchData = async () => {
         setLoading(true);
 
         try {
-            const response = await fetch(`/api/maps/markers/categories`, {
+            const response = await fetch(`/api/maps/markers-categories`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch marker categories");
+            }
+
+            const data = await response.json();
+            setMarkerCategories(data);
+        } catch (error) {
+            console.error("Error fetching marker categories:", error);
+            toast.error("Error fetching marker categories.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setLoading(true);
+
+        try {
+            const response = await fetch(`/api/maps/markers-categories`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
             });
 
-            console.log("RESPONSE: ", response.json());
-
             if (!response.ok) {
                 throw new Error("Failed to save marker categories");
             }
 
-            toast.success("Marker categories created successfully!");
+            await response.json();
+            toast.success("Marker category created successfully!");
             form.reset();
+            await fetchData();
         } catch (error) {
             console.error("Error creating marker categories:", error);
-            toast.error("Error craeating marker categories.");
+            toast.error("Error creating marker categories.");
         } finally {
             setLoading(false);
         }
     }
 
+    const handleCategoryUpdate = () => {
+        fetchData();
+    };
+
     return (
         <DashboardMapLayout currentPath={"/maps/marker/categories"}>
             <Head title="Marker Categories" />
-            <div className="gap-8 grid grid-cols-1 md:grid-cols-2">
-                <div className="">
+            <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
+                <div className="col-span-1">
                     <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
                         Marker Category
                     </h2>
@@ -119,11 +136,18 @@ export default function MapMarkerCategoriesComponent() {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit">Submit</Button>
+                            <Button type="submit" disabled={loading}>
+                                {loading ? "Adding..." : "Add New Category"}
+                            </Button>
                         </form>
                     </Form>
                 </div>
-                <div className=""></div>
+                <div className="md:col-span-2">
+                    <TableCategory
+                        markerCategories={markerCategories}
+                        onCategoryUpdate={handleCategoryUpdate}
+                    />
+                </div>
             </div>
         </DashboardMapLayout>
     );

@@ -7,6 +7,12 @@ export interface UserInterface {
     updated_at: Date;
 }
 
+export interface CategoriesInterface {
+    id: number;
+    name: string;
+    description: string;
+}
+
 export interface MarkerInterface {
     id: number;
     name: string;
