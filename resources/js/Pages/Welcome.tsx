@@ -20,12 +20,13 @@ export default function Welcome({
     return (
         <>
             <Head title="Welcome" />
+            {JSON.stringify(auth)}
             <div className="bg-gray-50 dark:bg-black text-black/50 dark:text-white/50">
-                <img
+                {/* <img
                     id="background"
                     className="top-0 -left-20 absolute max-w-[877px]"
                     src="https://laravel.com/assets/img/welcome/background.svg"
-                />
+                /> */}
                 <div className="relative flex flex-col justify-center items-center selection:bg-[#FF2D20] min-h-screen selection:text-white">
                     <div className="relative px-6 w-full max-w-2xl lg:max-w-7xl">
                         <header className="items-center gap-2 grid grid-cols-2 lg:grid-cols-3 py-10">
