@@ -31,6 +31,7 @@ import {
 } from "@/Components/ui/table";
 import { Input } from "@/Components/ui/input";
 import { Eye } from "lucide-react";
+import { centerPoints } from "@/Consts/centerPoints";
 
 export default function MapOverviewMarkerComponent({
     currentPath,
@@ -39,13 +40,22 @@ export default function MapOverviewMarkerComponent({
     currentPath: string;
     markers: MarkerInterface[];
 }) {
-    const [markers, setMarkers] = useState<MarkerInterface[]>(initialMarkers);
+    const [markers, setMarkers] = useState<MarkerInterface[] | null>(
+        initialMarkers
+    );
     const [filteredMarkers, setFilteredMarkers] =
         useState<MarkerInterface[]>(initialMarkers);
-    const [mapCenter, setMapCenter] = useState<MarkerCoordinatesInterface>({
-        latitude: markers[0].latitude,
-        longitude: markers[0].longitude,
-    });
+    const [mapCenter, setMapCenter] = useState<MarkerCoordinatesInterface>(
+        markers && markers.length > 0
+            ? {
+                  latitude: markers[0].latitude,
+                  longitude: markers[0].longitude,
+              }
+            : {
+                  latitude: centerPoints[0], // fallback jika markers kosong
+                  longitude: centerPoints[1],
+              }
+    );
     const [searchValue, setSearchValue] = useState<string>("");
 
     const fetchMarkers = async (): Promise<void> => {
@@ -78,12 +88,15 @@ export default function MapOverviewMarkerComponent({
     };
 
     useEffect(() => {
-        const filteredMarkers = markers.filter((marker) =>
-            marker.name.toLowerCase().includes(searchValue.toLowerCase())
-        );
-
-        setFilteredMarkers(filteredMarkers);
-    }, [searchValue]);
+        if (markers) {
+            const filtered = markers.filter((marker) =>
+                marker.name.toLowerCase().includes(searchValue.toLowerCase())
+            );
+            setFilteredMarkers(filtered);
+        } else {
+            setFilteredMarkers([]);
+        }
+    }, [searchValue, markers]);
 
     return (
         <>
@@ -103,7 +116,7 @@ export default function MapOverviewMarkerComponent({
                                         <p>Marker</p>
                                         <p>
                                             ({filteredMarkers.length}/
-                                            {markers.length})
+                                            {markers?.length})
                                         </p>
                                     </TableHead>
                                 </TableRow>

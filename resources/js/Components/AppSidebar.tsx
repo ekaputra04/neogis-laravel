@@ -15,7 +15,7 @@ import {
     SidebarRail,
 } from "@/Components/ui/sidebar";
 
-import { sidebarData } from "@/consts/sidebarData";
+import { sidebarData } from "@/Consts/sidebarData";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     currentPath: string;

@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -18,30 +17,41 @@ import {
 } from "@/Components/ui/table";
 import { Input } from "@/Components/ui/input";
 import { Eye } from "lucide-react";
+import { centerPoints } from "@/Consts/centerPoints";
 
 export default function MapOverviewComponent({
     currentPath,
-    markers: initialMarkers,
+    markers,
 }: {
     currentPath: string;
     markers: MarkerInterface[];
 }) {
-    const [markers, setMarkers] = useState<MarkerInterface[]>(initialMarkers);
-    const [filteredMarkers, setFilteredMarkers] =
-        useState<MarkerInterface[]>(initialMarkers);
-    const [mapCenter, setMapCenter] = useState<MarkerCoordinatesInterface>({
-        latitude: markers[0].latitude,
-        longitude: markers[0].longitude,
-    });
-    const [searchValue, setSearchValue] = useState<string>("");
+    // const [filteredMarkers, setFilteredMarkers] = useState<MarkerInterface[]>(
+    //     markers ?? []
+    // );
+    const [mapCenter, setMapCenter] = useState<MarkerCoordinatesInterface>(
+        markers && markers.length > 0
+            ? {
+                  latitude: markers[0].latitude,
+                  longitude: markers[0].longitude,
+              }
+            : {
+                  latitude: centerPoints[0], // fallback jika markers kosong
+                  longitude: centerPoints[1],
+              }
+    );
+    // const [searchValue, setSearchValue] = useState<string>("");
 
-    useEffect(() => {
-        const filteredMarkers = markers.filter((marker) =>
-            marker.name.toLowerCase().includes(searchValue.toLowerCase())
-        );
-
-        setFilteredMarkers(filteredMarkers);
-    }, [searchValue]);
+    // useEffect(() => {
+    //     if (markers) {
+    //         const filtered = markers.filter((marker) =>
+    //             marker.name.toLowerCase().includes(searchValue.toLowerCase())
+    //         );
+    //         setFilteredMarkers(filtered);
+    //     } else {
+    //         setFilteredMarkers([]);
+    //     }
+    // }, [searchValue, markers]);
 
     return (
         <>
@@ -49,46 +59,48 @@ export default function MapOverviewComponent({
                 <Head title="Maps" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
-                        <Input
-                            placeholder="Search..."
-                            className="mb-8"
-                            onChange={(e) => setSearchValue(e.target.value)}
-                        ></Input>
-                        <Table className="">
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="flex justify-between items-center">
-                                        <p>Marker</p>
-                                        <p>
-                                            ({filteredMarkers.length}/
-                                            {markers.length})
-                                        </p>
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredMarkers.map((marker, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell className="flex justify-between items-center">
-                                            {marker.name}
-                                            <Button
-                                                variant={"outline"}
-                                                onClick={() =>
-                                                    setMapCenter({
-                                                        latitude:
-                                                            marker.latitude,
-                                                        longitude:
-                                                            marker.longitude,
-                                                    })
-                                                }
-                                            >
-                                                <Eye />
-                                            </Button>
-                                        </TableCell>
+                        <>
+                            {/* <Input
+                                placeholder="Search..."
+                                className="mb-8"
+                                onChange={(e) => setSearchValue(e.target.value)}
+                            ></Input> */}
+                            <Table className="">
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="flex justify-between items-center">
+                                            <p>Marker</p>
+                                            <p>
+                                                ({markers.length}/
+                                                {markers.length})
+                                            </p>
+                                        </TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {markers.map((marker, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell className="flex justify-between items-center">
+                                                {marker.name}
+                                                <Button
+                                                    variant={"outline"}
+                                                    onClick={() =>
+                                                        setMapCenter({
+                                                            latitude:
+                                                                marker.latitude,
+                                                            longitude:
+                                                                marker.longitude,
+                                                        })
+                                                    }
+                                                >
+                                                    <Eye />
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </>
                     </div>
                     <div className="z-0 md:col-span-3">
                         <MapContainer
