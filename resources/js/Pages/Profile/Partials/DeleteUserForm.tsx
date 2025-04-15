@@ -1,14 +1,15 @@
-import DangerButton from '@/Components/DangerButton';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import Modal from '@/Components/Modal';
-import SecondaryButton from '@/Components/SecondaryButton';
-import TextInput from '@/Components/TextInput';
-import { useForm } from '@inertiajs/react';
-import { FormEventHandler, useRef, useState } from 'react';
+import DangerButton from "@/Components/DangerButton";
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import Modal from "@/Components/Modal";
+import SecondaryButton from "@/Components/SecondaryButton";
+import TextInput from "@/Components/TextInput";
+import { Button } from "@/Components/ui/button";
+import { useForm } from "@inertiajs/react";
+import { FormEventHandler, useRef, useState } from "react";
 
 export default function DeleteUserForm({
-    className = '',
+    className = "",
 }: {
     className?: string;
 }) {
@@ -24,7 +25,7 @@ export default function DeleteUserForm({
         errors,
         clearErrors,
     } = useForm({
-        password: '',
+        password: "",
     });
 
     const confirmUserDeletion = () => {
@@ -34,7 +35,7 @@ export default function DeleteUserForm({
     const deleteUser: FormEventHandler = (e) => {
         e.preventDefault();
 
-        destroy(route('profile.destroy'), {
+        destroy(route("profile.destroy"), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
             onError: () => passwordInput.current?.focus(),
@@ -52,11 +53,11 @@ export default function DeleteUserForm({
     return (
         <section className={`space-y-6 ${className}`}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">
+                <h2 className="font-medium text-gray-900 dark:text-white text-lg">
                     Delete Account
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-gray-600 dark:text-gray-200 text-sm">
                     Once your account is deleted, all of its resources and data
                     will be permanently deleted. Before deleting your account,
                     please download any data or information that you wish to
@@ -64,17 +65,17 @@ export default function DeleteUserForm({
                 </p>
             </header>
 
-            <DangerButton onClick={confirmUserDeletion}>
+            <Button onClick={confirmUserDeletion} variant={"destructive"}>
                 Delete Account
-            </DangerButton>
+            </Button>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900">
+                    <h2 className="font-medium text-gray-900 text-lg">
                         Are you sure you want to delete your account?
                     </h2>
 
-                    <p className="mt-1 text-sm text-gray-600">
+                    <p className="mt-1 text-gray-600 text-sm">
                         Once your account is deleted, all of its resources and
                         data will be permanently deleted. Please enter your
                         password to confirm you would like to permanently delete
@@ -95,9 +96,9 @@ export default function DeleteUserForm({
                             ref={passwordInput}
                             value={data.password}
                             onChange={(e) =>
-                                setData('password', e.target.value)
+                                setData("password", e.target.value)
                             }
-                            className="mt-1 block w-3/4"
+                            className="block mt-1 w-3/4"
                             isFocused
                             placeholder="Password"
                         />
@@ -108,7 +109,7 @@ export default function DeleteUserForm({
                         />
                     </div>
 
-                    <div className="mt-6 flex justify-end">
+                    <div className="flex justify-end mt-6">
                         <SecondaryButton onClick={closeModal}>
                             Cancel
                         </SecondaryButton>

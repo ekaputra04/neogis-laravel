@@ -16,18 +16,18 @@ export default function Edit({
             <Head title="Profile" />
 
             <div className="space-y-6 mx-auto">
-                <div className="bg-white shadow p-4 sm:p-8 sm:rounded-lg">
+                <div className="shadow p-4 sm:p-8 sm:rounded-lg">
                     <UpdateProfileInformationForm
                         mustVerifyEmail={mustVerifyEmail}
                         status={status}
                     />
                 </div>
 
-                <div className="bg-white shadow p-4 sm:p-8 sm:rounded-lg">
+                <div className="shadow p-4 sm:p-8 sm:rounded-lg">
                     <UpdatePasswordForm />
                 </div>
 
-                <div className="bg-white shadow p-4 sm:p-8 sm:rounded-lg">
+                <div className="shadow p-4 sm:p-8 sm:rounded-lg">
                     <DeleteUserForm />
                 </div>
             </div>
