@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,14 +20,24 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
 import { useEffect, useState } from "react";
-import { MarkerCoordinatesInterface } from "@/types/types";
+import { CategoriesInterface, MarkerCoordinatesInterface } from "@/types/types";
 import { toast } from "sonner";
 import FormSkeleton from "@/Components/FormSkeleton";
 import { Skeleton } from "@/Components/ui/skeleton";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
     description: z.string().min(2),
+    categoryId: z.number(),
 });
 
 interface DrawCreatedEvent {
@@ -39,11 +49,15 @@ interface DrawEditedEvent {
     layers: L.LayerGroup;
 }
 
+interface MapAddMarkerComponentProps {
+    currentPath: string;
+    categories: CategoriesInterface[];
+}
+
 export default function MapAddMarkerComponent({
     currentPath,
-}: {
-    currentPath: string;
-}) {
+    categories,
+}: MapAddMarkerComponentProps) {
     const [marker, setMarker] = useState<MarkerCoordinatesInterface | null>(
         null
     );
@@ -150,48 +164,111 @@ export default function MapAddMarkerComponent({
                                 <FormSkeleton count={2} />
                             </>
                         ) : (
-                            <Form {...form}>
-                                <form
-                                    onSubmit={form.handleSubmit(onSubmit)}
-                                    className="space-y-4"
-                                >
-                                    <FormField
-                                        control={form.control}
-                                        name="name"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Name</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="Name..."
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="description"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Description
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Textarea
-                                                        placeholder="Description"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <Button type="submit">Submit</Button>
-                                </form>
-                            </Form>
+                            <>
+                                {categories.length == 0 && (
+                                    <Link href={"/maps/marker/categories"}>
+                                        <Button
+                                            className="my-4"
+                                            variant={"destructive"}
+                                        >
+                                            Please insert marker category first!
+                                        </Button>
+                                    </Link>
+                                )}
+                                <Form {...form}>
+                                    <form
+                                        onSubmit={form.handleSubmit(onSubmit)}
+                                        className="space-y-4"
+                                    >
+                                        <FormField
+                                            control={form.control}
+                                            name="name"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Name</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            placeholder="Name..."
+                                                            {...field}
+                                                            disabled={
+                                                                categories.length ==
+                                                                0
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="description"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>
+                                                        Description
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Textarea
+                                                            placeholder="Description"
+                                                            {...field}
+                                                            disabled={
+                                                                categories.length ==
+                                                                0
+                                                            }
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <Select
+                                            required
+                                            onValueChange={(value) => {
+                                                const selectedCategory =
+                                                    categories.find(
+                                                        (cat) =>
+                                                            cat.name === value
+                                                    );
+                                                if (selectedCategory) {
+                                                    console.log(
+                                                        "selected category",
+                                                        selectedCategory.id
+                                                    );
+                                                    form.setValue(
+                                                        "categoryId",
+                                                        selectedCategory.id
+                                                    );
+                                                }
+                                            }}
+                                            disabled={categories.length == 0}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a category" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {categories.map((category) => (
+                                                    <SelectItem
+                                                        value={category.name}
+                                                        key={category.id}
+                                                    >
+                                                        {category.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <Button
+                                            type="submit"
+                                            disabled={categories.length == 0}
+                                        >
+                                            {loading
+                                                ? "Adding Marker..."
+                                                : "Add Marker"}
+                                        </Button>
+                                    </form>
+                                </Form>
+                            </>
                         )}
                     </div>
                     <div className="md:col-span-2">

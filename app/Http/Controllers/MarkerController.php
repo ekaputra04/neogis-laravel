@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Marker;
+use App\Models\MarkerCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -157,8 +158,10 @@ class MarkerController extends Controller
 
     public function addMarker()
     {
+        $categories = MarkerCategory::all();
         return Inertia::render('MapAddMarker', [
             'currentPath' => "/maps/marker/add",
+            'categories' => $categories
         ]);
     }
 

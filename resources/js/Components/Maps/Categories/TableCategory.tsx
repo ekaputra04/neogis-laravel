@@ -36,10 +36,10 @@ export default function TableCategory({
                             </TableCell>
                         </TableRow>
                     ) : (
-                        markerCategories.map((category) => (
+                        markerCategories.map((category, index) => (
                             <TableRow key={category.id}>
                                 <TableCell className="font-medium">
-                                    {category.id}
+                                    {index + 1}
                                 </TableCell>
                                 <TableCell>{category.name}</TableCell>
                                 <TableCell>{category.description}</TableCell>
