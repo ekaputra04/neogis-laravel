@@ -39,7 +39,7 @@ export const sidebarData = {
                 },
                 {
                     title: "Marker Category",
-                    url: "/maps/marker/add/category",
+                    url: "/maps/marker/categories",
                     icon: <ListPlus className="size-4" />,
                 },
                 {

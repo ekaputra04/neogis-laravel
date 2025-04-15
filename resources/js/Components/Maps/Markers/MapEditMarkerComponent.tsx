@@ -153,7 +153,7 @@ export default function MapEditMarkerComponent({
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
                 <Head title="Edit Marker" />
-                <h2 className="mb-4 font-bold text-slate-900 text-3xl">
+                <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
                     Edit Marker
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">

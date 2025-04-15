@@ -10,7 +10,7 @@ export default function Edit({
     mustVerifyEmail,
     status,
 }: PageProps<{ mustVerifyEmail: boolean; status?: string }>) {
-    const currentPath = "profile";
+    const currentPath = "/profile";
     return (
         <DashboardMapLayout currentPath={currentPath as string}>
             <Head title="Profile" />

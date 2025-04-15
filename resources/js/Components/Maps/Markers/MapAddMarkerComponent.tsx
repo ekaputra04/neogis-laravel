@@ -140,7 +140,7 @@ export default function MapAddMarkerComponent({
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
                 <Head title="Add Marker" />
-                <h2 className="mb-4 font-bold text-slate-900 text-3xl">
+                <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
                     Add Marker
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
