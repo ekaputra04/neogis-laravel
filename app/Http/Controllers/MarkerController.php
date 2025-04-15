@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Marker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
+
 
 class MarkerController extends Controller
 {
@@ -133,6 +135,50 @@ class MarkerController extends Controller
 
         return response()->json([
             'message' => 'Marker deleted successfully.'
+        ]);
+    }
+
+    public function overviewMarker()
+    {
+        $markers = Marker::all()->map(function ($marker) {
+            return [
+                'id' => $marker->id,
+                'name' => $marker->name,
+                'description' => $marker->description,
+                'latitude' => $marker->latitude,
+                'longitude' => $marker->longitude,
+            ];
+        });
+        return Inertia::render('MapOverviewMarker', [
+            'currentPath' => '/maps/marker',
+            'markers' => $markers,
+        ]);
+    }
+
+    public function addMarker()
+    {
+        return Inertia::render('MapAddMarker', [
+            'currentPath' => "/maps/marker/add",
+        ]);
+    }
+
+    public function editMarker($id)
+    {
+        $marker = Marker::find($id);
+
+        if (!$marker) {
+            return Inertia::render('NotFound');
+        }
+
+        return Inertia::render('MapEditMarker', [
+            'currentPath' => '/maps/marker/edit',
+            'marker' => [
+                'id' => $marker->id,
+                'name' => $marker->name,
+                'description' => $marker->description,
+                'latitude' => $marker->latitude,
+                'longitude' => $marker->longitude,
+            ],
         ]);
     }
 }

@@ -1,4 +1,11 @@
-import { LayoutDashboard, Map, Pencil, PlusCircle, User } from "lucide-react";
+import {
+    LayoutDashboard,
+    ListPlus,
+    Map,
+    Pencil,
+    PlusCircle,
+    User,
+} from "lucide-react";
 
 export const sidebarData = {
     navMain: [
@@ -29,6 +36,11 @@ export const sidebarData = {
                     title: "Marker Overview",
                     url: "/maps/marker",
                     icon: <Map className="size-4" />,
+                },
+                {
+                    title: "Marker Category",
+                    url: "/maps/marker/add/category",
+                    icon: <ListPlus className="size-4" />,
                 },
                 {
                     title: "Add Marker",

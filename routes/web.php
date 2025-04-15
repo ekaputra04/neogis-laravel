@@ -1,11 +1,9 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MapController;
 use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Marker;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -23,72 +21,14 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard',);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/', function () {
-    return Inertia::render('Home', [
-        'auth' => [
-            'user' => Auth::user()
-        ]
-    ]);
-})->name('home');
+Route::get('/', [HomeController::class, 'homePage'])->name('home');
 
 Route::middleware(['auth', 'verified'])->prefix('maps')->name('maps.')->group(function () {
-    Route::get('/', function () {
-        $markers = Marker::all()->map(function ($marker) {
-            return [
-                'id' => $marker->id,
-                'name' => $marker->name,
-                'description' => $marker->description,
-                'latitude' => $marker->latitude,
-                'longitude' => $marker->longitude,
-            ];
-        });
+    Route::get('/', [MapController::class, 'mapOverview'])->name('index');
 
-        return Inertia::render('MapOverview', [
-            'currentPath' => Request::path(),
-            'markers' => $markers,
-        ]);
-    })->name('index');
-
-    Route::get('/marker', function () {
-        $markers = Marker::all()->map(function ($marker) {
-            return [
-                'id' => $marker->id,
-                'name' => $marker->name,
-                'description' => $marker->description,
-                'latitude' => $marker->latitude,
-                'longitude' => $marker->longitude,
-            ];
-        });
-        return Inertia::render('MapOverviewMarker', [
-            'currentPath' => Request::path(),
-            'markers' => $markers,
-        ]);
-    })->name('marker');
-
-    Route::get('/marker/add', function () {
-        return Inertia::render('MapAddMarker', [
-            'currentPath' => Request::path(),
-        ]);
-    })->name('marker.add');
-
-    Route::get('/marker/edit/{id}', function ($id) {
-        $marker = Marker::find($id);
-
-        if (!$marker) {
-            return Inertia::render('NotFound');
-        }
-
-        return Inertia::render('MapEditMarker', [
-            'currentPath' => Request::path(),
-            'marker' => [
-                'id' => $marker->id,
-                'name' => $marker->name,
-                'description' => $marker->description,
-                'latitude' => $marker->latitude,
-                'longitude' => $marker->longitude,
-            ],
-        ]);
-    })->name('marker.editdelete');
+    Route::get('/marker', [MarkerController::class, 'overviewMarker'])->name('marker');
+    Route::get('/marker/add', [MarkerController::class, 'addMarker'])->name('marker.add');
+    Route::get('/marker/edit/{id}', [MarkerController::class, 'editMarker'])->name('marker.editdelete');
 });
 
 Route::middleware('auth')->group(function () {

@@ -56,9 +56,8 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                                 {item.items?.length ? (
                                     <SidebarMenuSub>
                                         {item.items.map((subItem) => {
-                                            const path = "/" + currentPath;
                                             const isActive =
-                                                path === subItem.url; // Cek apakah URL saat ini cocok
+                                                currentPath === subItem.url; // Cek apakah URL saat ini cocok
 
                                             return (
                                                 <SidebarMenuSubItem

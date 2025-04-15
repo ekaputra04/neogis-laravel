@@ -9,27 +9,27 @@ const faqs = [
     {
         value: "item-1",
         question: "Apa itu Sistem Informasi Geografis (SIG)?",
-        answer: "Sistem Informasi Geografis (SIG) adalah sistem yang dirancang untuk mengumpulkan, menyimpan, menganalisis, dan memvisualisasikan data yang berkaitan dengan lokasi di permukaan bumi.",
+        answer: "Sistem Informasi Geografis (SIG) adalah sistem yang digunakan untuk mengelola, menganalisis, dan memvisualisasikan data berbasis lokasi yang terdapat di permukaan bumi.",
     },
     {
         value: "item-2",
-        question: "Bagaimana cara menambahkan zona baru pada peta?",
-        answer: "Anda dapat menambahkan zona baru melalui dashboard admin dengan menentukan pusat koordinat, radius, nama zona, deskripsi, dan kategori zona.",
+        question: "Bagaimana cara menambahkan marker pada peta?",
+        answer: "Anda dapat menambahkan marker melalui dashboard admin dengan mengisi informasi seperti nama, deskripsi, dan koordinat titik lokasi (latitude & longitude).",
     },
     {
         value: "item-3",
-        question: "Apakah sistem ini mendukung data real-time?",
-        answer: "Ya, sistem ini mendukung integrasi dengan data real-time seperti sensor lokasi atau laporan langsung dari pengguna lapangan.",
+        question: "Bagaimana cara menambahkan garis (line) di peta?",
+        answer: "Untuk menambahkan garis, Anda bisa memasukkan serangkaian titik koordinat yang akan membentuk satu garis terhubung (LineString). Hal ini dapat dilakukan melalui dashboard admin.",
     },
     {
         value: "item-4",
-        question: "Apakah saya bisa mengekspor data dari sistem ini?",
-        answer: "Ya, Anda dapat mengekspor data dalam berbagai format seperti CSV, GeoJSON, atau Shapefile untuk keperluan analisis lebih lanjut.",
+        question: "Bagaimana cara mengetahui siapa pengguna yang login?",
+        answer: "Informasi pengguna yang login dapat diakses melalui sistem autentikasi. Di frontend, data user dapat diambil dari `usePage().props.auth.user`.",
     },
     {
         value: "item-5",
-        question: "Bagaimana dengan keamanan data?",
-        answer: "Sistem ini menggunakan autentikasi pengguna yang aman serta enkripsi data untuk memastikan informasi sensitif tetap terlindungi.",
+        question: "Apakah data bisa difilter berdasarkan nama?",
+        answer: "Ya, sistem mendukung fitur pencarian dan filter data marker berdasarkan nama atau kategori yang Anda ketikkan.",
     },
     {
         value: "item-6",
@@ -38,59 +38,58 @@ const faqs = [
     },
     {
         value: "item-7",
-        question:
-            "Apakah saya bisa mengatur kategori untuk zona yang saya buat?",
-        answer: "Ya, Anda dapat membuat dan mengelola berbagai kategori zona sesuai kebutuhan seperti zona rawan bencana, area pemantauan, atau kawasan konservasi.",
+        question: "Apakah saya bisa mengelompokkan zona dalam kategori?",
+        answer: "Ya, Anda dapat menambahkan kategori untuk setiap marker atau zona seperti zona rawan, pemantauan, dan lainnya.",
     },
     {
         value: "item-8",
-        question: "Bagaimana cara membagikan peta dengan tim saya?",
-        answer: "Peta dapat dibagikan melalui link khusus atau diekspor dalam format yang dapat dibuka di berbagai aplikasi GIS lainnya.",
+        question: "Apakah sistem ini mendukung fitur autentikasi?",
+        answer: "Ya, sistem ini menggunakan autentikasi aman untuk membatasi akses hanya kepada pengguna yang terdaftar dan login.",
     },
     {
         value: "item-9",
-        question: "Apakah ada fitur untuk pencarian lokasi?",
-        answer: "Ya, sistem dilengkapi dengan fitur pencarian lokasi untuk memudahkan pengguna menemukan zona atau titik koordinat tertentu.",
+        question: "Apakah tersedia fitur export data?",
+        answer: "Ya, data dapat diekspor dalam format seperti CSV atau GeoJSON untuk keperluan analisis lanjutan.",
     },
     {
         value: "item-10",
-        question: "Bagaimana sistem menangani pembaruan data?",
-        answer: "Data diperbarui secara otomatis ketika pengguna melakukan perubahan. Selain itu, admin juga dapat melakukan sinkronisasi manual jika diperlukan.",
+        question: "Apakah saya bisa mengatur notifikasi?",
+        answer: "Fitur notifikasi dapat ditambahkan agar pengguna mendapatkan informasi ketika zona atau data tertentu diperbarui.",
     },
     {
         value: "item-11",
-        question: "Apakah saya bisa melihat histori perubahan data?",
-        answer: "Ya, sistem menyediakan log histori perubahan sehingga Anda dapat melacak siapa yang melakukan perubahan dan kapan perubahan tersebut dilakukan.",
+        question: "Apakah tersedia histori perubahan data?",
+        answer: "Ya, sistem mencatat log perubahan data termasuk siapa yang mengubah dan kapan perubahan dilakukan.",
     },
     {
         value: "item-12",
-        question: "Apakah sistem mendukung integrasi dengan platform lain?",
-        answer: "Sistem ini mendukung integrasi dengan berbagai API eksternal seperti OpenStreetMap, Google Maps, dan platform IoT untuk data sensor.",
+        question: "Apakah sistem ini mendukung integrasi pihak ketiga?",
+        answer: "Sistem dapat diintegrasikan dengan API eksternal seperti OpenStreetMap, Google Maps, atau IoT sensor untuk data real-time.",
     },
     {
         value: "item-13",
-        question: "Apakah tersedia fitur notifikasi?",
-        answer: "Ya, Anda bisa mengatur notifikasi untuk mendapatkan pembaruan terkait zona tertentu atau ketika terjadi perubahan penting.",
+        question: "Apakah bisa menampilkan data real-time di peta?",
+        answer: "Ya, sistem mendukung integrasi dengan data real-time seperti data sensor atau pelaporan langsung dari pengguna.",
     },
     {
         value: "item-14",
-        question: "Apakah ada batasan jumlah zona yang bisa dibuat?",
-        answer: "Tidak ada batasan jumlah zona, Anda bebas membuat sebanyak yang diperlukan sesuai dengan kapasitas penyimpanan server.",
+        question: "Apakah saya bisa berbagi peta dengan tim saya?",
+        answer: "Peta dapat dibagikan melalui tautan khusus atau diekspor dalam format umum yang dapat dibuka di software GIS lainnya.",
     },
     {
         value: "item-15",
-        question: "Bagaimana jika saya mengalami kendala teknis?",
-        answer: "Tim support kami siap membantu Anda. Silakan hubungi kami melalui email support atau fitur live chat yang tersedia di dashboard.",
+        question: "Bagaimana jika saya mengalami masalah teknis?",
+        answer: "Silakan hubungi tim support kami melalui email atau live chat yang tersedia di dashboard untuk bantuan lebih lanjut.",
     },
 ];
 
 export function FaQComponent() {
     return (
-        <div className="my-16 max-w-4xl">
+        <div className="my-16 w-full">
             <h2 className="bg-clip-text bg-gradient-to-b from-black dark:from-white to-gray-300/80 dark:to-slate-900/10 mb-16 font-semibold text-transparent text-4xl text-center leading-none whitespace-pre-wrap pointer-events-none">
                 Frequently Asked Questions
             </h2>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="single" collapsible>
                 {faqs.map((faq) => (
                     <AccordionItem key={faq.value} value={faq.value}>
                         <AccordionTrigger>{faq.question}</AccordionTrigger>

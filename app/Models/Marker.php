@@ -11,9 +11,15 @@ class Marker extends Model
         'name',
         'description',
         'coordinates',
+        'category_id',
     ];
 
     protected $appends = ['latitude', 'longitude'];
+
+    public function category()
+    {
+        return $this->belongsTo(MarkerCategory::class, 'category_id');
+    }
 
     public function getLatitudeAttribute()
     {
