@@ -37,7 +37,7 @@ import {
 const formSchema = z.object({
     name: z.string().min(2).max(50),
     description: z.string().min(2),
-    categoryId: z.number(),
+    category_id: z.number(),
 });
 
 interface DrawCreatedEvent {
@@ -83,6 +83,7 @@ export default function MapAddMarkerComponent({
             description: values.description,
             latitude: marker.latitude,
             longitude: marker.longitude,
+            category_id: values.category_id,
         };
 
         setLoading(true);
@@ -232,12 +233,8 @@ export default function MapAddMarkerComponent({
                                                             cat.name === value
                                                     );
                                                 if (selectedCategory) {
-                                                    console.log(
-                                                        "selected category",
-                                                        selectedCategory.id
-                                                    );
                                                     form.setValue(
-                                                        "categoryId",
+                                                        "category_id",
                                                         selectedCategory.id
                                                     );
                                                 }

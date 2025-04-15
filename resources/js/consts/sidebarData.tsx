@@ -18,11 +18,11 @@ export const sidebarData = {
                     url: "/maps",
                     icon: <Map className="size-4" />,
                 },
-                {
-                    title: "Master Data",
-                    url: "/maps/master-data",
-                    icon: <LayoutDashboard className="size-4" />,
-                },
+                // {
+                //     title: "Master Data",
+                //     url: "/maps/master-data",
+                //     icon: <LayoutDashboard className="size-4" />,
+                // },
                 // { title: "User Geolocation", url: "#" },
                 // { title: "Route & Navigation", url: "#" },
                 // { title: "Data Filtering", url: "#" },

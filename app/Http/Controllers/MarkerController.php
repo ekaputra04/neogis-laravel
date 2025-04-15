@@ -57,12 +57,14 @@ class MarkerController extends Controller
             'description' => 'nullable|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'category_id' => 'required|numeric',
         ]);
 
         // Simpan marker
         $marker = Marker::create([
             'name' => $validated['name'],
             'description' => $validated['description'],
+            'category_id' => $validated['category_id'],
             'coordinates' => DB::raw("ST_GeomFromText('POINT({$validated['longitude']} {$validated['latitude']})')"),
         ]);
 
@@ -74,6 +76,7 @@ class MarkerController extends Controller
             'id' => $marker->id,
             'name' => $marker->name,
             'description' => $marker->description,
+            'category_id' => $marker->category_id,
             'latitude' => $location->latitude,
             'longitude' => $location->longitude,
         ];
@@ -89,6 +92,7 @@ class MarkerController extends Controller
             'description' => 'nullable|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'category_id' => 'required|numeric',
         ]);
 
         // Cari marker berdasarkan ID
@@ -103,6 +107,7 @@ class MarkerController extends Controller
         $marker->update([
             'name' => $validated['name'],
             'description' => $validated['description'],
+            'category_id' => $validated['category_id'],
             'coordinates' => DB::raw("ST_GeomFromText('POINT({$validated['longitude']} {$validated['latitude']})')"),
         ]);
 
@@ -114,6 +119,7 @@ class MarkerController extends Controller
             'id' => $marker->id,
             'name' => $marker->name,
             'description' => $marker->description,
+            'category_id' => $marker->category_id,
             'latitude' => $location->latitude,
             'longitude' => $location->longitude,
         ];
@@ -173,6 +179,8 @@ class MarkerController extends Controller
             return Inertia::render('NotFound');
         }
 
+        $categories = MarkerCategory::all();
+
         return Inertia::render('MapEditMarker', [
             'currentPath' => '/maps/marker/edit',
             'marker' => [
@@ -181,7 +189,9 @@ class MarkerController extends Controller
                 'description' => $marker->description,
                 'latitude' => $marker->latitude,
                 'longitude' => $marker->longitude,
+                'category_id' => $marker->category_id,
             ],
+            'categories' => $categories
         ]);
     }
 }

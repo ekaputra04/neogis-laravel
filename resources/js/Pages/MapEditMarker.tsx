@@ -1,9 +1,9 @@
 import MapEditMarkerComponent from "@/Components/Maps/Markers/MapEditMarkerComponent";
-import { MarkerInterface } from "@/types/types";
+import { CategoriesInterface, MarkerInterface } from "@/types/types";
 import { usePage } from "@inertiajs/react";
 
 export default function MapAddMarker() {
-    const { currentPath, marker } = usePage().props;
+    const { currentPath, marker, categories } = usePage().props;
 
     return (
         <>
@@ -11,6 +11,7 @@ export default function MapAddMarker() {
                 <MapEditMarkerComponent
                     currentPath={currentPath as string}
                     marker={marker as MarkerInterface}
+                    categories={categories as CategoriesInterface[]}
                 />
             </div>
         </>

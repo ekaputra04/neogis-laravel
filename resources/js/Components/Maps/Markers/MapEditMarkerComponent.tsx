@@ -26,17 +26,29 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
 import { useEffect, useState } from "react";
-import { MarkerCoordinatesInterface, MarkerInterface } from "@/types/types";
+import {
+    CategoriesInterface,
+    MarkerCoordinatesInterface,
+    MarkerInterface,
+} from "@/types/types";
 import { toast } from "sonner";
 import FormSkeleton from "@/Components/FormSkeleton";
 import { Skeleton } from "@/Components/ui/skeleton";
-import { CornerDownLeft } from "lucide-react";
 import { customIcon } from "@/Components/CustomMarkerIcon";
-import axios from "axios";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
     description: z.string().min(2),
+    category_id: z.number(),
 });
 
 interface DrawCreatedEvent {
@@ -48,13 +60,17 @@ interface DrawEditedEvent {
     layers: L.LayerGroup;
 }
 
+interface MapEditMarkerComponentProps {
+    currentPath: string;
+    marker: MarkerInterface;
+    categories: CategoriesInterface[];
+}
+
 export default function MapEditMarkerComponent({
     currentPath,
     marker,
-}: {
-    currentPath: string;
-    marker: MarkerInterface;
-}) {
+    categories,
+}: MapEditMarkerComponentProps) {
     const [markerCoordinates, setMarkerCoordinates] =
         useState<MarkerCoordinatesInterface | null>({
             latitude: marker.latitude,
@@ -62,12 +78,14 @@ export default function MapEditMarkerComponent({
         });
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
+    const [selectedCategoryName, setSelectedCategoryName] = useState("");
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: marker.name,
             description: marker.description,
+            category_id: marker.category_id,
         },
     });
 
@@ -82,6 +100,7 @@ export default function MapEditMarkerComponent({
             description: values.description,
             latitude: markerCoordinates.latitude,
             longitude: markerCoordinates.longitude,
+            category_id: values.category_id,
         };
 
         setLoading(true);
@@ -149,6 +168,14 @@ export default function MapEditMarkerComponent({
         }
     }, [markerCoordinates]);
 
+    useEffect(() => {
+        const initialCategory = categories.find(
+            (cat) => cat.id === marker.category_id
+        );
+
+        setSelectedCategoryName(initialCategory?.name || "");
+    }, [marker, categories]);
+
     return (
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
@@ -202,6 +229,39 @@ export default function MapEditMarkerComponent({
                                             </FormItem>
                                         )}
                                     />
+
+                                    <Select
+                                        required
+                                        value={selectedCategoryName}
+                                        onValueChange={(value) => {
+                                            setSelectedCategoryName(value);
+
+                                            const selectedCategory =
+                                                categories.find(
+                                                    (cat) => cat.name === value
+                                                );
+                                            if (selectedCategory) {
+                                                form.setValue(
+                                                    "category_id",
+                                                    selectedCategory.id
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select a category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {categories.map((category) => (
+                                                <SelectItem
+                                                    value={category.name}
+                                                    key={category.id}
+                                                >
+                                                    {category.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                     <Button type="submit">Submit</Button>
                                 </form>
                             </Form>
