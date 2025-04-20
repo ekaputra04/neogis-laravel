@@ -11,10 +11,10 @@ import EditCategoryDialog from "./EditCategoryDialog";
 import DeleteCategoryDialog from "./DeletedCategoryDialog";
 
 export default function TableCategory({
-    markerCategories,
+    categories,
     onCategoryUpdate,
 }: {
-    markerCategories: CategoriesInterface[];
+    categories: CategoriesInterface[];
     onCategoryUpdate: () => void;
 }) {
     return (
@@ -29,14 +29,14 @@ export default function TableCategory({
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {markerCategories.length === 0 ? (
+                    {categories.length === 0 ? (
                         <TableRow>
                             <TableCell colSpan={4} className="text-center">
                                 Category not found
                             </TableCell>
                         </TableRow>
                     ) : (
-                        markerCategories.map((category, index) => (
+                        categories.map((category, index) => (
                             <TableRow key={category.id}>
                                 <TableCell className="font-medium">
                                     {index + 1}

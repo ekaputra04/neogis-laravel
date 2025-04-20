@@ -133,7 +133,9 @@ export default function Login({
                                         className="ms-4 px-8 py-2"
                                         disabled={processing}
                                     >
-                                        Log in
+                                        {processing
+                                            ? "Logging in..."
+                                            : "Log in"}
                                     </Button>
                                 </div>
                             </form>

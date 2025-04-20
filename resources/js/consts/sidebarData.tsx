@@ -64,6 +64,11 @@ export const sidebarData = {
                     icon: <Map className="size-4" />,
                 },
                 {
+                    title: "Line Category",
+                    url: "/maps/line/categories",
+                    icon: <ListPlus className="size-4" />,
+                },
+                {
                     title: "Add Line",
                     url: "/maps/line/add",
                     icon: <PlusCircle className="size-4" />,
@@ -83,6 +88,11 @@ export const sidebarData = {
                     title: "Rectangle Overview",
                     url: "/maps/rectangle",
                     icon: <Map className="size-4" />,
+                },
+                {
+                    title: "Rectangle Category",
+                    url: "/maps/rectangle/categories",
+                    icon: <ListPlus className="size-4" />,
                 },
                 {
                     title: "Add Rectangle",
@@ -106,6 +116,11 @@ export const sidebarData = {
                     icon: <Map className="size-4" />,
                 },
                 {
+                    title: "Polygon Category",
+                    url: "/maps/polygon/categories",
+                    icon: <ListPlus className="size-4" />,
+                },
+                {
                     title: "Add Polygon",
                     url: "/maps/polygon/add",
                     icon: <PlusCircle className="size-4" />,
@@ -125,6 +140,11 @@ export const sidebarData = {
                     title: "Circle Overview",
                     url: "/maps/circle",
                     icon: <Map className="size-4" />,
+                },
+                {
+                    title: "Circle Category",
+                    url: "/maps/circle/categories",
+                    icon: <ListPlus className="size-4" />,
                 },
                 {
                     title: "Add Circle",

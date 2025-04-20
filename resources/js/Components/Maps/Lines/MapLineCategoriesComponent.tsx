@@ -22,13 +22,14 @@ import { Textarea } from "@/Components/ui/textarea";
 const formSchema = z.object({
     name: z.string().min(2).max(50),
     description: z.string().min(2),
+    color: z.string(),
 });
 
-export default function MapMarkerCategoriesComponent() {
+export default function MapLineCategoriesComponent() {
     const { categories } = usePage().props;
-    const [markerCategories, setMarkerCategories] = useState<
-        CategoriesInterface[]
-    >(categories as CategoriesInterface[]);
+    const [lineCategories, setLineCategories] = useState<CategoriesInterface[]>(
+        categories as CategoriesInterface[]
+    );
     const [loading, setLoading] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -36,6 +37,7 @@ export default function MapMarkerCategoriesComponent() {
         defaultValues: {
             name: "",
             description: "",
+            color: "#3388ff",
         },
     });
 
@@ -43,20 +45,20 @@ export default function MapMarkerCategoriesComponent() {
         setLoading(true);
 
         try {
-            const response = await fetch(`/api/maps/markers-categories`, {
+            const response = await fetch(`/api/maps/lines-categories`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
             });
 
             if (!response.ok) {
-                throw new Error("Failed to fetch marker categories");
+                throw new Error("Failed to fetch line categories");
             }
 
             const data = await response.json();
-            setMarkerCategories(data);
+            setLineCategories(data);
         } catch (error) {
-            console.error("Error fetching marker categories:", error);
-            toast.error("Error fetching marker categories.");
+            console.error("Error fetching line categories:", error);
+            toast.error("Error fetching line categories.");
         } finally {
             setLoading(false);
         }
@@ -66,23 +68,25 @@ export default function MapMarkerCategoriesComponent() {
         setLoading(true);
 
         try {
-            const response = await fetch(`/api/maps/markers-categories`, {
+            console.log(values);
+
+            const response = await fetch(`/api/maps/lines-categories`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
             });
 
             if (!response.ok) {
-                throw new Error("Failed to save marker categories");
+                throw new Error("Failed to save line categories");
             }
 
             await response.json();
-            toast.success("Marker category created successfully!");
+            toast.success("Line category created successfully!");
             form.reset();
             await fetchData();
         } catch (error) {
-            console.error("Error creating marker categories:", error);
-            toast.error("Error creating marker categories.");
+            console.error("Error creating line categories:", error);
+            toast.error("Error creating line categories.");
         } finally {
             setLoading(false);
         }
@@ -93,12 +97,12 @@ export default function MapMarkerCategoriesComponent() {
     };
 
     return (
-        <DashboardMapLayout currentPath={"/maps/marker/categories"}>
-            <Head title="Marker Categories" />
+        <DashboardMapLayout currentPath={"/maps/line/categories"}>
+            <Head title="Line Categories" />
             <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                 <div className="col-span-1">
                     <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
-                        Marker Category
+                        Line Category
                     </h2>
                     <Form {...form}>
                         <form
@@ -137,6 +141,19 @@ export default function MapMarkerCategoriesComponent() {
                                     </FormItem>
                                 )}
                             />
+                            <FormField
+                                control={form.control}
+                                name="color"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Color</FormLabel>
+                                        <FormControl>
+                                            <Input type="color" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <Button type="submit" disabled={loading}>
                                 {loading ? "Adding..." : "Add New Category"}
                             </Button>
@@ -145,7 +162,7 @@ export default function MapMarkerCategoriesComponent() {
                 </div>
                 <div className="md:col-span-2">
                     <TableCategory
-                        categories={markerCategories}
+                        categories={lineCategories}
                         onCategoryUpdate={handleCategoryUpdate}
                     />
                 </div>
