@@ -31,7 +31,7 @@ import {
 } from "@/Components/ui/table";
 import { Input } from "@/Components/ui/input";
 import { Eye, PlusCircle } from "lucide-react";
-import { centerPoints } from "@/Consts/centerPoints";
+import { centerPoints } from "@/consts/centerPoints";
 import { Badge } from "@/Components/ui/badge";
 import HowToUseMarkersOverview from "@/Components/HowToUseMarkersOverview";
 

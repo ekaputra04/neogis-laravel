@@ -16,7 +16,7 @@ import {
     TableRow,
 } from "@/Components/ui/table";
 import { Eye } from "lucide-react";
-import { centerPoints } from "@/Consts/centerPoints";
+import { centerPoints } from "@/consts/centerPoints";
 import { Badge } from "../ui/badge";
 
 export default function MapOverviewComponent({

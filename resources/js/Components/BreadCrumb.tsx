@@ -6,7 +6,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/Components/ui/breadcrumb";
-import { sidebarData } from "@/Consts/sidebarData";
+import { sidebarData } from "@/consts/sidebarData";
 import React from "react";
 
 export default function BreadCrumbMaps({
