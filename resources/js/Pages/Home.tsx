@@ -50,7 +50,7 @@ export default function HomePage({ auth }: HomePageProps) {
                 <main className="flex flex-col justify-start items-center p-8 md:px-16 lg:px-32 lg:py-16 w-full">
                     <div className="space-y-8">
                         <p className="bg-clip-text bg-gradient-to-b from-black dark:from-white to-gray-300/80 dark:to-slate-900/10 font-semibold text-transparent text-6xl text-center leading-none whitespace-pre-wrap pointer-events-none">
-                            World Map
+                            NeoGIS
                         </p>
 
                         <p className="mx-auto py-4 text-neutral-500 text-sm md:text-lg text-center">
@@ -74,9 +74,10 @@ export default function HomePage({ auth }: HomePageProps) {
                             </Link>
                         </div>
                         <div className="">
-                            <Link
+                            <a
                                 href="https://github.com/ekaputra04/neogis-laravel.git"
                                 className="flex justify-center mx-auto my-16 w-full"
+                                target="_blank"
                             >
                                 <InteractiveHoverButton>
                                     <div className="flex gap-2">
@@ -84,7 +85,7 @@ export default function HomePage({ auth }: HomePageProps) {
                                         Github
                                     </div>
                                 </InteractiveHoverButton>
-                            </Link>
+                            </a>
                         </div>
                     </div>
 

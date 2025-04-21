@@ -34,7 +34,7 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                                 </div>
                                 <div className="flex flex-col gap-0.5 leading-none">
                                     <span className="font-semibold">
-                                        World Map
+                                        NeoGIS
                                     </span>
                                     <span className="">v1.0.0</span>
                                 </div>

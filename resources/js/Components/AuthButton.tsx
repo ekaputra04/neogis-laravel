@@ -15,7 +15,7 @@ export default function AuthButton({ auth }: AuthButtonProps) {
         <nav className="">
             {auth.user ? (
                 <div className="flex justify-between items-center px-8 md:px-16 lg:px-32 pt-4">
-                    <h1 className="font-bold text-xl">World Map</h1>
+                    <h1 className="font-bold text-xl">NeoGIS</h1>
 
                     <div className="flex justify-between items-center gap-4">
                         <Dropdown>
@@ -26,7 +26,7 @@ export default function AuthButton({ auth }: AuthButtonProps) {
                                         className="inline-flex items-center px-3 py-2 border border-transparent rounded-md focus:outline-none font-medium text-gray-500 hover:text-gray-700 text-sm leading-4 transition duration-150 ease-in-out"
                                     >
                                         <p className="dark:text-white">
-                                            Helo, {auth.user.name}
+                                            Hello, {auth.user.name}
                                         </p>
                                         <svg
                                             className="ms-2 -me-0.5 w-4 h-4"
@@ -65,7 +65,7 @@ export default function AuthButton({ auth }: AuthButtonProps) {
                 </div>
             ) : (
                 <div className="flex justify-between items-center px-8 md:px-16 lg:px-32 pt-4">
-                    <h1 className="font-bold text-xl">World Map</h1>
+                    <h1 className="font-bold text-xl">NeoGIS</h1>
                     <div className="flex justify-end gap-2">
                         <Button asChild variant={"outline"}>
                             <Link href="/login">Sign in</Link>
@@ -83,7 +83,7 @@ export default function AuthButton({ auth }: AuthButtonProps) {
 
     // ) : (
     //     <div className="flex justify-between items-center px-8 md:px-16 lg:px-32 pt-4">
-    //         <h1 className="font-bold text-xl">World Map</h1>
+    //         <h1 className="font-bold text-xl">NeoGIS</h1>
     //         <div className="flex justify-end gap-2">
     //             <Button asChild size="sm" variant={"outline"}>
     //                 <Link href="/sign-in">Sign in</Link>
