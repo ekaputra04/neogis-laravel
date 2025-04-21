@@ -21,7 +21,7 @@ class MapController extends Controller
             ];
         });
         return Inertia::render('MapOverview', [
-            'currentPath' => '/maps',
+            'currentPath' => '/dashboard',
             'markers' => $markers,
         ]);
     }

@@ -46,7 +46,7 @@ export default function Welcome({
                             <nav className="flex flex-1 justify-end -mx-3">
                                 {auth.user ? (
                                     <Link
-                                        href="/maps"
+                                        href="/dashboard"
                                         className="px-3 py-2 rounded-md focus:outline-none ring-1 ring-transparent focus-visible:ring-[#FF2D20] dark:focus-visible:ring-white text-black hover:text-black/70 dark:hover:text-white/80 dark:text-white transition"
                                     >
                                         Dashboard

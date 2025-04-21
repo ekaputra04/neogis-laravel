@@ -27,7 +27,7 @@ class MarkerCategoryController extends Controller
         $markerCategories = MarkerCategory::all();
 
         return Inertia::render('MarkerCategories', [
-            'currentPath' => "/maps/marker/add",
+            'currentPath' => "/dashboard/marker/add",
             'categories' => $markerCategories
         ]);
     }

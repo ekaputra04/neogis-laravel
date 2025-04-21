@@ -159,7 +159,7 @@ class MarkerController extends Controller
         });
 
         return Inertia::render('MapOverviewMarker', [
-            'currentPath' => '/maps/marker',
+            'currentPath' => '/dashboard/marker',
             'markers' => $markers,
         ]);
     }
@@ -168,7 +168,7 @@ class MarkerController extends Controller
     {
         $categories = MarkerCategory::all();
         return Inertia::render('MapAddMarker', [
-            'currentPath' => "/maps/marker/add",
+            'currentPath' => "/dashboard/marker/add",
             'categories' => $categories
         ]);
     }
@@ -184,7 +184,7 @@ class MarkerController extends Controller
         $categories = MarkerCategory::all();
 
         return Inertia::render('MapEditMarker', [
-            'currentPath' => '/maps/marker/edit',
+            'currentPath' => '/dashboard/marker/edit',
             'marker' => [
                 'id' => $marker->id,
                 'name' => $marker->name,

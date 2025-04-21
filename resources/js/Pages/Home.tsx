@@ -26,7 +26,7 @@ const navItems = [
     },
     {
         name: "Dashboard",
-        link: "/maps",
+        link: "/dashboard",
         icon: (
             <LayoutDashboard className="w-4 h-4 text-neutral-500 dark:text-white" />
         ),
@@ -66,8 +66,8 @@ export default function HomePage({ auth }: HomePageProps) {
 
                     <div className="flex justify-center items-center gap-4 w-full">
                         <div className="">
-                            <Link href={"/maps"} className="my-16">
-                                <RainbowButton className="gap-2">
+                            <Link href={"/dashboard"} className="my-16">
+                                <RainbowButton className="gap-2 rounded-full">
                                     <LayoutDashboard className="w-6 h-6" />
                                     Explore Dashboard
                                 </RainbowButton>

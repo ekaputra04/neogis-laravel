@@ -118,7 +118,7 @@ export default function MapEditMarkerComponent({
 
             toast.success("Location updated successfully!");
             form.reset();
-            router.visit("/maps/marker");
+            router.visit("/dashboard/marker");
         } catch (error) {
             console.error("Error saving location:", error);
             toast.error("Error saving location.");

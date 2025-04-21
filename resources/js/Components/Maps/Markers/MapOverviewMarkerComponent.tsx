@@ -197,7 +197,7 @@ export default function MapOverviewMarkerComponent({
                                                 className="mr-2"
                                                 onClick={() => {
                                                     router.visit(
-                                                        `/maps/marker/edit/${marker.id}`
+                                                        `/dashboard/marker/edit/${marker.id}`
                                                     );
                                                 }}
                                                 variant={"outline"}

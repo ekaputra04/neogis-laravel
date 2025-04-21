@@ -93,7 +93,7 @@ export default function MapMarkerCategoriesComponent() {
     };
 
     return (
-        <DashboardMapLayout currentPath={"/maps/marker/categories"}>
+        <DashboardMapLayout currentPath={"/dashboard/marker/categories"}>
             <Head title="Marker Categories" />
             <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                 <div className="col-span-1">

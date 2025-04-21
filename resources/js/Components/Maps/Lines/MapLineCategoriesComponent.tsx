@@ -97,7 +97,7 @@ export default function MapLineCategoriesComponent() {
     };
 
     return (
-        <DashboardMapLayout currentPath={"/maps/line/categories"}>
+        <DashboardMapLayout currentPath={"/dashboard/line/categories"}>
             <Head title="Line Categories" />
             <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                 <div className="col-span-1">

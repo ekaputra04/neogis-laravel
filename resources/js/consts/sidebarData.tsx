@@ -11,16 +11,16 @@ export const sidebarData = {
     navMain: [
         {
             title: "Main Map",
-            url: "/maps",
+            url: "/dashboard",
             items: [
                 {
                     title: "Overview",
-                    url: "/maps",
+                    url: "/dashboard",
                     icon: <Map className="size-4" />,
                 },
                 // {
                 //     title: "Master Data",
-                //     url: "/maps/master-data",
+                //     url: "/dashboard/master-data",
                 //     icon: <LayoutDashboard className="size-4" />,
                 // },
                 // { title: "User Geolocation", url: "#" },
@@ -30,130 +30,130 @@ export const sidebarData = {
         },
         {
             title: "Marker",
-            url: "/maps/marker",
+            url: "/dashboard/marker",
             items: [
                 {
                     title: "Marker Overview",
-                    url: "/maps/marker",
+                    url: "/dashboard/marker",
                     icon: <Map className="size-4" />,
                 },
                 {
                     title: "Marker Category",
-                    url: "/maps/marker/categories",
+                    url: "/dashboard/marker/categories",
                     icon: <ListPlus className="size-4" />,
                 },
                 {
                     title: "Add Marker",
-                    url: "/maps/marker/add",
+                    url: "/dashboard/marker/add",
                     icon: <PlusCircle className="size-4" />,
                 },
                 // {
                 //     title: "Edit & Delete Marker",
-                //     url: "/maps/marker/edit-delete",
+                //     url: "/dashboard/marker/edit-delete",
                 //     icon: <Pencil className="size-4" />,
                 // },
             ],
         },
         {
             title: "Line",
-            url: "/maps/line",
+            url: "/dashboard/line",
             items: [
                 {
                     title: "Line Overview",
-                    url: "/maps/line",
+                    url: "/dashboard/line",
                     icon: <Map className="size-4" />,
                 },
                 {
                     title: "Line Category",
-                    url: "/maps/line/categories",
+                    url: "/dashboard/line/categories",
                     icon: <ListPlus className="size-4" />,
                 },
                 {
                     title: "Add Line",
-                    url: "/maps/line/add",
+                    url: "/dashboard/line/add",
                     icon: <PlusCircle className="size-4" />,
                 },
                 // {
                 //     title: "Edit & Delete Line",
-                //     url: "/maps/line/edit-delete",
+                //     url: "/dashboard/line/edit-delete",
                 //     icon: <Pencil className="size-4" />,
                 // },
             ],
         },
         {
             title: "Rectangle",
-            url: "/maps/rectangle",
+            url: "/dashboard/rectangle",
             items: [
                 {
                     title: "Rectangle Overview",
-                    url: "/maps/rectangle",
+                    url: "/dashboard/rectangle",
                     icon: <Map className="size-4" />,
                 },
                 {
                     title: "Rectangle Category",
-                    url: "/maps/rectangle/categories",
+                    url: "/dashboard/rectangle/categories",
                     icon: <ListPlus className="size-4" />,
                 },
                 {
                     title: "Add Rectangle",
-                    url: "/maps/rectangle/add",
+                    url: "/dashboard/rectangle/add",
                     icon: <PlusCircle className="size-4" />,
                 },
                 // {
                 //     title: "Edit & Delete Rectangle",
-                //     url: "/maps/rectangle/edit-delete",
+                //     url: "/dashboard/rectangle/edit-delete",
                 //     icon: <Pencil className="size-4" />,
                 // },
             ],
         },
         {
             title: "Polygon",
-            url: "/maps/polygon",
+            url: "/dashboard/polygon",
             items: [
                 {
                     title: "Polygon Overview",
-                    url: "/maps/polygon",
+                    url: "/dashboard/polygon",
                     icon: <Map className="size-4" />,
                 },
                 {
                     title: "Polygon Category",
-                    url: "/maps/polygon/categories",
+                    url: "/dashboard/polygon/categories",
                     icon: <ListPlus className="size-4" />,
                 },
                 {
                     title: "Add Polygon",
-                    url: "/maps/polygon/add",
+                    url: "/dashboard/polygon/add",
                     icon: <PlusCircle className="size-4" />,
                 },
                 // {
                 //     title: "Edit & Delete Polygon",
-                //     url: "/maps/polygon/edit-delete",
+                //     url: "/dashboard/polygon/edit-delete",
                 //     icon: <Pencil className="size-4" />,
                 // },
             ],
         },
         {
             title: "Circle",
-            url: "/maps/circle",
+            url: "/dashboard/circle",
             items: [
                 {
                     title: "Circle Overview",
-                    url: "/maps/circle",
+                    url: "/dashboard/circle",
                     icon: <Map className="size-4" />,
                 },
                 {
                     title: "Circle Category",
-                    url: "/maps/circle/categories",
+                    url: "/dashboard/circle/categories",
                     icon: <ListPlus className="size-4" />,
                 },
                 {
                     title: "Add Circle",
-                    url: "/maps/circle/add",
+                    url: "/dashboard/circle/add",
                     icon: <PlusCircle className="size-4" />,
                 },
                 // {
                 //     title: "Edit & Delete Circle",
-                //     url: "/maps/circle/edit-delete",
+                //     url: "/dashboard/circle/edit-delete",
                 //     icon: <Pencil className="size-4" />,
                 // },
             ],

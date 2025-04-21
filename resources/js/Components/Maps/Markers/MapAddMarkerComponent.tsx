@@ -167,7 +167,7 @@ export default function MapAddMarkerComponent({
                         ) : (
                             <>
                                 {categories.length == 0 && (
-                                    <Link href={"/maps/marker/categories"}>
+                                    <Link href={"/dashboard/marker/categories"}>
                                         <Button
                                             className="my-4"
                                             variant={"destructive"}

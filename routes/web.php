@@ -19,13 +19,13 @@ use Inertia\Inertia;
 // });
 
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard',);
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard',);
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/', [HomeController::class, 'homePage'])->name('home');
 
-Route::middleware(['auth', 'verified'])->prefix('maps')->name('maps.')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->group(function () {
     Route::get('/', [MapController::class, 'mapOverview'])->name('index');
 
     Route::get('/marker', [MarkerController::class, 'overviewMarker'])->name('marker');
@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified'])->prefix('maps')->name('maps.')->group(fu
     Route::get('/marker/edit/{id}', [MarkerController::class, 'editMarker'])->name('marker.editdelete');
     Route::get('/marker/categories', [MarkerCategoryController::class, 'index'])->name('marker.categories');
 
-    Route::get('/line/categories', [LineCategoryController::class, 'index'])->name('line.categories');
+    // Route::get('/line/categories', [LineCategoryController::class, 'index'])->name('line.categories');
 });
 
 
