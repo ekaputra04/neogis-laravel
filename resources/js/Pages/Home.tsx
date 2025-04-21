@@ -75,7 +75,7 @@ export default function HomePage({ auth }: HomePageProps) {
                         </div>
                         <div className="">
                             <Link
-                                href="https://github.com/ekaputra04/gis-starter.git"
+                                href="https://github.com/ekaputra04/neogis-laravel.git"
                                 className="flex justify-center mx-auto my-16 w-full"
                             >
                                 <InteractiveHoverButton>

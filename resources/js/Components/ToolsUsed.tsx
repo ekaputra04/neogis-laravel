@@ -1,39 +1,51 @@
-"use client";
-import React from "react";
 import { AnimatedTooltip } from "./ui/animated-tooltip";
-import nextJSImage from "@/images/logo/nextjs.png";
-import supabaseImage from "@/images/logo/supabase.png";
 import reactLeafletImage from "@/images/logo/leaflet.png";
 import shadcnUIImage from "@/images/logo/shadcn-ui.png";
 import magicUIImage from "@/images/logo/magic-ui.png";
+import laravelImage from "@/images/logo/laravel.png";
+import mySQLImage from "@/images/logo/mysql.png";
+import inertiaImage from "@/images/logo/inertia.png";
+import reactImage from "@/images/logo/react.png";
 
 const tools = [
     {
         id: 1,
-        name: "Next JS",
-        designation: "Full-Stack Framework",
-        image: nextJSImage,
+        name: "Laravel",
+        designation: "Backend Framework",
+        image: laravelImage,
     },
     {
         id: 2,
-        name: "Supabase",
-        designation: "Database as a Service",
-        image: supabaseImage,
+        name: "InertiaJS",
+        designation: "Frontend-backend connector for SPAs",
+        image: inertiaImage,
     },
     {
         id: 3,
+        name: "ReactJS",
+        designation: "Frontend Library",
+        image: reactImage,
+    },
+    {
+        id: 4,
+        name: "MySQL",
+        designation: "Relational Database",
+        image: mySQLImage,
+    },
+    {
+        id: 5,
         name: "React Leaflet",
         designation: "Map Library",
         image: reactLeafletImage,
     },
     {
-        id: 4,
+        id: 6,
         name: "Shadcn UI",
         designation: "UI Components",
         image: shadcnUIImage,
     },
     {
-        id: 5,
+        id: 7,
         name: "Magic UI",
         designation: "UI Components",
         image: magicUIImage,
