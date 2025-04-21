@@ -6,6 +6,6 @@
 // resources/js/bootstrap.ts atau file setup Axios Anda
 import axios from "axios";
 
-axios.defaults.baseURL = "https://gis_2205551087.manpits.xyz";
+// axios.defaults.baseURL = "https://gis_2205551087.manpits.xyz";
 axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 axios.defaults.withCredentials = true;

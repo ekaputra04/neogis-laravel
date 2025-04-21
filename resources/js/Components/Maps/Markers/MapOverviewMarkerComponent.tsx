@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -30,9 +30,10 @@ import {
     TableRow,
 } from "@/Components/ui/table";
 import { Input } from "@/Components/ui/input";
-import { Eye } from "lucide-react";
+import { Eye, PlusCircle } from "lucide-react";
 import { centerPoints } from "@/Consts/centerPoints";
 import { Badge } from "@/Components/ui/badge";
+import HowToUseMarkersOverview from "@/Components/HowToUseMarkersOverview";
 
 export default function MapOverviewMarkerComponent({
     currentPath,
@@ -64,11 +65,7 @@ export default function MapOverviewMarkerComponent({
             const response = await axios.get(`/api/maps/markers`);
             setMarkers(response.data);
         } catch (error: any) {
-            console.error(
-                "Error deleting marker:",
-                error.response?.data?.message || error.message
-            );
-            alert(error.response?.data?.message || "Gagal menghapus marker.");
+            console.error(error.response?.data?.message || error.message);
         }
     };
 
@@ -84,7 +81,9 @@ export default function MapOverviewMarkerComponent({
                 "Error deleting marker:",
                 error.response?.data?.message || error.message
             );
-            alert(error.response?.data?.message || "Gagal menghapus marker.");
+            toast.error(
+                error.response?.data?.message || "Gagal menghapus marker."
+            );
         }
     };
 
@@ -105,46 +104,59 @@ export default function MapOverviewMarkerComponent({
                 <Head title="Maps" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
+                        <HowToUseMarkersOverview />
+                        <Link href={route("maps.marker.add")}>
+                            <Button className="mb-4 w-full">
+                                <PlusCircle />
+                                Add New Marker
+                            </Button>
+                        </Link>
+                        <hr />
                         <Input
                             placeholder="Search..."
-                            className="mb-8"
+                            className="my-4"
                             onChange={(e) => setSearchValue(e.target.value)}
                         ></Input>
-                        <Table className="">
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="flex justify-between items-center">
-                                        <p>Marker</p>
-                                        <p>
-                                            ({filteredMarkers.length}/
-                                            {markers?.length})
-                                        </p>
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredMarkers.map((marker, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell className="flex justify-between items-center">
-                                            {marker.name}
-                                            <Button
-                                                variant={"outline"}
-                                                onClick={() =>
-                                                    setMapCenter({
-                                                        latitude:
-                                                            marker.latitude,
-                                                        longitude:
-                                                            marker.longitude,
-                                                    })
-                                                }
-                                            >
-                                                <Eye />
-                                            </Button>
-                                        </TableCell>
+                        <div className="justify-between w-full h-80 overflow-y-scroll">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="flex justify-between items-center">
+                                            <p>Marker</p>
+                                            <p>
+                                                ({filteredMarkers.length}/
+                                                {markers?.length})
+                                            </p>
+                                        </TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody className="block w-full">
+                                    {filteredMarkers.map((marker, index) => (
+                                        <TableRow
+                                            key={index}
+                                            className="block w-full"
+                                        >
+                                            <TableCell className="flex justify-between items-center">
+                                                {marker.name}
+                                                <Button
+                                                    variant={"outline"}
+                                                    onClick={() =>
+                                                        setMapCenter({
+                                                            latitude:
+                                                                marker.latitude,
+                                                            longitude:
+                                                                marker.longitude,
+                                                        })
+                                                    }
+                                                >
+                                                    <Eye />
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
                     <div className="z-0 md:col-span-3">
                         <MapContainer

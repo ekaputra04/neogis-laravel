@@ -4,7 +4,7 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
-import image from "@/images/sign-in-bg.jpg";
+import image from "@/images/background/sign-in-bg.jpg";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
