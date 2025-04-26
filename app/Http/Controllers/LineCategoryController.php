@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLineCategoryRequest;
 use App\Http\Requests\UpdateLineCategoryRequest;
 use Illuminate\Http\Request;
-
+use Inertia\Inertia;
 
 class LineCategoryController extends Controller
 {
@@ -23,7 +23,12 @@ class LineCategoryController extends Controller
      */
     public function index()
     {
-        //
+        $lineCategories = LineCategory::all();
+
+        return Inertia::render('LineCategories', [
+            'currentPath' => "/dashboard/line/add",
+            'categories' => $lineCategories
+        ]);
     }
 
     /**
@@ -42,11 +47,13 @@ class LineCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'color' => 'nullable|string',
         ]);
 
         $category = LineCategory::create([
             'name' => $validated['name'],
             'description' => $validated['description'],
+            'color' => $validated['color'],
         ]);
 
         return response()->json($category, 201);

@@ -13,12 +13,14 @@ import {
 } from "@/Components/ui/alert-dialog";
 
 interface DeleteCategoryDialogProps {
+    type: "markers" | "lines" | "polygons" | "rectangles" | "circles";
     categoryId: number;
     categoryName: string;
     onCategoryDeleted: () => void;
 }
 
 export default function DeleteCategoryDialog({
+    type,
     categoryId,
     categoryName,
     onCategoryDeleted,
@@ -31,7 +33,7 @@ export default function DeleteCategoryDialog({
 
         try {
             const response = await fetch(
-                `/api/maps/markers-categories/${categoryId}`,
+                `/api/maps/${type}-categories/${categoryId}`,
                 {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
@@ -39,15 +41,15 @@ export default function DeleteCategoryDialog({
             );
 
             if (!response.ok) {
-                throw new Error("Failed to delete marker category");
+                throw new Error(`Failed to delete ${type} category`);
             }
 
-            toast.success("Marker category deleted successfully!");
+            toast.success(`${type} category deleted successfully!`);
             setIsOpen(false);
             onCategoryDeleted();
         } catch (error) {
-            console.error("Error deleting marker category:", error);
-            toast.error("Error deleting marker category.");
+            console.error(`Error deleting ${type} category:`, error);
+            toast.error(`Error deleting ${type} category`);
         } finally {
             setLoading(false);
         }

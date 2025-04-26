@@ -162,6 +162,7 @@ export default function MapLineCategoriesComponent() {
                 </div>
                 <div className="md:col-span-2">
                     <TableCategory
+                        type="lines"
                         categories={lineCategories}
                         onCategoryUpdate={handleCategoryUpdate}
                     />

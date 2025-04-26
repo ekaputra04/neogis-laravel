@@ -30,11 +30,13 @@ const formSchema = z.object({
 });
 
 interface EditCategoryDialogProps {
+    type: "markers" | "lines" | "polygons" | "rectangles" | "circles";
     category: CategoriesInterface;
     onCategoryUpdated: () => void;
 }
 
 export default function EditCategoryDialog({
+    type,
     category,
     onCategoryUpdated,
 }: EditCategoryDialogProps) {
@@ -54,7 +56,7 @@ export default function EditCategoryDialog({
 
         try {
             const response = await fetch(
-                `/api/maps/markers-categories/${category.id}`,
+                `/api/maps/${type}-categories/${category.id}`,
                 {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
@@ -63,15 +65,15 @@ export default function EditCategoryDialog({
             );
 
             if (!response.ok) {
-                throw new Error("Failed to update marker category");
+                throw new Error(`Failed to update ${type} category`);
             }
 
-            toast.success("Marker category updated successfully!");
+            toast.success(`${type} category updated successfully!`);
             setIsOpen(false);
             onCategoryUpdated();
         } catch (error) {
-            console.error("Error updating marker category:", error);
-            toast.error("Error updating marker category.");
+            console.error(`Error updating ${type} category:`, error);
+            toast.error(`Error updating ${type} category.`);
         } finally {
             setLoading(false);
         }

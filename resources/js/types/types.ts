@@ -13,6 +13,10 @@ export interface CategoriesInterface {
     description: string;
 }
 
+export interface LineCategoryInterface extends CategoriesInterface {
+    color: string;
+}
+
 export interface MarkerInterface {
     id: number;
     name: string;

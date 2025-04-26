@@ -145,6 +145,7 @@ export default function MapMarkerCategoriesComponent() {
                 </div>
                 <div className="md:col-span-2">
                     <TableCategory
+                        type="markers"
                         categories={markerCategories}
                         onCategoryUpdate={handleCategoryUpdate}
                     />

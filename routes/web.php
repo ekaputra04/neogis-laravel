@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
     Route::get('/marker/edit/{id}', [MarkerController::class, 'editMarker'])->name('marker.editdelete');
     Route::get('/marker/categories', [MarkerCategoryController::class, 'index'])->name('marker.categories');
 
-    // Route::get('/line/categories', [LineCategoryController::class, 'index'])->name('line.categories');
+    Route::get('/line/categories', [LineCategoryController::class, 'index'])->name('line.categories');
 });
 
 

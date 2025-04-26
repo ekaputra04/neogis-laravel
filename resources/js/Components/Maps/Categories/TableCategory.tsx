@@ -1,4 +1,4 @@
-import { CategoriesInterface } from "@/types/types";
+import { CategoriesInterface, LineCategoryInterface } from "@/types/types";
 import {
     Table,
     TableBody,
@@ -10,13 +10,17 @@ import {
 import EditCategoryDialog from "./EditCategoryDialog";
 import DeleteCategoryDialog from "./DeletedCategoryDialog";
 
+interface TableCategoryProps {
+    type: "markers" | "lines" | "polygons" | "rectangles" | "circles";
+    categories: CategoriesInterface[] | LineCategoryInterface[];
+    onCategoryUpdate: () => void;
+}
+
 export default function TableCategory({
+    type,
     categories,
     onCategoryUpdate,
-}: {
-    categories: CategoriesInterface[];
-    onCategoryUpdate: () => void;
-}) {
+}: TableCategoryProps) {
     return (
         <div>
             <Table>
@@ -25,6 +29,7 @@ export default function TableCategory({
                         <TableHead>No</TableHead>
                         <TableHead>Name</TableHead>
                         <TableHead>Description</TableHead>
+                        {type === "lines" && <TableHead>Color</TableHead>}
                         <TableHead>Action</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -43,13 +48,28 @@ export default function TableCategory({
                                 </TableCell>
                                 <TableCell>{category.name}</TableCell>
                                 <TableCell>{category.description}</TableCell>
+                                {type == "lines" &&
+                                    "color" in category &&
+                                    category.color && (
+                                        <TableCell>
+                                            <div
+                                                className="border border-black rounded-full w-6 h-6"
+                                                style={{
+                                                    backgroundColor:
+                                                        category.color,
+                                                }}
+                                            ></div>
+                                        </TableCell>
+                                    )}
                                 <TableCell>
                                     <div className="flex gap-2">
                                         <EditCategoryDialog
+                                            type={type}
                                             category={category}
                                             onCategoryUpdated={onCategoryUpdate}
                                         />
                                         <DeleteCategoryDialog
+                                            type={type}
                                             categoryId={category.id}
                                             categoryName={category.name}
                                             onCategoryDeleted={onCategoryUpdate}
