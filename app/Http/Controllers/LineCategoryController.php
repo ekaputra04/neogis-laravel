@@ -83,6 +83,7 @@ class LineCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'color' => 'nullable|string',
         ]);
 
         $lineCategory = LineCategory::find($id);
@@ -94,6 +95,7 @@ class LineCategoryController extends Controller
         $lineCategory->update([
             'name' => $validated['name'],
             'description' => $validated['description'],
+            'color' => $validated['color'],
         ]);
 
         return response()->json($lineCategory, 200);

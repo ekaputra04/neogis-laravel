@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { CategoriesInterface } from "@/types/types";
+import { CategoriesInterface, LineCategoryInterface } from "@/types/types";
 import { Button } from "@/Components/ui/button";
 import {
     Dialog,
@@ -27,11 +27,12 @@ import { Input } from "@/Components/ui/input";
 const formSchema = z.object({
     name: z.string().min(2).max(50),
     description: z.string().min(2),
+    color: z.string().optional(), // color tetap opsional
 });
 
 interface EditCategoryDialogProps {
     type: "markers" | "lines" | "polygons" | "rectangles" | "circles";
-    category: CategoriesInterface;
+    category: CategoriesInterface | LineCategoryInterface;
     onCategoryUpdated: () => void;
 }
 
@@ -48,6 +49,8 @@ export default function EditCategoryDialog({
         defaultValues: {
             name: category.name,
             description: category.description,
+            color:
+                "color" in category ? category.color ?? "#000000" : undefined, // Aman!
         },
     });
 
@@ -55,12 +58,20 @@ export default function EditCategoryDialog({
         setLoading(true);
 
         try {
+            const payload = {
+                name: values.name,
+                description: values.description,
+                ...(type === "lines" && values.color
+                    ? { color: values.color }
+                    : {}),
+            };
+
             const response = await fetch(
                 `/api/maps/${type}-categories/${category.id}`,
                 {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(values),
+                    body: JSON.stringify(payload),
                 }
             );
 
@@ -88,6 +99,7 @@ export default function EditCategoryDialog({
                 <DialogHeader>
                     <DialogTitle>Edit Category</DialogTitle>
                     <DialogDescription>
+                        {JSON.stringify(category)}
                         Update the details for the category: {category.name}
                     </DialogDescription>
                 </DialogHeader>
@@ -129,6 +141,21 @@ export default function EditCategoryDialog({
                                 </FormItem>
                             )}
                         />
+                        {type === "lines" && (
+                            <FormField
+                                control={form.control}
+                                name="color"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Color</FormLabel>
+                                        <FormControl>
+                                            <Input type="color" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                         <DialogFooter>
                             <Button
                                 type="button"
