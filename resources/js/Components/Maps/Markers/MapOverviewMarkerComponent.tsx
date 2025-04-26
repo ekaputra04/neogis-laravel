@@ -117,7 +117,7 @@ export default function MapOverviewMarkerComponent({
                             className="my-4"
                             onChange={(e) => setSearchValue(e.target.value)}
                         ></Input>
-                        <div className="justify-between w-full h-80 overflow-y-scroll">
+                        <div className="justify-between w-full h-80 overflow-y-auto">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
