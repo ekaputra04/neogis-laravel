@@ -30,3 +30,4 @@ Route::delete('/maps/lines-categories/{id}', [LineCategoryController::class, 'de
 Route::get('/maps/lines', [LineController::class, 'getAllLines']);
 Route::post('/maps/lines', [LineController::class, 'store']);
 Route::put('/maps/lines/{id}', [LineController::class, 'update']);
+Route::delete('/maps/lines/{id}', [LineController::class, 'destroy']);
