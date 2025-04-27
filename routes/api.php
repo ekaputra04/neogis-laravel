@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LineCategoryController;
+use App\Http\Controllers\LineController;
 use App\Http\Controllers\MarkerCategoryController;
 use App\Http\Controllers\MarkerController;
 use Illuminate\Http\Request;
@@ -25,3 +26,7 @@ Route::get('/maps/lines-categories', [LineCategoryController::class, 'getAllLine
 Route::post('/maps/lines-categories', [LineCategoryController::class, 'store']);
 Route::put('/maps/lines-categories/{id}', [LineCategoryController::class, 'update']);
 Route::delete('/maps/lines-categories/{id}', [LineCategoryController::class, 'destroy']);
+
+Route::get('/maps/lines', [LineController::class, 'getAllLines']);
+Route::post('/maps/lines', [LineController::class, 'store']);
+Route::put('/maps/lines/{id}', [LineController::class, 'update']);

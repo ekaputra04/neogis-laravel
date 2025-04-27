@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class Line extends Model
 {
-    /** @use HasFactory<\Database\Factories\LineFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -18,7 +17,7 @@ class Line extends Model
         'category_id',
     ];
 
-    // Jika kamu ingin langsung mengambil array koordinat, bisa pakai accessor ini
+    // Menambahkan property virtual 'line_coordinates'
     protected $appends = ['line_coordinates'];
 
     public function category()
@@ -26,8 +25,13 @@ class Line extends Model
         return $this->belongsTo(LineCategory::class, 'category_id');
     }
 
+    // Accessor untuk mengambil coordinates dalam bentuk array
     public function getLineCoordinatesAttribute()
     {
+        if (!$this->coordinates) {
+            return null;
+        }
+
         $result = DB::selectOne("SELECT ST_AsGeoJSON(coordinates) as geojson FROM lines WHERE id = ?", [$this->id]);
 
         if ($result && $result->geojson) {

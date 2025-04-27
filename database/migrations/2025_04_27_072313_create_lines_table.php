@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::statement('ALTER TABLE `lines` ADD `coordinates` LINESTRING;');
+        DB::statement('ALTER TABLE `lines` ADD `coordinates` LINESTRING NULL;');
     }
 
     /**
