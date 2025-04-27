@@ -35,6 +35,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
     Route::get('/marker/categories', [MarkerCategoryController::class, 'index'])->name('marker.categories');
 
     Route::get('/line', [LineController::class, 'overviewLine'])->name('line');
+    Route::get('/line/add', [LineController::class, 'addLine'])->name('line.add');
     Route::get('/line/categories', [LineCategoryController::class, 'index'])->name('line.categories');
 });
 

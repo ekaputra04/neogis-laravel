@@ -6,6 +6,7 @@ use App\Models\Line;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLineRequest;
 use App\Http\Requests\UpdateLineRequest;
+use App\Models\LineCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -241,6 +242,15 @@ class LineController extends Controller
         return Inertia::render('MapOverviewLine', [
             'currentPath' => '/dashboard/line',
             'lines' => $lines,
+        ]);
+    }
+
+    public function addLine()
+    {
+        $categories = LineCategory::all();
+        return Inertia::render('MapAddLine', [
+            'currentPath' => "/dashboard/line/add",
+            'categories' => $categories
         ]);
     }
 }

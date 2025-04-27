@@ -8,7 +8,6 @@ export default function MapOverviewLine() {
     return (
         <>
             <div className="">
-                {JSON.stringify(lines)}
                 <MapOverviewLineComponent
                     currentPath={currentPath as string}
                     lines={lines as LineInterface[]}

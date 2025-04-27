@@ -2,7 +2,6 @@ import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import {
     MapContainer,
-    Marker,
     Polyline,
     Popup,
     TileLayer,
@@ -10,12 +9,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import {
-    CoordinatesInterface,
-    LineInterface,
-    MarkerInterface,
-} from "@/types/types";
-import { customIcon } from "@/Components/CustomMarkerIcon";
+import { CoordinatesInterface, LineInterface } from "@/types/types";
 import { Button } from "@/Components/ui/button";
 import {
     AlertDialog,
@@ -45,7 +39,6 @@ import { Eye, PlusCircle } from "lucide-react";
 import { centerPoints } from "@/consts/centerPoints";
 import { Badge } from "@/Components/ui/badge";
 import HowToUseMarkersOverview from "@/Components/HowToUseMarkersOverview";
-import { LatLngTuple } from "leaflet";
 
 interface MapOverviewLineComponentProps {
     currentPath: string;
@@ -92,7 +85,7 @@ export default function MapOverviewLineComponent({
                 error.response?.data?.message || error.message
             );
             toast.error(
-                error.response?.data?.message || "error deleting line."
+                error.response?.data?.message || "Error deleting line."
             );
         }
     };
@@ -115,10 +108,10 @@ export default function MapOverviewLineComponent({
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
                         <HowToUseMarkersOverview />
-                        <Link href={route("maps.marker.add")}>
+                        <Link href={route("maps.line.add")}>
                             <Button className="mb-4 w-full">
                                 <PlusCircle />
-                                Add New Marker
+                                Add New Line
                             </Button>
                         </Link>
                         <hr />
@@ -132,7 +125,7 @@ export default function MapOverviewLineComponent({
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead className="flex justify-between items-center">
-                                            <p>Marker</p>
+                                            <p>Line</p>
                                             <p>
                                                 ({filteredLines.length}/
                                                 {lines?.length})
@@ -173,7 +166,7 @@ export default function MapOverviewLineComponent({
                     <div className="z-0 md:col-span-3">
                         <MapContainer
                             center={[mapCenter.latitude, mapCenter.longitude]}
-                            zoom={16}
+                            zoom={13}
                             style={{ height: "500px", width: "100%" }}
                         >
                             <MapCenterUpdater
@@ -187,50 +180,28 @@ export default function MapOverviewLineComponent({
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             />
                             {lines &&
-                                lines.map((line) => {
-                                    // Membalikkan koordinat dari [latitude, longitude] menjadi [longitude, latitude]
-                                    const coordinates: LatLngTuple[] =
-                                        line.coordinates.map(
-                                            ([lat, lng]: [number, number]) => [
-                                                lng,
-                                                lat,
-                                            ]
-                                        );
-
-                                    return (
-                                        <Polyline
-                                            key={line.id}
-                                            positions={coordinates}
-                                            color={line.color || "blue"}
-                                        />
-                                    );
-                                })}
-                            {/* {lines &&
-                                lines.map((line, index) => (
-                                    <Marker
-                                        key={index}
-                                        position={[
-                                            line.latitude,
-                                            line.longitude,
-                                        ]}
-                                        icon={customIcon}
+                                lines.map((line) => (
+                                    <Polyline
+                                        key={line.id}
+                                        positions={line.coordinates}
+                                        color={line.color || "blue"}
                                     >
                                         <Popup>
-                                            {marker.name ? (
-                                                <strong>{marker.name}</strong>
+                                            {line.name ? (
+                                                <strong>{line.name}</strong>
                                             ) : (
                                                 "Lokasi tanpa nama"
                                             )}
                                             <br />
                                             <br />
-                                            {marker.description ||
+                                            {line.description ||
                                                 "Tidak ada deskripsi"}
                                             <br />
                                             <br />
-                                            {marker.category_name && (
+                                            {line.category_name && (
                                                 <>
                                                     <Badge variant={"default"}>
-                                                        {marker.category_name}
+                                                        {line.category_name}
                                                     </Badge>
                                                 </>
                                             )}
@@ -240,7 +211,7 @@ export default function MapOverviewLineComponent({
                                                 className="mr-2"
                                                 onClick={() => {
                                                     router.visit(
-                                                        `/dashboard/marker/edit/${marker.id}`
+                                                        `/dashboard/lines/edit/${line.id}`
                                                     );
                                                 }}
                                                 variant={"outline"}
@@ -261,7 +232,7 @@ export default function MapOverviewLineComponent({
                                                             This action cannot
                                                             be undone. This will
                                                             permanently delete
-                                                            marker from our
+                                                            line from our
                                                             servers.
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
@@ -272,7 +243,7 @@ export default function MapOverviewLineComponent({
                                                         <AlertDialogAction
                                                             onClick={() =>
                                                                 handleDeleted(
-                                                                    marker.id
+                                                                    line.id
                                                                 )
                                                             }
                                                         >
@@ -282,8 +253,8 @@ export default function MapOverviewLineComponent({
                                                 </AlertDialogContent>
                                             </AlertDialog>
                                         </Popup>
-                                    </Marker>
-                                ))} */}
+                                    </Polyline>
+                                ))}
                         </MapContainer>
                     </div>
                 </div>
