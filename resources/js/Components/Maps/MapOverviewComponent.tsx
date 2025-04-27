@@ -3,7 +3,7 @@ import { Head, router } from "@inertiajs/react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import { MarkerCoordinatesInterface, MarkerInterface } from "@/types/types";
+import { CoordinatesInterface, MarkerInterface } from "@/types/types";
 import { customIcon } from "@/Components/CustomMarkerIcon";
 import { Button } from "@/Components/ui/button";
 import { useEffect, useState } from "react";
@@ -26,7 +26,7 @@ export default function MapOverviewComponent({
     currentPath: string;
     markers: MarkerInterface[];
 }) {
-    const [mapCenter, setMapCenter] = useState<MarkerCoordinatesInterface>(
+    const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
         markers && markers.length > 0
             ? {
                   latitude: markers[0].latitude,

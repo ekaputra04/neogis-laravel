@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LineCategoryController;
+use App\Http\Controllers\LineController;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\MarkerCategoryController;
 use App\Http\Controllers\MarkerController;
@@ -33,6 +34,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
     Route::get('/marker/edit/{id}', [MarkerController::class, 'editMarker'])->name('marker.editdelete');
     Route::get('/marker/categories', [MarkerCategoryController::class, 'index'])->name('marker.categories');
 
+    Route::get('/line', [LineController::class, 'overviewLine'])->name('line');
     Route::get('/line/categories', [LineCategoryController::class, 'index'])->name('line.categories');
 });
 

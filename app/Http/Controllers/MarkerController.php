@@ -18,6 +18,7 @@ class MarkerController extends Controller
                 'id',
                 'name',
                 'description',
+                'category_id',
                 DB::raw('ST_Y(coordinates) AS latitude'),
                 DB::raw('ST_X(coordinates) AS longitude')
             )

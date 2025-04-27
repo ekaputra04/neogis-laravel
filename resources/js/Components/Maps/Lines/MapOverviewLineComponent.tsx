@@ -1,9 +1,20 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+    MapContainer,
+    Marker,
+    Polyline,
+    Popup,
+    TileLayer,
+    useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import { CoordinatesInterface, MarkerInterface } from "@/types/types";
+import {
+    CoordinatesInterface,
+    LineInterface,
+    MarkerInterface,
+} from "@/types/types";
 import { customIcon } from "@/Components/CustomMarkerIcon";
 import { Button } from "@/Components/ui/button";
 import {
@@ -34,69 +45,68 @@ import { Eye, PlusCircle } from "lucide-react";
 import { centerPoints } from "@/consts/centerPoints";
 import { Badge } from "@/Components/ui/badge";
 import HowToUseMarkersOverview from "@/Components/HowToUseMarkersOverview";
+import { LatLngTuple } from "leaflet";
 
-export default function MapOverviewMarkerComponent({
-    currentPath,
-    markers: initialMarkers,
-}: {
+interface MapOverviewLineComponentProps {
     currentPath: string;
-    markers: MarkerInterface[];
-}) {
-    const [markers, setMarkers] = useState<MarkerInterface[] | null>(
-        initialMarkers
-    );
-    const [filteredMarkers, setFilteredMarkers] =
-        useState<MarkerInterface[]>(initialMarkers);
+    lines: LineInterface[];
+}
+
+export default function MapOverviewLineComponent({
+    currentPath,
+    lines: initialLines,
+}: MapOverviewLineComponentProps) {
+    const [lines, setLines] = useState<LineInterface[] | null>(initialLines);
+    const [filteredLines, setFilteredLines] =
+        useState<LineInterface[]>(initialLines);
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
-        markers && markers.length > 0
+        lines && lines.length > 0
             ? {
-                  latitude: markers[0].latitude,
-                  longitude: markers[0].longitude,
+                  latitude: lines[0].coordinates[0][0],
+                  longitude: lines[0].coordinates[0][1],
               }
             : {
-                  latitude: centerPoints[0], // fallback jika markers kosong
+                  latitude: centerPoints[0], // fallback jika lines kosong
                   longitude: centerPoints[1],
               }
     );
     const [searchValue, setSearchValue] = useState<string>("");
 
-    const fetchMarkers = async (): Promise<void> => {
+    const fetchlines = async (): Promise<void> => {
         try {
-            const response = await axios.get(`/api/maps/markers`);
-            setMarkers(response.data);
+            const response = await axios.get(`/api/maps/lines`);
+            setLines(response.data);
         } catch (error: any) {
             console.error(error.response?.data?.message || error.message);
         }
     };
 
-    const handleDeleted = async (markerId: number): Promise<void> => {
+    const handleDeleted = async (lineId: number): Promise<void> => {
         try {
-            const response = await axios.delete(
-                `/api/maps/markers/${markerId}`
-            );
-            await fetchMarkers();
-            toast.success("Marker berhasil dihapus!");
+            const response = await axios.delete(`/api/maps/lines/${lineId}`);
+            await fetchlines();
+            toast.success("Line deleted successfully!");
         } catch (error: any) {
             console.error(
-                "Error deleting marker:",
+                "Error deleting line:",
                 error.response?.data?.message || error.message
             );
             toast.error(
-                error.response?.data?.message || "Gagal menghapus marker."
+                error.response?.data?.message || "error deleting line."
             );
         }
     };
 
     useEffect(() => {
-        if (markers) {
-            const filtered = markers.filter((marker) =>
+        if (lines) {
+            const filtered = lines.filter((marker) =>
                 marker.name.toLowerCase().includes(searchValue.toLowerCase())
             );
-            setFilteredMarkers(filtered);
+            setFilteredLines(filtered);
         } else {
-            setFilteredMarkers([]);
+            setFilteredLines([]);
         }
-    }, [searchValue, markers]);
+    }, [searchValue, lines]);
 
     return (
         <>
@@ -124,28 +134,30 @@ export default function MapOverviewMarkerComponent({
                                         <TableHead className="flex justify-between items-center">
                                             <p>Marker</p>
                                             <p>
-                                                ({filteredMarkers.length}/
-                                                {markers?.length})
+                                                ({filteredLines.length}/
+                                                {lines?.length})
                                             </p>
                                         </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody className="block w-full">
-                                    {filteredMarkers.map((marker, index) => (
+                                    {filteredLines.map((line, index) => (
                                         <TableRow
                                             key={index}
                                             className="block w-full"
                                         >
                                             <TableCell className="flex justify-between items-center">
-                                                {marker.name}
+                                                {line.name}
                                                 <Button
                                                     variant={"outline"}
                                                     onClick={() =>
                                                         setMapCenter({
                                                             latitude:
-                                                                marker.latitude,
+                                                                line
+                                                                    .coordinates[0][0],
                                                             longitude:
-                                                                marker.longitude,
+                                                                line
+                                                                    .coordinates[0][1],
                                                         })
                                                     }
                                                 >
@@ -174,13 +186,32 @@ export default function MapOverviewMarkerComponent({
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             />
-                            {markers &&
-                                markers.map((marker, index) => (
+                            {lines &&
+                                lines.map((line) => {
+                                    // Membalikkan koordinat dari [latitude, longitude] menjadi [longitude, latitude]
+                                    const coordinates: LatLngTuple[] =
+                                        line.coordinates.map(
+                                            ([lat, lng]: [number, number]) => [
+                                                lng,
+                                                lat,
+                                            ]
+                                        );
+
+                                    return (
+                                        <Polyline
+                                            key={line.id}
+                                            positions={coordinates}
+                                            color={line.color || "blue"}
+                                        />
+                                    );
+                                })}
+                            {/* {lines &&
+                                lines.map((line, index) => (
                                     <Marker
                                         key={index}
                                         position={[
-                                            marker.latitude,
-                                            marker.longitude,
+                                            line.latitude,
+                                            line.longitude,
                                         ]}
                                         icon={customIcon}
                                     >
@@ -252,7 +283,7 @@ export default function MapOverviewMarkerComponent({
                                             </AlertDialog>
                                         </Popup>
                                     </Marker>
-                                ))}
+                                ))} */}
                         </MapContainer>
                     </div>
                 </div>

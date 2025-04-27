@@ -20,7 +20,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
 import { useEffect, useState } from "react";
-import { CategoriesInterface, MarkerCoordinatesInterface } from "@/types/types";
+import { CategoriesInterface, CoordinatesInterface } from "@/types/types";
 import { toast } from "sonner";
 import FormSkeleton from "@/Components/FormSkeleton";
 import { Skeleton } from "@/Components/ui/skeleton";
@@ -59,9 +59,7 @@ export default function MapAddMarkerComponent({
     currentPath,
     categories,
 }: MapAddMarkerComponentProps) {
-    const [marker, setMarker] = useState<MarkerCoordinatesInterface | null>(
-        null
-    );
+    const [marker, setMarker] = useState<CoordinatesInterface | null>(null);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
 
@@ -115,7 +113,7 @@ export default function MapAddMarkerComponent({
         const { layer } = e;
         if (layer instanceof L.Marker) {
             const { lat, lng } = layer.getLatLng();
-            const newMarker: MarkerCoordinatesInterface = {
+            const newMarker: CoordinatesInterface = {
                 latitude: lat,
                 longitude: lng,
             };
@@ -129,7 +127,7 @@ export default function MapAddMarkerComponent({
         event.layers.eachLayer((layer) => {
             if (layer instanceof L.Marker) {
                 const { lat, lng } = layer.getLatLng();
-                const newMarker: MarkerCoordinatesInterface = {
+                const newMarker: CoordinatesInterface = {
                     latitude: lat,
                     longitude: lng,
                 };

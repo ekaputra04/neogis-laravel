@@ -8,6 +8,8 @@ use App\Http\Requests\StoreLineRequest;
 use App\Http\Requests\UpdateLineRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
+
 
 class LineController extends Controller
 {
@@ -219,6 +221,26 @@ class LineController extends Controller
 
         return response()->json([
             'message' => 'Line deleted successfully.'
+        ]);
+    }
+
+    public function overviewLine()
+    {
+        $lines = Line::with('category')->get()->map(function ($line) {
+            return [
+                'id' => $line->id,
+                'name' => $line->name,
+                'description' => $line->description,
+                'coordinates' => $line->line_coordinates, // Ambil dari accessor
+                'category_id' => $line->category_id,
+                'category_name' => $line->category?->name, // tetap pakai optional chaining
+                'color' => $line->category?->color, // tetap pakai optional chaining
+            ];
+        });
+
+        return Inertia::render('MapOverviewLine', [
+            'currentPath' => '/dashboard/line',
+            'lines' => $lines,
         ]);
     }
 }

@@ -23,11 +23,11 @@ class Marker extends Model
 
     public function getLatitudeAttribute()
     {
-        return optional(DB::selectOne("SELECT ST_Y(coordinates) AS latitude FROM markers WHERE id = ?", [$this->id]))->latitude;
+        return optional(DB::selectOne("SELECT ST_Y(coordinates) AS latitude FROM `markers` WHERE id = ?", [$this->id]))->latitude;
     }
 
     public function getLongitudeAttribute()
     {
-        return optional(DB::selectOne("SELECT ST_X(coordinates) AS longitude FROM markers WHERE id = ?", [$this->id]))->longitude;
+        return optional(DB::selectOne("SELECT ST_X(coordinates) AS longitude FROM `markers` WHERE id = ?", [$this->id]))->longitude;
     }
 }

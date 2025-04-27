@@ -32,7 +32,7 @@ class Line extends Model
             return null;
         }
 
-        $result = DB::selectOne("SELECT ST_AsGeoJSON(coordinates) as geojson FROM lines WHERE id = ?", [$this->id]);
+        $result = DB::selectOne("SELECT ST_AsGeoJSON(coordinates) as geojson FROM `lines` WHERE id = ?", [$this->id]);
 
         if ($result && $result->geojson) {
             $geojson = json_decode($result->geojson, true);

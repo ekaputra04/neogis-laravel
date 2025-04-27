@@ -28,7 +28,7 @@ import L from "leaflet";
 import { useEffect, useState } from "react";
 import {
     CategoriesInterface,
-    MarkerCoordinatesInterface,
+    CoordinatesInterface,
     MarkerInterface,
 } from "@/types/types";
 import { toast } from "sonner";
@@ -72,7 +72,7 @@ export default function MapEditMarkerComponent({
     categories,
 }: MapEditMarkerComponentProps) {
     const [markerCoordinates, setMarkerCoordinates] =
-        useState<MarkerCoordinatesInterface | null>({
+        useState<CoordinatesInterface | null>({
             latitude: marker.latitude,
             longitude: marker.longitude,
         });
@@ -131,7 +131,7 @@ export default function MapEditMarkerComponent({
         const { layer } = e;
         if (layer instanceof L.Marker) {
             const { lat, lng } = layer.getLatLng();
-            const newMarker: MarkerCoordinatesInterface = {
+            const newMarker: CoordinatesInterface = {
                 latitude: lat,
                 longitude: lng,
             };
@@ -145,7 +145,7 @@ export default function MapEditMarkerComponent({
         event.layers.eachLayer((layer) => {
             if (layer instanceof L.Marker) {
                 const { lat, lng } = layer.getLatLng();
-                const newMarker: MarkerCoordinatesInterface = {
+                const newMarker: CoordinatesInterface = {
                     latitude: lat,
                     longitude: lng,
                 };
