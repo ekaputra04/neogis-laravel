@@ -1,4 +1,4 @@
-import MapAddMarkerComponent from "@/Components/Maps/Markers/MapAddMarkerComponent";
+import MapAddLineComponent from "@/Components/Maps/Lines/MapAddLineComponent";
 import { CategoriesInterface } from "@/types/types";
 import { usePage } from "@inertiajs/react";
 
@@ -8,7 +8,7 @@ export default function MapAddLine() {
     return (
         <>
             <div className="">
-                <MapAddMarkerComponent
+                <MapAddLineComponent
                     currentPath={currentPath as string}
                     categories={categories as CategoriesInterface[]}
                 />
