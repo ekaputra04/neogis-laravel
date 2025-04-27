@@ -23,6 +23,7 @@ import {
     FormMessage,
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
+import { Textarea } from "@/Components/ui/textarea";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -99,7 +100,6 @@ export default function EditCategoryDialog({
                 <DialogHeader>
                     <DialogTitle>Edit Category</DialogTitle>
                     <DialogDescription>
-                        {JSON.stringify(category)}
                         Update the details for the category: {category.name}
                     </DialogDescription>
                 </DialogHeader>
@@ -132,7 +132,7 @@ export default function EditCategoryDialog({
                                 <FormItem>
                                     <FormLabel>Description</FormLabel>
                                     <FormControl>
-                                        <Input
+                                        <Textarea
                                             placeholder="Description..."
                                             {...field}
                                         />
