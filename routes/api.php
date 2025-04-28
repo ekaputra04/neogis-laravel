@@ -5,6 +5,7 @@ use App\Http\Controllers\LineController;
 use App\Http\Controllers\MarkerCategoryController;
 use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\RectangleCategoryController;
+use App\Http\Controllers\RectangleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,3 +38,5 @@ Route::get('/maps/lines', [LineController::class, 'getAllLines']);
 Route::post('/maps/lines', [LineController::class, 'store']);
 Route::put('/maps/lines/{id}', [LineController::class, 'update']);
 Route::delete('/maps/lines/{id}', [LineController::class, 'destroy']);
+
+Route::get('/maps/rectangles', [RectangleController::class, 'getAllRectangles']);
