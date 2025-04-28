@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { CategoriesInterface, LineCategoryInterface } from "@/types/types";
+import { CategoriesInterface, CategoryWithColorInterface } from "@/types/types";
 import { Button } from "@/Components/ui/button";
 import {
     Dialog,
@@ -33,7 +33,7 @@ const formSchema = z.object({
 
 interface EditCategoryDialogProps {
     type: "markers" | "lines" | "polygons" | "rectangles" | "circles";
-    category: CategoriesInterface | LineCategoryInterface;
+    category: CategoriesInterface | CategoryWithColorInterface;
     onCategoryUpdated: () => void;
 }
 
@@ -62,7 +62,7 @@ export default function EditCategoryDialog({
             const payload = {
                 name: values.name,
                 description: values.description,
-                ...(type === "lines" && values.color
+                ...(type != "markers" && values.color
                     ? { color: values.color }
                     : {}),
             };
@@ -141,7 +141,7 @@ export default function EditCategoryDialog({
                                 </FormItem>
                             )}
                         />
-                        {type === "lines" && (
+                        {type != "markers" && (
                             <FormField
                                 control={form.control}
                                 name="color"

@@ -18,7 +18,7 @@ export interface CategoriesInterface {
     description: string;
 }
 
-export interface LineCategoryInterface extends CategoriesInterface {
+export interface CategoryWithColorInterface extends CategoriesInterface {
     color: string;
 }
 

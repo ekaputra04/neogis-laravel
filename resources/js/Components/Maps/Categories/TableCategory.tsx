@@ -1,4 +1,4 @@
-import { CategoriesInterface, LineCategoryInterface } from "@/types/types";
+import { CategoriesInterface, CategoryWithColorInterface } from "@/types/types";
 import {
     Table,
     TableBody,
@@ -12,7 +12,7 @@ import DeleteCategoryDialog from "./DeletedCategoryDialog";
 
 interface TableCategoryProps {
     type: "markers" | "lines" | "polygons" | "rectangles" | "circles";
-    categories: CategoriesInterface[] | LineCategoryInterface[];
+    categories: CategoriesInterface[] | CategoryWithColorInterface[];
     onCategoryUpdate: () => void;
 }
 
@@ -29,7 +29,11 @@ export default function TableCategory({
                         <TableHead>No</TableHead>
                         <TableHead>Name</TableHead>
                         <TableHead>Description</TableHead>
-                        {type === "lines" && <TableHead>Color</TableHead>}
+                        {type == "markers" ? (
+                            <></>
+                        ) : (
+                            <TableHead>Color</TableHead>
+                        )}
                         <TableHead>Action</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -48,7 +52,7 @@ export default function TableCategory({
                                 </TableCell>
                                 <TableCell>{category.name}</TableCell>
                                 <TableCell>{category.description}</TableCell>
-                                {type == "lines" &&
+                                {type !== "markers" &&
                                     "color" in category &&
                                     category.color && (
                                         <TableCell>

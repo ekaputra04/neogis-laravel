@@ -6,6 +6,7 @@ use App\Models\RectangleCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRectangleCategoryRequest;
 use App\Http\Requests\UpdateRectangleCategoryRequest;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class RectangleCategoryController extends Controller
@@ -41,9 +42,21 @@ class RectangleCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRectangleCategoryRequest $request)
+    public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'color' => 'nullable|string',
+        ]);
+
+        $category = RectangleCategory::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'color' => $validated['color'],
+        ]);
+
+        return response()->json($category, 201);
     }
 
     /**
@@ -65,9 +78,27 @@ class RectangleCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRectangleCategoryRequest $request, RectangleCategory $rectangleCategory)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'color' => 'nullable|string',
+        ]);
+
+        $rectangleCategory = RectangleCategory::find($id);
+
+        if (!$rectangleCategory) {
+            return response()->json(['message' => 'Rectangle category not found'], 404);
+        }
+
+        $rectangleCategory->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'color' => $validated['color'],
+        ]);
+
+        return response()->json($rectangleCategory, 200);
     }
 
     /**
