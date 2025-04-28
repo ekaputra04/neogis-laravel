@@ -6,6 +6,7 @@ use App\Models\RectangleCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRectangleCategoryRequest;
 use App\Http\Requests\UpdateRectangleCategoryRequest;
+use Inertia\Inertia;
 
 class RectangleCategoryController extends Controller
 {
@@ -19,9 +20,14 @@ class RectangleCategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): void
+    public function index()
     {
-        //
+        $rectangleCategories = RectangleCategory::all();
+
+        return Inertia::render('RectangleCategories', [
+            'currentPath' => "/dashboard/rectangle/add",
+            'categories' => $rectangleCategories
+        ]);
     }
 
     /**

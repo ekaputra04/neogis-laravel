@@ -7,6 +7,7 @@ use App\Http\Controllers\MapController;
 use App\Http\Controllers\MarkerCategoryController;
 use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RectangleCategoryController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -38,6 +39,8 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
     Route::get('/line/add', [LineController::class, 'addLine'])->name('line.add');
     Route::get('/line/edit/{id}', [LineController::class, 'editLine'])->name('line.edit');
     Route::get('/line/categories', [LineCategoryController::class, 'index'])->name('line.categories');
+
+    Route::get('/rectangle/categories', [RectangleCategoryController::class, 'index'])->name('rectangle.categories');
 });
 
 
