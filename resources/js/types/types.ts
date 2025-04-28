@@ -34,8 +34,8 @@ export interface LineInterface {
     id: number;
     name: string;
     description: string;
+    coordinates: [number, number][];
     category_id?: number;
     category_name?: string;
-    coordinates: [number, number][];
     color: string;
 }

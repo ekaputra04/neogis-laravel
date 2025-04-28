@@ -253,4 +253,36 @@ class LineController extends Controller
             'categories' => $categories
         ]);
     }
+
+    public function editLine($id)
+    {
+        // Mengambil line berdasarkan ID menggunakan find() yang langsung mengambil satu data
+        $line = Line::with('category')->find($id);
+
+        if (!$line) {
+            // Jika data line tidak ditemukan, render halaman 404
+            return Inertia::render('NotFound');
+        }
+
+        // Mapping data line untuk format yang diinginkan
+        $lineData = [
+            'id' => $line->id,
+            'name' => $line->name,
+            'description' => $line->description,
+            'coordinates' => $line->line_coordinates, // Ambil dari accessor
+            'category_id' => $line->category_id,
+            'category_name' => $line->category?->name, // tetap pakai optional chaining
+            'color' => $line->category?->color, // tetap pakai optional chaining
+        ];
+
+        // Ambil semua kategori untuk ditampilkan di form
+        $categories = LineCategory::all();
+
+        // Render halaman MapEditMarker dengan data line dan kategori
+        return Inertia::render('MapEditLine', [
+            'currentPath' => '/dashboard/line/edit',
+            'line' => $lineData,
+            'categories' => $categories
+        ]);
+    }
 }

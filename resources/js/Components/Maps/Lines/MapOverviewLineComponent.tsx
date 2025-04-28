@@ -211,7 +211,7 @@ export default function MapOverviewLineComponent({
                                                 className="mr-2"
                                                 onClick={() => {
                                                     router.visit(
-                                                        `/dashboard/lines/edit/${line.id}`
+                                                        `/dashboard/line/edit/${line.id}`
                                                     );
                                                 }}
                                                 variant={"outline"}

@@ -31,11 +31,12 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
 
     Route::get('/marker', [MarkerController::class, 'overviewMarker'])->name('marker');
     Route::get('/marker/add', [MarkerController::class, 'addMarker'])->name('marker.add');
-    Route::get('/marker/edit/{id}', [MarkerController::class, 'editMarker'])->name('marker.editdelete');
+    Route::get('/marker/edit/{id}', [MarkerController::class, 'editMarker'])->name('marker.edit');
     Route::get('/marker/categories', [MarkerCategoryController::class, 'index'])->name('marker.categories');
 
     Route::get('/line', [LineController::class, 'overviewLine'])->name('line');
     Route::get('/line/add', [LineController::class, 'addLine'])->name('line.add');
+    Route::get('/line/edit/{id}', [LineController::class, 'editLine'])->name('line.edit');
     Route::get('/line/categories', [LineCategoryController::class, 'index'])->name('line.categories');
 });
 
