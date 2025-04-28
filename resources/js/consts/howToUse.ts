@@ -12,7 +12,8 @@ import imageBtnEdit from "@/images/how-to-use/marker-add/btn-edit.png";
 import imageMarkerLocation from "@/images/how-to-use/marker-add/markerLocation.png";
 import imageMarkerEdit from "@/images/how-to-use/marker-add/markerEdit.png";
 import imageBtnDelete from "@/images/how-to-use/marker-add/btn-delete.png";
-import imageBtnSubmit from "@/images/how-to-use/marker-add/btn-submit.png";
+import imageBtnAddMarker from "@/images/how-to-use/marker-add/btn-submit.png";
+import imageBtnSubmit from "@/images/how-to-use/marker-edit/btn-submit.png";
 
 export const HowToUseMarkerOverview: tutorialProps[] = [
     {
@@ -65,7 +66,7 @@ export const HowToUseMarkerAdd: tutorialProps[] = [
     },
     {
         description:
-            "Perbarui posisi lokasi dengan menarik markerke lokasi yang baru.",
+            "Perbarui posisi lokasi dengan menarik marker ke lokasi yang baru.",
         image: imageMarkerEdit,
     },
     {
@@ -76,6 +77,29 @@ export const HowToUseMarkerAdd: tutorialProps[] = [
     {
         description:
             "Setelah semua data diinput, klik tombol 'Add Marker' untuk menyimpan marker.",
+        image: imageBtnAddMarker,
+    },
+];
+
+export const HowToUseMarkerUpdate: tutorialProps[] = [
+    {
+        description:
+            "Perbarui nama, deskripsi, dan kategori pada form yang disediakan.",
+        image: imageForm,
+    },
+    {
+        description:
+            "Jika ingin memperbarui lokasi marker, klik tombol edit di pojok kanan atas peta.",
+        image: imageBtnEdit,
+    },
+    {
+        description:
+            "Perbarui posisi lokasi dengan menarik marker ke lokasi yang baru.",
+        image: imageMarkerEdit,
+    },
+    {
+        description:
+            "Setelah semua data diupdate, klik tombol 'Submit' untuk menyimpan perbaruan marker.",
         image: imageBtnSubmit,
     },
 ];

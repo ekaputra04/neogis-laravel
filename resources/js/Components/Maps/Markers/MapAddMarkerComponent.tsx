@@ -33,7 +33,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import HowToUse from "@/Components/HowToUseComponent";
+import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerAdd } from "@/consts/howToUse";
 
 const formSchema = z.object({
@@ -160,7 +160,7 @@ export default function MapAddMarkerComponent({
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
-                        <HowToUse tutorials={HowToUseMarkerAdd} />
+                        <HowToUseComponent tutorials={HowToUseMarkerAdd} />
                         {loading ? (
                             <>
                                 <FormSkeleton count={2} />

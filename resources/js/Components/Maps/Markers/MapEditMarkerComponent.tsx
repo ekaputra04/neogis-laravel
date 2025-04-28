@@ -44,6 +44,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
+import HowToUseComponent from "@/Components/HowToUseComponent";
+import { HowToUseMarkerUpdate } from "@/consts/howToUse";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -185,6 +187,7 @@ export default function MapEditMarkerComponent({
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
+                        <HowToUseComponent tutorials={HowToUseMarkerUpdate} />
                         {loading ? (
                             <>
                                 <FormSkeleton count={2} />
