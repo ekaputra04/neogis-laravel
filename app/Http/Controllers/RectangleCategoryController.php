@@ -104,8 +104,20 @@ class RectangleCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RectangleCategory $rectangleCategory)
+    public function destroy($id)
     {
-        //
+        $rectangleCategory = RectangleCategory::find($id);
+
+        if (!$rectangleCategory) {
+            return response()->json([
+                'message' => 'Rectangle category not found.'
+            ], 404);
+        }
+
+        $rectangleCategory->delete();
+
+        return response()->json([
+            'message' => 'Rectangle category deleted successfully.'
+        ]);
     }
 }

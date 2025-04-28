@@ -31,6 +31,7 @@ Route::delete('/maps/lines-categories/{id}', [LineCategoryController::class, 'de
 Route::get('/maps/rectangles-categories', [RectangleCategoryController::class, 'getAllRectangleCategories']);
 Route::post('/maps/rectangles-categories', [RectangleCategoryController::class, 'store']);
 Route::put('/maps/rectangles-categories/{id}', [RectangleCategoryController::class, 'update']);
+Route::delete('/maps/rectangles-categories/{id}', [RectangleCategoryController::class, 'destroy']);
 
 Route::get('/maps/lines', [LineController::class, 'getAllLines']);
 Route::post('/maps/lines', [LineController::class, 'store']);
