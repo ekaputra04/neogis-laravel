@@ -39,3 +39,8 @@ export interface LineInterface {
     category_name?: string;
     color: string;
 }
+
+export interface tutorialProps {
+    description: string;
+    image: string;
+}

@@ -38,7 +38,8 @@ import { Input } from "@/Components/ui/input";
 import { Eye, PlusCircle } from "lucide-react";
 import { centerPoints } from "@/consts/centerPoints";
 import { Badge } from "@/Components/ui/badge";
-import HowToUseMarkersOverview from "@/Components/HowToUseMarkersOverview";
+import HowToUseComponent from "@/Components/HowToUseComponent";
+import { HowToUseMarkerOverview } from "@/consts/howToUse";
 
 interface MapOverviewLineComponentProps {
     currentPath: string;
@@ -107,7 +108,8 @@ export default function MapOverviewLineComponent({
                 <Head title="Maps" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
-                        <HowToUseMarkersOverview />
+                        <HowToUseComponent tutorials={HowToUseMarkerOverview} />
+
                         <Link href={route("maps.line.add")}>
                             <Button className="mb-4 w-full">
                                 <PlusCircle />

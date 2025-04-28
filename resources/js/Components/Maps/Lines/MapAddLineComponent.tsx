@@ -33,7 +33,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import HowToUseMarkersAdd from "@/Components/HowToUseMarkersAdd";
+import HowToUse from "@/Components/HowToUseComponent";
+import { HowToUseMarkerAdd } from "@/consts/howToUse";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -186,7 +187,8 @@ export default function MapAddLineComponent({
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
-                        <HowToUseMarkersAdd />
+                        <HowToUse tutorials={HowToUseMarkerAdd} />
+
                         {loading ? (
                             <>
                                 <FormSkeleton count={2} />
