@@ -1,6 +1,13 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, Link } from "@inertiajs/react";
-import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
+import { Head, router } from "@inertiajs/react";
+import {
+    FeatureGroup,
+    MapContainer,
+    Polygon,
+    Polyline,
+    Popup,
+    TileLayer,
+} from "react-leaflet";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,8 +26,12 @@ import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
-import { useEffect, useRef, useState } from "react";
-import { CategoriesInterface, CoordinatesInterface } from "@/types/types";
+import { useEffect, useState } from "react";
+import {
+    CategoriesInterface,
+    CoordinatesInterface,
+    PolygonInterface,
+} from "@/types/types";
 import { toast } from "sonner";
 import FormSkeleton from "@/Components/FormSkeleton";
 import { Skeleton } from "@/Components/ui/skeleton";
@@ -33,8 +44,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import HowToUse from "@/Components/HowToUseComponent";
-import { HowToUseMarkerAdd } from "@/consts/howToUse";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -51,26 +60,30 @@ interface DrawEditedEvent {
     layers: L.LayerGroup;
 }
 
-interface MapAddPolygonComponentProps {
+interface MapEditPolygonComponentProps {
     currentPath: string;
+    polygon: PolygonInterface;
     categories: CategoriesInterface[];
 }
 
-export default function MapAddPolygonComponent({
+export default function MapEditPolygonComponent({
     currentPath,
+    polygon,
     categories,
-}: MapAddPolygonComponentProps) {
+}: MapEditPolygonComponentProps) {
     const [polygonCoordinates, setPolygonCoordinates] = useState<
-        CoordinatesInterface[]
-    >([]);
+        [number, number][]
+    >(polygon.coordinates);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
+    const [selectedCategoryName, setSelectedCategoryName] = useState("");
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
-            description: "",
+            name: polygon.name,
+            description: polygon.description,
+            category_id: polygon.category_id,
         },
     });
 
@@ -80,36 +93,29 @@ export default function MapAddPolygonComponent({
             return;
         }
 
-        console.log(values);
-
-        const formattedCoordinates = polygonCoordinates.map((coord) => [
-            coord.latitude,
-            coord.longitude,
-        ]);
-
         const data = {
             name: values.name,
             description: values.description,
             category_id: values.category_id,
-            coordinates: formattedCoordinates,
+            coordinates: polygonCoordinates,
         };
 
         setLoading(true);
 
         try {
-            const response = await fetch(`${origin}/api/maps/polygons`, {
-                method: "POST",
+            const response = await fetch(`/api/maps/polygons/${polygon.id}`, {
+                method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
             if (!response.ok) {
-                throw new Error("Failed to save polygon");
+                throw new Error("Failed to update polygon");
             }
 
-            toast.success("Polygon saved successfully!");
+            toast.success("Polygon updated successfully!");
             form.reset();
-            setPolygonCoordinates([]);
+            router.visit("/dashboard/polygon");
         } catch (error) {
             console.error("Error saving polygon:", error);
             toast.error("Error saving polygon.");
@@ -162,8 +168,14 @@ export default function MapAddPolygonComponent({
 
                 console.log("Formatted coordinates:", coordinates);
 
+                const convertedCoordinates: [number, number][] =
+                    coordinates.map((coord) => [
+                        coord.latitude,
+                        coord.longitude,
+                    ]);
+
                 // Simpan koordinat tersebut ke dalam state
-                setPolygonCoordinates(coordinates);
+                setPolygonCoordinates(convertedCoordinates);
             } catch (error) {
                 console.error("Error processing polygon coordinates:", error);
             }
@@ -210,7 +222,13 @@ export default function MapAddPolygonComponent({
 
             // Update state hanya jika ada koordinat yang valid
             if (updatedCoordinates.length > 0) {
-                setPolygonCoordinates(updatedCoordinates);
+                const convertedCoordinates: [number, number][] =
+                    updatedCoordinates.map((coord) => [
+                        coord.latitude,
+                        coord.longitude,
+                    ]);
+
+                setPolygonCoordinates(convertedCoordinates);
             }
         } catch (error) {
             console.error("Error processing edited polygon:", error);
@@ -224,135 +242,109 @@ export default function MapAddPolygonComponent({
             }
         });
     };
-
     useEffect(() => {
-        if (polygonCoordinates.length == 0) {
+        if (polygonCoordinates === null) {
             setMapKey((prevKey) => prevKey + 1);
         }
-
-        console.log("polygonCoordinates", JSON.stringify(polygonCoordinates));
     }, [polygonCoordinates]);
+
+    useEffect(() => {
+        const initialCategory = categories.find(
+            (cat) => cat.id === polygon.category_id
+        );
+
+        setSelectedCategoryName(initialCategory?.name || "");
+    }, [polygon, categories]);
 
     return (
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
-                <Head title="Add Polygon" />
+                <Head title="Edit Polygon" />
                 <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
-                    Add Polygon
+                    Edit Polygon
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
-                        <HowToUse tutorials={HowToUseMarkerAdd} />
-
                         {loading ? (
                             <>
                                 <FormSkeleton count={2} />
                             </>
                         ) : (
-                            <>
-                                {categories.length == 0 && (
-                                    <Link
-                                        href={"/dashboard/polygon/categories"}
-                                    >
-                                        <Button
-                                            className="my-4"
-                                            variant={"destructive"}
-                                        >
-                                            Please insert polygon category
-                                            first!
-                                        </Button>
-                                    </Link>
-                                )}
-                                <Form {...form}>
-                                    <form
-                                        onSubmit={form.handleSubmit(onSubmit)}
-                                        className="space-y-4"
-                                    >
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder="Name..."
-                                                            {...field}
-                                                            disabled={
-                                                                categories.length ==
-                                                                0
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="description"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Description
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Textarea
-                                                            placeholder="Description"
-                                                            {...field}
-                                                            disabled={
-                                                                categories.length ==
-                                                                0
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
+                            <Form {...form}>
+                                <form
+                                    onSubmit={form.handleSubmit(onSubmit)}
+                                    className="space-y-4"
+                                >
+                                    <FormField
+                                        control={form.control}
+                                        name="name"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Name</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Name..."
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="description"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Description
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        placeholder="Description"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                                        <Select
-                                            required
-                                            onValueChange={(value) => {
-                                                const selectedCategory =
-                                                    categories.find(
-                                                        (cat) =>
-                                                            cat.name === value
-                                                    );
-                                                if (selectedCategory) {
-                                                    form.setValue(
-                                                        "category_id",
-                                                        selectedCategory.id
-                                                    );
-                                                }
-                                            }}
-                                            disabled={categories.length == 0}
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Select a category" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {categories.map((category) => (
-                                                    <SelectItem
-                                                        value={category.name}
-                                                        key={category.id}
-                                                    >
-                                                        {category.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <Button
-                                            type="submit"
-                                            disabled={categories.length == 0}
-                                        >
-                                            {loading
-                                                ? "Adding Polygon..."
-                                                : "Add Polygon"}
-                                        </Button>
-                                    </form>
-                                </Form>
-                            </>
+                                    <Select
+                                        required
+                                        value={selectedCategoryName}
+                                        onValueChange={(value) => {
+                                            setSelectedCategoryName(value);
+
+                                            const selectedCategory =
+                                                categories.find(
+                                                    (cat) => cat.name === value
+                                                );
+                                            if (selectedCategory) {
+                                                form.setValue(
+                                                    "category_id",
+                                                    selectedCategory.id
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select a category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {categories.map((category) => (
+                                                <SelectItem
+                                                    value={category.name}
+                                                    key={category.id}
+                                                >
+                                                    {category.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <Button type="submit">Submit</Button>
+                                </form>
+                            </Form>
                         )}
                     </div>
                     <div className="md:col-span-2">
@@ -363,7 +355,10 @@ export default function MapAddPolygonComponent({
                         ) : (
                             <MapContainer
                                 key={mapKey}
-                                center={[-8.65, 115.21]}
+                                center={[
+                                    polygon.coordinates[0][0],
+                                    polygon.coordinates[0][1],
+                                ]}
                                 zoom={13}
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
@@ -382,13 +377,31 @@ export default function MapAddPolygonComponent({
                                         draw={{
                                             rectangle: false,
                                             polygon:
-                                                polygonCoordinates?.length == 0,
+                                                polygonCoordinates?.length ===
+                                                0,
                                             circle: false,
                                             marker: false,
                                             polyline: false,
                                             circlemarker: false,
                                         }}
                                     />
+
+                                    <Polygon
+                                        key={polygon.id}
+                                        positions={polygon.coordinates}
+                                        color={polygon.color || "blue"}
+                                    >
+                                        <Popup>
+                                            {polygon.name ? (
+                                                <strong>{polygon.name}</strong>
+                                            ) : (
+                                                "Garis tanpa nama"
+                                            )}
+                                            <br />
+                                            {polygon.description ||
+                                                "Tidak ada deskripsi"}
+                                        </Popup>
+                                    </Polygon>
                                 </FeatureGroup>
                             </MapContainer>
                         )}

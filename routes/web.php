@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
 
     Route::get('/polygon', [PolygonController::class, 'overviewPolygon'])->name('polygon');
     Route::get('/polygon/add', [PolygonController::class, 'addPolygon'])->name('polygon.add');
+    Route::get('/polygon/edit/{id}', [PolygonController::class, 'editPolygon'])->name('polygon.edit');
     Route::get('/polygon/categories', [PolygonCategoryController::class, 'index'])->name('polygon.categories');
 
     // Route::get('/rectangle', [RectangleController::class, 'overviewRectangle'])->name('rectangle');

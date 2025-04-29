@@ -322,4 +322,40 @@ class PolygonController extends Controller
             'categories' => $categories
         ]);
     }
+
+    public function editPolygon($id)
+    {
+        $polygon = DB::table('polygons')
+            ->join('polygon_categories', 'polygons.category_id', '=', 'polygon_categories.id')
+            ->select(
+                'polygons.id',
+                'polygons.name',
+                'polygons.description',
+                'polygons.category_id',
+                'polygon_categories.name as category_name',
+                'polygon_categories.color as color',
+                DB::raw('ST_AsGeoJSON(polygons.coordinates) AS coordinates')
+            )
+            ->where('polygons.id', $id)
+            ->first();
+
+        // Jika data polygon tidak ditemukan, render halaman 404
+        if (!$polygon) {
+            return Inertia::render('NotFound');
+        }
+
+        // Decode coordinates GeoJSON
+        $geojson = json_decode($polygon->coordinates, true);
+        $polygon->coordinates = $geojson['coordinates'][0] ?? [];
+
+        // Ambil semua kategori untuk ditampilkan di form
+        $categories = PolygonCategory::all();
+
+        // Render halaman MapEditPolygon dengan data polygon dan kategori
+        return Inertia::render('MapEditPolygon', [
+            'currentPath' => '/dashboard/polygon/edit',
+            'polygon' => $polygon,
+            'categories' => $categories
+        ]);
+    }
 }
