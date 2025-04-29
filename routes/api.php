@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CircleCategoryController;
+use App\Http\Controllers\CircleController;
 use App\Http\Controllers\LineCategoryController;
 use App\Http\Controllers\LineController;
 use App\Http\Controllers\MarkerCategoryController;
@@ -37,7 +38,6 @@ Route::put('/maps/circles-categories/{id}', [CircleCategoryController::class, 'u
 Route::delete('/maps/circles-categories/{id}', [CircleCategoryController::class, 'destroy']);
 
 Route::get('/maps/markers', [MarkerController::class, 'getAllMarkers']);
-Route::get('/maps/markers/{id}', [MarkerController::class, 'getMarkerById']);
 Route::post('/maps/markers', [MarkerController::class, 'store']);
 Route::put('/maps/markers/{id}', [MarkerController::class, 'update']);
 Route::delete('/maps/markers/{id}', [MarkerController::class, 'destroy']);
@@ -51,6 +51,11 @@ Route::get('/maps/polygons', [PolygonController::class, 'getAllPolygons']);
 Route::post('/maps/polygons', [PolygonController::class, 'store']);
 Route::put('/maps/polygons/{id}', [PolygonController::class, 'update']);
 Route::delete('/maps/polygons/{id}', [PolygonController::class, 'destroy']);
+
+Route::get('/maps/circles', [CircleController::class, 'getAllCircles']);
+Route::post('/maps/circles', [CircleController::class, 'store']);
+Route::put('/maps/circles/{id}', [CircleController::class, 'update']);
+Route::delete('/maps/circles/{id}', [CircleController::class, 'destroy']);
 
 // Route::get('/maps/rectangles-categories', [RectangleCategoryController::class, 'getAllRectangleCategories']);
 // Route::post('/maps/rectangles-categories', [RectangleCategoryController::class, 'store']);
