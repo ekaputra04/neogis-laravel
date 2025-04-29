@@ -19,7 +19,7 @@ import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CategoriesInterface, CoordinatesInterface } from "@/types/types";
 import { toast } from "sonner";
 import FormSkeleton from "@/Components/FormSkeleton";
@@ -51,17 +51,17 @@ interface DrawEditedEvent {
     layers: L.LayerGroup;
 }
 
-interface MapAddLineComponentProps {
+interface MapAddPolygonComponentProps {
     currentPath: string;
     categories: CategoriesInterface[];
 }
 
-export default function MapAddLineComponent({
+export default function MapAddPolygonComponent({
     currentPath,
     categories,
-}: MapAddLineComponentProps) {
-    const [lineCoordinates, setLineCoordinates] = useState<
-        CoordinatesInterface[] | null
+}: MapAddPolygonComponentProps) {
+    const [polygonCoordinates, setPolygonCoordinates] = useState<
+        CoordinatesInterface[]
     >([]);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
@@ -75,14 +75,14 @@ export default function MapAddLineComponent({
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        if (!lineCoordinates) {
-            toast.error("Please add a line first.");
+        if (!polygonCoordinates) {
+            toast.error("Please add a polygon first.");
             return;
         }
 
         console.log(values);
 
-        const formattedCoordinates = lineCoordinates.map((coord) => [
+        const formattedCoordinates = polygonCoordinates.map((coord) => [
             coord.latitude,
             coord.longitude,
         ]);
@@ -97,22 +97,22 @@ export default function MapAddLineComponent({
         setLoading(true);
 
         try {
-            const response = await fetch(`${origin}/api/maps/lines`, {
+            const response = await fetch(`${origin}/api/maps/polygons`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
             if (!response.ok) {
-                throw new Error("Failed to save line");
+                throw new Error("Failed to save polygon");
             }
 
-            toast.success("Line saved successfully!");
+            toast.success("Polygon saved successfully!");
             form.reset();
-            setLineCoordinates(null);
+            setPolygonCoordinates([]);
         } catch (error) {
-            console.error("Error saving line:", error);
-            toast.error("Error saving line.");
+            console.error("Error saving polygon:", error);
+            toast.error("Error saving polygon.");
         } finally {
             setLoading(false);
         }
@@ -121,70 +121,124 @@ export default function MapAddLineComponent({
     const handleCreated = (e: DrawCreatedEvent) => {
         const { layer } = e;
 
-        if (layer instanceof L.Polyline) {
-            // Ambil seluruh koordinat polyline
-            const latLngs = layer.getLatLngs() as L.LatLng[];
+        console.log("Layer created:", layer);
 
-            // Transformasikan koordinat ke format yang sesuai
-            const coordinates: CoordinatesInterface[] = latLngs.map(
-                (latLng) => ({
-                    latitude: latLng.lat,
-                    longitude: latLng.lng,
-                })
-            );
+        if (layer instanceof L.Polygon) {
+            try {
+                // Dapatkan latlngs dengan casting yang tepat
+                const latLngs = layer.getLatLngs();
+                console.log("Raw latLngs:", latLngs);
 
-            console.log(coordinates);
+                // Polygon di Leaflet selalu memiliki struktur nested array
+                // latLngs[0] adalah array koordinat luar, latLngs[1] dst adalah hole (jika ada)
+                // Kita butuh memastikan kita mempunyai array dari objek LatLng
 
-            // Simpan koordinat tersebut ke dalam state (atau tempat lain yang sesuai)
-            setLineCoordinates(coordinates);
+                // Coba pendekatan yang lebih aman dengan type guards
+                let polygonPoints: L.LatLng[] = [];
+
+                // Cek apakah latLngs adalah array 2D (polygon biasa)
+                if (Array.isArray(latLngs) && latLngs.length > 0) {
+                    // Ambil array koordinat luar (outer ring)
+                    const outerRing = latLngs[0];
+
+                    if (Array.isArray(outerRing)) {
+                        // Iterasi melalui semua poin dalam outer ring
+                        polygonPoints = outerRing as L.LatLng[];
+                    }
+                }
+
+                console.log("Polygon points:", polygonPoints);
+
+                // Transformasikan koordinat ke format yang sesuai
+                const coordinates: CoordinatesInterface[] = [];
+
+                // Sekarang kita bisa aman melakukan iterasi
+                for (const point of polygonPoints) {
+                    coordinates.push({
+                        latitude: point.lat,
+                        longitude: point.lng,
+                    });
+                }
+
+                console.log("Formatted coordinates:", coordinates);
+
+                // Simpan koordinat tersebut ke dalam state
+                setPolygonCoordinates(coordinates);
+            } catch (error) {
+                console.error("Error processing polygon coordinates:", error);
+            }
         }
     };
 
     const handleEdited = (e: DrawEditedEvent) => {
-        const event = e as DrawEditedEvent;
+        console.log("Edit event:", e);
 
-        // Variabel untuk menyimpan seluruh koordinat polyline yang diedit
+        // Variabel untuk menyimpan seluruh koordinat polygon yang diedit
         let updatedCoordinates: CoordinatesInterface[] = [];
 
-        event.layers.eachLayer((layer) => {
-            if (layer instanceof L.Polyline) {
-                // Ambil seluruh koordinat polyline yang diedit
-                const latLngs = layer.getLatLngs() as L.LatLng[];
+        try {
+            e.layers.eachLayer((layer: L.Layer) => {
+                if (layer instanceof L.Polygon) {
+                    // Ambil seluruh koordinat polygon yang diedit
+                    const latLngs = layer.getLatLngs();
+                    console.log("Edited latLngs:", latLngs);
 
-                // Map koordinat ke format yang sesuai
-                updatedCoordinates = latLngs.map((latLng) => ({
-                    latitude: latLng.lat,
-                    longitude: latLng.lng,
-                }));
+                    // Sama seperti handleCreated, kita butuh memproses struktur nested
+                    if (Array.isArray(latLngs) && latLngs.length > 0) {
+                        const outerRing = latLngs[0];
+
+                        if (Array.isArray(outerRing)) {
+                            // Buat koordinat dari setiap point
+                            const polygonPoints = outerRing as L.LatLng[];
+
+                            // Reset updatedCoordinates untuk menghindari koordinat duplikat dari layer sebelumnya
+                            updatedCoordinates = [];
+
+                            // Proses tiap point
+                            for (const point of polygonPoints) {
+                                updatedCoordinates.push({
+                                    latitude: point.lat,
+                                    longitude: point.lng,
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+
+            console.log("Updated coordinates after edit:", updatedCoordinates);
+
+            // Update state hanya jika ada koordinat yang valid
+            if (updatedCoordinates.length > 0) {
+                setPolygonCoordinates(updatedCoordinates);
             }
-        });
-
-        // Update state dengan koordinat yang telah diedit
-        setLineCoordinates(updatedCoordinates);
+        } catch (error) {
+            console.error("Error processing edited polygon:", error);
+        }
     };
 
     const handleDeleted = (e: any) => {
         e.layers.eachLayer((layer: any) => {
             if (layer instanceof L.Marker) {
-                setLineCoordinates(null);
+                setPolygonCoordinates([]);
             }
         });
     };
 
     useEffect(() => {
-        if (lineCoordinates === null) {
+        if (polygonCoordinates.length == 0) {
             setMapKey((prevKey) => prevKey + 1);
         }
 
-        console.log("LINECoordinates", JSON.stringify(lineCoordinates));
-    }, [lineCoordinates]);
+        console.log("polygonCoordinates", JSON.stringify(polygonCoordinates));
+    }, [polygonCoordinates]);
 
     return (
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
-                <Head title="Add Line" />
+                <Head title="Add Polygon" />
                 <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
-                    Add Line
+                    Add Polygon
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
@@ -197,12 +251,15 @@ export default function MapAddLineComponent({
                         ) : (
                             <>
                                 {categories.length == 0 && (
-                                    <Link href={"/dashboard/lines/categories"}>
+                                    <Link
+                                        href={"/dashboard/polygon/categories"}
+                                    >
                                         <Button
                                             className="my-4"
                                             variant={"destructive"}
                                         >
-                                            Please insert line category first!
+                                            Please insert polygon category
+                                            first!
                                         </Button>
                                     </Link>
                                 )}
@@ -290,8 +347,8 @@ export default function MapAddLineComponent({
                                             disabled={categories.length == 0}
                                         >
                                             {loading
-                                                ? "Adding Line..."
-                                                : "Add Line"}
+                                                ? "Adding Polygon..."
+                                                : "Add Polygon"}
                                         </Button>
                                     </form>
                                 </Form>
@@ -324,11 +381,11 @@ export default function MapAddLineComponent({
                                         onDeleted={handleDeleted}
                                         draw={{
                                             rectangle: false,
-                                            polygon: false,
+                                            polygon:
+                                                polygonCoordinates?.length == 0,
                                             circle: false,
                                             marker: false,
-                                            polyline:
-                                                lineCoordinates?.length == 0,
+                                            polyline: false,
                                             circlemarker: false,
                                         }}
                                     />

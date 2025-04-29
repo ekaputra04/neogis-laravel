@@ -6,6 +6,7 @@ use App\Models\Polygon;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePolygonRequest;
 use App\Http\Requests\UpdatePolygonRequest;
+use App\Models\PolygonCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -311,7 +312,14 @@ class PolygonController extends Controller
             'currentPath' => '/dashboard/polygon',
             'polygons' => $polygons,
         ]);
+    }
 
-        // return Inertia::render('MapOverviewRectangle',);
+    public function addPolygon()
+    {
+        $categories = PolygonCategory::all();
+        return Inertia::render('MapAddPolygon', [
+            'currentPath' => "/dashboard/polygon/add",
+            'categories' => $categories
+        ]);
     }
 }
