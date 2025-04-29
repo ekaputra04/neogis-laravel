@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CircleCategoryController;
 use App\Http\Controllers\LineCategoryController;
 use App\Http\Controllers\LineController;
 use App\Http\Controllers\MarkerCategoryController;
@@ -29,6 +30,11 @@ Route::get('/maps/polygons-categories', [PolygonCategoryController::class, 'getA
 Route::post('/maps/polygons-categories', [PolygonCategoryController::class, 'store']);
 Route::put('/maps/polygons-categories/{id}', [PolygonCategoryController::class, 'update']);
 Route::delete('/maps/polygons-categories/{id}', [PolygonCategoryController::class, 'destroy']);
+
+Route::get('/maps/circles-categories', [CircleCategoryController::class, 'getAllCircleCategories']);
+Route::post('/maps/circles-categories', [CircleCategoryController::class, 'store']);
+Route::put('/maps/circles-categories/{id}', [CircleCategoryController::class, 'update']);
+Route::delete('/maps/circles-categories/{id}', [CircleCategoryController::class, 'destroy']);
 
 Route::get('/maps/markers', [MarkerController::class, 'getAllMarkers']);
 Route::get('/maps/markers/{id}', [MarkerController::class, 'getMarkerById']);

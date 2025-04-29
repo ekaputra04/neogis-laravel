@@ -9,4 +9,10 @@ class CircleCategory extends Model
 {
     /** @use HasFactory<\Database\Factories\CircleCategoryFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'description',
+        'color',
+    ];
 }

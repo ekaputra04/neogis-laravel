@@ -6,17 +6,29 @@ use App\Models\CircleCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCircleCategoryRequest;
 use App\Http\Requests\UpdateCircleCategoryRequest;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CircleCategoryController extends Controller
 {
+    public function getAllCircleCategories()
+    {
+        $circleCategories = CircleCategory::all();
+
+        return response()->json($circleCategories);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
-    }
+        $circleCategories = CircleCategory::all();
 
+        return Inertia::render('CircleCategories', [
+            'categories' => $circleCategories
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -28,9 +40,21 @@ class CircleCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCircleCategoryRequest $request)
+    public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'color' => 'nullable|string',
+        ]);
+
+        $category = CircleCategory::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'color' => $validated['color'],
+        ]);
+
+        return response()->json($category, 201);
     }
 
     /**
@@ -52,16 +76,46 @@ class CircleCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCircleCategoryRequest $request, CircleCategory $circleCategory)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'color' => 'nullable|string',
+        ]);
+
+        $circleCategory = CircleCategory::find($id);
+
+        if (!$circleCategory) {
+            return response()->json(['message' => 'Circle category not found'], 404);
+        }
+
+        $circleCategory->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'color' => $validated['color'],
+        ]);
+
+        return response()->json($circleCategory, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CircleCategory $circleCategory)
+    public function destroy($id)
     {
-        //
+        $circleCategory = CircleCategory::find($id);
+
+        if (!$circleCategory) {
+            return response()->json([
+                'message' => 'Circle category not found.'
+            ], 404);
+        }
+
+        $circleCategory->delete();
+
+        return response()->json([
+            'message' => 'Circle category deleted successfully.'
+        ]);
     }
 }

@@ -15,4 +15,9 @@ class PolygonCategory extends Model
         'description',
         'color',
     ];
+
+    public function polygons()
+    {
+        return $this->hasMany(Polygon::class, 'category_id');
+    }
 }

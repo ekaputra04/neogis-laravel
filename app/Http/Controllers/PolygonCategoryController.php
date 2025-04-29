@@ -26,7 +26,6 @@ class PolygonCategoryController extends Controller
         $polygonCategories = PolygonCategory::all();
 
         return Inertia::render('PolygonCategories', [
-            'currentPath' => "/dashboard/polygon/add",
             'categories' => $polygonCategories
         ]);
     }
