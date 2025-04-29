@@ -1,13 +1,6 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
 import { Head, router } from "@inertiajs/react";
-import {
-    Circle,
-    FeatureGroup,
-    MapContainer,
-    Marker,
-    Popup,
-    TileLayer,
-} from "react-leaflet";
+import { Circle, FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

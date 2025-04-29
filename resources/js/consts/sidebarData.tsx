@@ -4,6 +4,7 @@ import {
     Map,
     Pencil,
     PlusCircle,
+    Settings,
     User,
 } from "lucide-react";
 
@@ -196,6 +197,17 @@ export const sidebarData = {
                     title: "Profile",
                     url: "/profile",
                     icon: <User className="size-4" />,
+                },
+            ],
+        },
+        {
+            title: "Settings",
+            url: "/dashboard/settings",
+            items: [
+                {
+                    title: "Settings",
+                    url: "/dashboard/settings",
+                    icon: <Settings className="size-4" />,
                 },
             ],
         },

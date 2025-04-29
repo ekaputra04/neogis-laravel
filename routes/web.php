@@ -13,6 +13,7 @@ use App\Http\Controllers\PolygonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RectangleCategoryController;
 use App\Http\Controllers\RectangleController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -55,6 +56,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
     Route::get('/circle/edit/{id}', [CircleController::class, 'editcircle'])->name('circle.edit');
     Route::get('/circle/categories', [CircleCategoryController::class, 'index'])->name('circle.categories');
 
+    Route::get('/settings', [SettingController::class, 'index'])->name('setting');
     // Route::get('/rectangle', [RectangleController::class, 'overviewRectangle'])->name('rectangle');
     // Route::get('/rectangle/add', [RectangleController::class, 'addRectangle'])->name('rectangle.add');
     // Route::get('/rectangle/categories', [RectangleCategoryController::class, 'index'])->name('rectangle.categories');
