@@ -80,32 +80,32 @@ export const sidebarData = {
                 // },
             ],
         },
-        {
-            title: "Rectangle",
-            url: "/dashboard/rectangle",
-            items: [
-                {
-                    title: "Rectangle Overview",
-                    url: "/dashboard/rectangle",
-                    icon: <Map className="size-4" />,
-                },
-                {
-                    title: "Rectangle Category",
-                    url: "/dashboard/rectangle/categories",
-                    icon: <ListPlus className="size-4" />,
-                },
-                {
-                    title: "Add Rectangle",
-                    url: "/dashboard/rectangle/add",
-                    icon: <PlusCircle className="size-4" />,
-                },
-                // {
-                //     title: "Edit & Delete Rectangle",
-                //     url: "/dashboard/rectangle/edit-delete",
-                //     icon: <Pencil className="size-4" />,
-                // },
-            ],
-        },
+        // {
+        //     title: "Rectangle",
+        //     url: "/dashboard/rectangle",
+        //     items: [
+        //         {
+        //             title: "Rectangle Overview",
+        //             url: "/dashboard/rectangle",
+        //             icon: <Map className="size-4" />,
+        //         },
+        //         {
+        //             title: "Rectangle Category",
+        //             url: "/dashboard/rectangle/categories",
+        //             icon: <ListPlus className="size-4" />,
+        //         },
+        //         {
+        //             title: "Add Rectangle",
+        //             url: "/dashboard/rectangle/add",
+        //             icon: <PlusCircle className="size-4" />,
+        //         },
+        //         // {
+        //         //     title: "Edit & Delete Rectangle",
+        //         //     url: "/dashboard/rectangle/edit-delete",
+        //         //     icon: <Pencil className="size-4" />,
+        //         // },
+        //     ],
+        // },
         {
             title: "Polygon",
             url: "/dashboard/polygon",

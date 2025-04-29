@@ -60,7 +60,7 @@ export default function MapAddRectangleComponent({
     currentPath,
     categories,
 }: MapAddRectangleComponentProps) {
-    const [lineCoordinates, setLineCoordinates] = useState<
+    const [rectangleCoordinates, setRectangleCoordinates] = useState<
         CoordinatesInterface[] | null
     >([]);
     const [loading, setLoading] = useState(false);
@@ -75,14 +75,14 @@ export default function MapAddRectangleComponent({
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        if (!lineCoordinates) {
-            toast.error("Please add a line first.");
+        if (!rectangleCoordinates) {
+            toast.error("Please add a rectangle first.");
             return;
         }
 
         console.log(values);
 
-        const formattedCoordinates = lineCoordinates.map((coord) => [
+        const formattedCoordinates = rectangleCoordinates.map((coord) => [
             coord.latitude,
             coord.longitude,
         ]);
@@ -97,48 +97,45 @@ export default function MapAddRectangleComponent({
         setLoading(true);
 
         try {
-            const response = await fetch(`${origin}/api/maps/lines`, {
+            const response = await fetch(`${origin}/api/maps/rectangles`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
             if (!response.ok) {
-                throw new Error("Failed to save line");
+                throw new Error("Failed to save rectangle");
             }
 
-            toast.success("Line saved successfully!");
+            toast.success("Rectangle saved successfully!");
             form.reset();
-            setLineCoordinates(null);
+            setRectangleCoordinates(null);
         } catch (error) {
-            console.error("Error saving line:", error);
-            toast.error("Error saving line.");
+            console.error("Error saving rectangle:", error);
+            toast.error("Error saving rectangle.");
         } finally {
             setLoading(false);
         }
     }
 
     const handleCreated = (e: DrawCreatedEvent) => {
-        const { layer } = e;
-
-        if (layer instanceof L.Polyline) {
-            // Ambil seluruh koordinat polyline
-            const latLngs = layer.getLatLngs() as L.LatLng[];
-
-            // Transformasikan koordinat ke format yang sesuai
-            const coordinates: CoordinatesInterface[] = latLngs.map(
-                (latLng) => ({
-                    latitude: latLng.lat,
-                    longitude: latLng.lng,
-                })
-            );
-
-            console.log(coordinates);
-
-            // Simpan koordinat tersebut ke dalam state (atau tempat lain yang sesuai)
-            setLineCoordinates(coordinates);
-        }
+        // const { layer } = e;
+        // if (layer instanceof L.Rectangle) {
+        //     // Ambil seluruh koordinat polyline
+        //     const latLngs = layer.getLatLngs() as L.LatLng[];
+        //     // Transformasikan koordinat ke format yang sesuai
+        //     const coordinates: CoordinatesInterface[] = latLngs.map(
+        //         (latLng) => ({
+        //             latitude: latLng.lat,
+        //             longitude: latLng.lng,
+        //         })
+        //     );
+        //     console.log(coordinates);
+        //     // Simpan koordinat tersebut ke dalam state (atau tempat lain yang sesuai)
+        //     setRectangleCoordinates(coordinates);
+        // }
     };
+
     const handleEdited = (e: DrawEditedEvent) => {
         const event = e as DrawEditedEvent;
 
@@ -159,31 +156,34 @@ export default function MapAddRectangleComponent({
         });
 
         // Update state dengan koordinat yang telah diedit
-        setLineCoordinates(updatedCoordinates);
+        setRectangleCoordinates(updatedCoordinates);
     };
 
     const handleDeleted = (e: any) => {
         e.layers.eachLayer((layer: any) => {
             if (layer instanceof L.Marker) {
-                setLineCoordinates(null);
+                setRectangleCoordinates(null);
             }
         });
     };
 
     useEffect(() => {
-        if (lineCoordinates === null) {
+        if (rectangleCoordinates === null) {
             setMapKey((prevKey) => prevKey + 1);
         }
 
-        console.log("LINECoordinates", JSON.stringify(lineCoordinates));
-    }, [lineCoordinates]);
+        console.log(
+            "rectangleCoordinates",
+            JSON.stringify(rectangleCoordinates)
+        );
+    }, [rectangleCoordinates]);
 
     return (
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
-                <Head title="Add Line" />
+                <Head title="Add Rectangle" />
                 <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
-                    Add Line
+                    Add Rectangle
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
@@ -196,12 +196,15 @@ export default function MapAddRectangleComponent({
                         ) : (
                             <>
                                 {categories.length == 0 && (
-                                    <Link href={"/dashboard/lines/categories"}>
+                                    <Link
+                                        href={"/dashboard/rectangle/categories"}
+                                    >
                                         <Button
                                             className="my-4"
                                             variant={"destructive"}
                                         >
-                                            Please insert line category first!
+                                            Please insert rectangle category
+                                            first!
                                         </Button>
                                     </Link>
                                 )}
@@ -289,8 +292,8 @@ export default function MapAddRectangleComponent({
                                             disabled={categories.length == 0}
                                         >
                                             {loading
-                                                ? "Adding Line..."
-                                                : "Add Line"}
+                                                ? "Adding Rectangle..."
+                                                : "Add Rectangle"}
                                         </Button>
                                     </form>
                                 </Form>
@@ -318,16 +321,25 @@ export default function MapAddRectangleComponent({
                                 <FeatureGroup>
                                     <EditControl
                                         position="topright"
-                                        onCreated={handleCreated}
-                                        onEdited={handleEdited}
-                                        onDeleted={handleDeleted}
+                                        // onCreated={handleCreated}
+                                        // onEdited={handleEdited}
+                                        // onDeleted={handleDeleted}
+                                        // draw={{
+                                        //     rectangle:
+                                        //         rectangleCoordinates?.length ==
+                                        //         0,
+                                        //     polygon: false,
+                                        //     circle: false,
+                                        //     marker: false,
+                                        //     polyline: false,
+                                        //     circlemarker: false,
+                                        // }}
                                         draw={{
-                                            rectangle: false,
-                                            polygon: false,
-                                            circle: false,
+                                            rectangle: true,
+                                            polygon: true,
+                                            circle: true,
                                             marker: false,
-                                            polyline:
-                                                lineCoordinates?.length == 0,
+                                            polyline: false,
                                             circlemarker: false,
                                         }}
                                     />
