@@ -201,4 +201,35 @@ class CircleController extends Controller
             'categories' => $categories
         ]);
     }
+
+    public function editCircle($id)
+    {
+        $circle = DB::table('circles')
+            ->join('circle_categories', 'circles.category_id', '=', 'circle_categories.id')
+            ->select(
+                'circles.id',
+                'circles.name',
+                'circles.description',
+                'circles.category_id',
+                DB::raw('ST_Y(circles.center) AS latitude'),
+                DB::raw('ST_X(circles.center) AS longitude'),
+                'circles.radius',
+                'circle_categories.name as category_name',
+                'circle_categories.color as color'
+            )
+            ->where('circles.id', $id)
+            ->first();
+
+        if (!$circle) {
+            return Inertia::render('NotFound');
+        }
+
+        $categories = CircleCategory::all();
+
+        return Inertia::render('MapEditCircle', [
+            'currentPath' => '/dashboard/circle/edit',
+            'circle' => $circle,
+            'categories' => $categories
+        ]);
+    }
 }
