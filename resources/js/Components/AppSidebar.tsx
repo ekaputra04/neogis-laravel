@@ -1,5 +1,5 @@
 import * as React from "react";
-import { EarthIcon, Map, Plus } from "lucide-react";
+import { EarthIcon } from "lucide-react";
 
 import {
     Sidebar,
@@ -36,7 +36,7 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                                     <span className="font-semibold">
                                         NeoGIS
                                     </span>
-                                    <span className="">v1.0.0</span>
+                                    <span className="">v2.0.0</span>
                                 </div>
                             </a>
                         </SidebarMenuButton>
