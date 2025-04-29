@@ -80,8 +80,6 @@ export default function MapAddPolygonComponent({
             return;
         }
 
-        console.log(values);
-
         const formattedCoordinates = polygonCoordinates.map((coord) => [
             coord.latitude,
             coord.longitude,
@@ -121,13 +119,10 @@ export default function MapAddPolygonComponent({
     const handleCreated = (e: DrawCreatedEvent) => {
         const { layer } = e;
 
-        console.log("Layer created:", layer);
-
         if (layer instanceof L.Polygon) {
             try {
                 // Dapatkan latlngs dengan casting yang tepat
                 const latLngs = layer.getLatLngs();
-                console.log("Raw latLngs:", latLngs);
 
                 // Polygon di Leaflet selalu memiliki struktur nested array
                 // latLngs[0] adalah array koordinat luar, latLngs[1] dst adalah hole (jika ada)
@@ -147,8 +142,6 @@ export default function MapAddPolygonComponent({
                     }
                 }
 
-                console.log("Polygon points:", polygonPoints);
-
                 // Transformasikan koordinat ke format yang sesuai
                 const coordinates: CoordinatesInterface[] = [];
 
@@ -160,8 +153,6 @@ export default function MapAddPolygonComponent({
                     });
                 }
 
-                console.log("Formatted coordinates:", coordinates);
-
                 // Simpan koordinat tersebut ke dalam state
                 setPolygonCoordinates(coordinates);
             } catch (error) {
@@ -171,8 +162,6 @@ export default function MapAddPolygonComponent({
     };
 
     const handleEdited = (e: DrawEditedEvent) => {
-        console.log("Edit event:", e);
-
         // Variabel untuk menyimpan seluruh koordinat polygon yang diedit
         let updatedCoordinates: CoordinatesInterface[] = [];
 
@@ -181,7 +170,6 @@ export default function MapAddPolygonComponent({
                 if (layer instanceof L.Polygon) {
                     // Ambil seluruh koordinat polygon yang diedit
                     const latLngs = layer.getLatLngs();
-                    console.log("Edited latLngs:", latLngs);
 
                     // Sama seperti handleCreated, kita butuh memproses struktur nested
                     if (Array.isArray(latLngs) && latLngs.length > 0) {
@@ -206,8 +194,6 @@ export default function MapAddPolygonComponent({
                 }
             });
 
-            console.log("Updated coordinates after edit:", updatedCoordinates);
-
             // Update state hanya jika ada koordinat yang valid
             if (updatedCoordinates.length > 0) {
                 setPolygonCoordinates(updatedCoordinates);
@@ -229,8 +215,6 @@ export default function MapAddPolygonComponent({
         if (polygonCoordinates.length == 0) {
             setMapKey((prevKey) => prevKey + 1);
         }
-
-        console.log("polygonCoordinates", JSON.stringify(polygonCoordinates));
     }, [polygonCoordinates]);
 
     return (

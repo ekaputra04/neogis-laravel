@@ -80,8 +80,6 @@ export default function MapAddRectangleComponent({
             return;
         }
 
-        console.log(values);
-
         const formattedCoordinates = rectangleCoordinates.map((coord) => [
             coord.latitude,
             coord.longitude,

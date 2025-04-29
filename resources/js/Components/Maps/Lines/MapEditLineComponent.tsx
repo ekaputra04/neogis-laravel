@@ -130,8 +130,6 @@ export default function MapEditLineComponent({
                 latLng.lng,
             ]);
 
-            console.log(coordinates);
-
             setLineCoordinates(coordinates);
         }
     };

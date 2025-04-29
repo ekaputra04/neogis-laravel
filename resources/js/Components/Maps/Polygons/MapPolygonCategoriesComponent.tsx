@@ -68,8 +68,6 @@ export default function MapPolygonCategoriesComponent() {
         setLoading(true);
 
         try {
-            console.log(values);
-
             const response = await fetch(`/api/maps/polygons-categories`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

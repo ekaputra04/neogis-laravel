@@ -68,8 +68,6 @@ export default function MapLineCategoriesComponent() {
         setLoading(true);
 
         try {
-            console.log(values);
-
             const response = await fetch(`/api/maps/lines-categories`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

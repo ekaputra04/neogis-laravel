@@ -68,8 +68,6 @@ export default function MapRectangleCategoriesComponent() {
         setLoading(true);
 
         try {
-            console.log(values);
-
             const response = await fetch(`/api/maps/rectangles-categories`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

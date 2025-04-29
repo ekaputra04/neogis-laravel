@@ -80,8 +80,6 @@ export default function MapAddLineComponent({
             return;
         }
 
-        console.log(values);
-
         const formattedCoordinates = lineCoordinates.map((coord) => [
             coord.latitude,
             coord.longitude,
@@ -133,8 +131,6 @@ export default function MapAddLineComponent({
                 })
             );
 
-            console.log(coordinates);
-
             // Simpan koordinat tersebut ke dalam state (atau tempat lain yang sesuai)
             setLineCoordinates(coordinates);
         }
@@ -175,8 +171,6 @@ export default function MapAddLineComponent({
         if (lineCoordinates === null) {
             setMapKey((prevKey) => prevKey + 1);
         }
-
-        console.log("LINECoordinates", JSON.stringify(lineCoordinates));
     }, [lineCoordinates]);
 
     return (

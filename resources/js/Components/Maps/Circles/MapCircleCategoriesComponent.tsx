@@ -68,8 +68,6 @@ export default function MapCircleCategoriesComponent() {
         setLoading(true);
 
         try {
-            console.log(values);
-
             const response = await fetch(`/api/maps/circles-categories`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
