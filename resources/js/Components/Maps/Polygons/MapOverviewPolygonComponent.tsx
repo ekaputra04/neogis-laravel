@@ -1,15 +1,9 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import {
-    MapContainer,
-    Polyline,
-    Popup,
-    TileLayer,
-    useMap,
-} from "react-leaflet";
+import { MapContainer, Polygon, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import { CoordinatesInterface, LineInterface } from "@/types/types";
+import { CoordinatesInterface, PolygonInterface } from "@/types/types";
 import { Button } from "@/Components/ui/button";
 import {
     AlertDialog,
@@ -41,79 +35,83 @@ import { Badge } from "@/Components/ui/badge";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
 
-interface MapOverviewLineComponentProps {
+interface MapOverviewPolygonComponentProps {
     currentPath: string;
-    lines: LineInterface[];
+    polygons: PolygonInterface[];
 }
 
-export default function MapOverviewLineComponent({
+export default function MapOverviewPolygonComponent({
     currentPath,
-    lines: initialLines,
-}: MapOverviewLineComponentProps) {
-    const [lines, setLines] = useState<LineInterface[] | null>(initialLines);
-    const [filteredLines, setFilteredLines] =
-        useState<LineInterface[]>(initialLines);
+    polygons: initialPolygons,
+}: MapOverviewPolygonComponentProps) {
+    const [polygons, setPolygons] = useState<PolygonInterface[] | null>(
+        initialPolygons
+    );
+    const [filteredPolygons, setFilteredPolygons] =
+        useState<PolygonInterface[]>(initialPolygons);
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
-        lines && lines.length > 0
+        polygons && polygons.length > 0
             ? {
-                  latitude: lines[0].coordinates[0][0],
-                  longitude: lines[0].coordinates[0][1],
+                  latitude: polygons[0].coordinates[0][0],
+                  longitude: polygons[0].coordinates[0][1],
               }
             : {
-                  latitude: centerPoints[0], // fallback jika lines kosong
+                  latitude: centerPoints[0], // fallback jika polygons kosong
                   longitude: centerPoints[1],
               }
     );
     const [searchValue, setSearchValue] = useState<string>("");
 
-    const fetchlines = async (): Promise<void> => {
+    const fetchPolygons = async (): Promise<void> => {
         try {
-            const response = await axios.get(`/api/maps/lines`);
-            setLines(response.data);
+            const response = await axios.get(`/api/maps/polygons`);
+            setPolygons(response.data);
         } catch (error: any) {
             console.error(error.response?.data?.message || error.message);
         }
     };
 
-    const handleDeleted = async (lineId: number): Promise<void> => {
+    const handleDeleted = async (polygonId: number): Promise<void> => {
         try {
-            const response = await axios.delete(`/api/maps/lines/${lineId}`);
-            await fetchlines();
-            toast.success("Line deleted successfully!");
+            const response = await axios.delete(
+                `/api/maps/polygons/${polygonId}`
+            );
+            await fetchPolygons();
+            toast.success("Polygon deleted successfully!");
         } catch (error: any) {
             console.error(
-                "Error deleting line:",
+                "Error deleting polygon:",
                 error.response?.data?.message || error.message
             );
             toast.error(
-                error.response?.data?.message || "Error deleting line."
+                error.response?.data?.message || "Error deleting polygon."
             );
         }
     };
 
     useEffect(() => {
-        if (lines) {
-            const filtered = lines.filter((marker) =>
+        if (polygons) {
+            const filtered = polygons.filter((marker) =>
                 marker.name.toLowerCase().includes(searchValue.toLowerCase())
             );
-            setFilteredLines(filtered);
+            setFilteredPolygons(filtered);
         } else {
-            setFilteredLines([]);
+            setFilteredPolygons([]);
         }
-    }, [searchValue, lines]);
+    }, [searchValue, polygons]);
 
     return (
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
-                <Head title="Line" />
+                <Head title="Polygon" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
                         <HowToUseComponent tutorials={HowToUseMarkerOverview} />
 
-                        <Link href={route("maps.line.add")}>
+                        <Link href={route("maps.polygon.add")}>
                             <Button className="mb-4 w-full">
                                 <PlusCircle />
-                                Add New Line
+                                Add New Polygon
                             </Button>
                         </Link>
                         <hr />
@@ -127,31 +125,31 @@ export default function MapOverviewLineComponent({
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead className="flex justify-between items-center">
-                                            <p>Line</p>
+                                            <p>Polygon</p>
                                             <p>
-                                                ({filteredLines.length}/
-                                                {lines?.length})
+                                                ({filteredPolygons.length}/
+                                                {polygons?.length})
                                             </p>
                                         </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody className="block w-full">
-                                    {filteredLines.map((line, index) => (
+                                    {filteredPolygons.map((polygon, index) => (
                                         <TableRow
                                             key={index}
                                             className="block w-full"
                                         >
                                             <TableCell className="flex justify-between items-center">
-                                                {line.name}
+                                                {polygon.name}
                                                 <Button
                                                     variant={"outline"}
                                                     onClick={() =>
                                                         setMapCenter({
                                                             latitude:
-                                                                line
+                                                                polygon
                                                                     .coordinates[0][0],
                                                             longitude:
-                                                                line
+                                                                polygon
                                                                     .coordinates[0][1],
                                                         })
                                                     }
@@ -181,29 +179,29 @@ export default function MapOverviewLineComponent({
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             />
-                            {lines &&
-                                lines.map((line) => (
-                                    <Polyline
-                                        key={line.id}
-                                        positions={line.coordinates}
-                                        color={line.color || "blue"}
+                            {polygons &&
+                                polygons.map((polygon) => (
+                                    <Polygon
+                                        key={polygon.id}
+                                        positions={polygon.coordinates}
+                                        color={polygon.color || "blue"}
                                     >
                                         <Popup>
-                                            {line.name ? (
-                                                <strong>{line.name}</strong>
+                                            {polygon.name ? (
+                                                <strong>{polygon.name}</strong>
                                             ) : (
                                                 "Lokasi tanpa nama"
                                             )}
                                             <br />
                                             <br />
-                                            {line.description ||
+                                            {polygon.description ||
                                                 "Tidak ada deskripsi"}
                                             <br />
                                             <br />
-                                            {line.category_name && (
+                                            {polygon.category_name && (
                                                 <>
                                                     <Badge variant={"default"}>
-                                                        {line.category_name}
+                                                        {polygon.category_name}
                                                     </Badge>
                                                 </>
                                             )}
@@ -213,7 +211,7 @@ export default function MapOverviewLineComponent({
                                                 className="mr-2"
                                                 onClick={() => {
                                                     router.visit(
-                                                        `/dashboard/line/edit/${line.id}`
+                                                        `/dashboard/polygon/edit/${polygon.id}`
                                                     );
                                                 }}
                                                 variant={"outline"}
@@ -234,7 +232,7 @@ export default function MapOverviewLineComponent({
                                                             This action cannot
                                                             be undone. This will
                                                             permanently delete
-                                                            line from our
+                                                            polygon from our
                                                             servers.
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
@@ -245,7 +243,7 @@ export default function MapOverviewLineComponent({
                                                         <AlertDialogAction
                                                             onClick={() =>
                                                                 handleDeleted(
-                                                                    line.id
+                                                                    polygon.id
                                                                 )
                                                             }
                                                         >
@@ -255,7 +253,7 @@ export default function MapOverviewLineComponent({
                                                 </AlertDialogContent>
                                             </AlertDialog>
                                         </Popup>
-                                    </Polyline>
+                                    </Polygon>
                                 ))}
                         </MapContainer>
                     </div>

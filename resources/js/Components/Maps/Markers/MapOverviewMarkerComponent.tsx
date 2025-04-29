@@ -102,7 +102,7 @@ export default function MapOverviewMarkerComponent({
     return (
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
-                <Head title="Maps" />
+                <Head title="Marker" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
                         <HowToUseComponent tutorials={HowToUseMarkerOverview} />

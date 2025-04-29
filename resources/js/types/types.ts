@@ -40,7 +40,10 @@ export interface LineInterface {
     color: string;
 }
 
-export interface RectangleInterface {
+export interface RectangleInterface extends LineInterface {}
+
+// export interface PolygonInterface extends LineInterface {}
+export interface PolygonInterface {
     id: number;
     name: string;
     description: string;

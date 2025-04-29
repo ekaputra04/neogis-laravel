@@ -8,6 +8,7 @@ use App\Http\Requests\StorePolygonRequest;
 use App\Http\Requests\UpdatePolygonRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class PolygonController extends Controller
 {
@@ -280,5 +281,37 @@ class PolygonController extends Controller
                 'message' => 'Failed to delete polygon: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function overviewPolygon()
+    {
+        $polygons = DB::table('polygons')
+            ->join('polygon_categories', 'polygons.category_id', '=', 'polygon_categories.id')
+            ->select(
+                'polygons.id',
+                'polygons.name',
+                'polygons.description',
+                'polygons.category_id',
+                'polygon_categories.name as category_name',
+                'polygon_categories.color as color',
+                DB::raw('ST_AsGeoJSON(polygons.coordinates) AS coordinates')
+            )
+            ->get()
+            ->map(function ($polygon) {
+                $geojson = json_decode($polygon->coordinates, true);
+
+                // Pastikan hanya ambil bagian pertama dari koordinat Polygon
+                $polygon->coordinates = $geojson['coordinates'][0] ?? [];
+
+                return $polygon;
+            });
+
+
+        return Inertia::render('MapOverviewPolygon', [
+            'currentPath' => '/dashboard/polygon',
+            'polygons' => $polygons,
+        ]);
+
+        // return Inertia::render('MapOverviewRectangle',);
     }
 }
