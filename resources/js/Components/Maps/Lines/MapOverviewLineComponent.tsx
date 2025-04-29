@@ -40,6 +40,8 @@ import { centerPoints } from "@/consts/centerPoints";
 import { Badge } from "@/Components/ui/badge";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { tileLayers } from "@/consts/tileLayers";
 
 interface MapOverviewLineComponentProps {
     currentPath: string;
@@ -50,6 +52,7 @@ export default function MapOverviewLineComponent({
     currentPath,
     lines: initialLines,
 }: MapOverviewLineComponentProps) {
+    const { selectedLayer } = useMapLayerStore();
     const [lines, setLines] = useState<LineInterface[] | null>(initialLines);
     const [filteredLines, setFilteredLines] =
         useState<LineInterface[]>(initialLines);
@@ -177,10 +180,8 @@ export default function MapOverviewLineComponent({
                                     mapCenter.longitude,
                                 ]}
                             />
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            />
+                            <TileLayer url={tileLayers[selectedLayer]} />
+
                             {lines &&
                                 lines.map((line) => (
                                     <Polyline

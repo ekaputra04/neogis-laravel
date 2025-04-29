@@ -35,6 +35,8 @@ import { centerPoints } from "@/consts/centerPoints";
 import { Badge } from "@/Components/ui/badge";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { tileLayers } from "@/consts/tileLayers";
 
 export default function MapOverviewMarkerComponent({
     currentPath,
@@ -43,6 +45,7 @@ export default function MapOverviewMarkerComponent({
     currentPath: string;
     markers: MarkerInterface[];
 }) {
+    const { selectedLayer } = useMapLayerStore();
     const [markers, setMarkers] = useState<MarkerInterface[] | null>(
         initialMarkers
     );
@@ -171,10 +174,8 @@ export default function MapOverviewMarkerComponent({
                                     mapCenter.longitude,
                                 ]}
                             />
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            />
+                            <TileLayer url={tileLayers[selectedLayer]} />
+
                             {markers &&
                                 markers.map((marker, index) => (
                                     <Marker

@@ -44,6 +44,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { tileLayers } from "@/consts/tileLayers";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -71,6 +73,7 @@ export default function MapEditPolygonComponent({
     polygon,
     categories,
 }: MapEditPolygonComponentProps) {
+    const { selectedLayer } = useMapLayerStore();
     const [polygonCoordinates, setPolygonCoordinates] = useState<
         [number, number][]
     >(polygon.coordinates);
@@ -351,10 +354,7 @@ export default function MapEditPolygonComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                />
+                                <TileLayer url={tileLayers[selectedLayer]} />
 
                                 <FeatureGroup>
                                     <EditControl

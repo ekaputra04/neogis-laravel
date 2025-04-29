@@ -46,6 +46,8 @@ import {
 } from "@/Components/ui/select";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerUpdate } from "@/consts/howToUse";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { tileLayers } from "@/consts/tileLayers";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -73,6 +75,7 @@ export default function MapEditMarkerComponent({
     marker,
     categories,
 }: MapEditMarkerComponentProps) {
+    const { selectedLayer } = useMapLayerStore();
     const [markerCoordinates, setMarkerCoordinates] =
         useState<CoordinatesInterface | null>({
             latitude: marker.latitude,
@@ -283,10 +286,7 @@ export default function MapEditMarkerComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                />
+                                <TileLayer url={tileLayers[selectedLayer]} />
 
                                 <FeatureGroup>
                                     <EditControl

@@ -8,6 +8,7 @@ import {
 import { tileLayers } from "@/consts/tileLayers";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { MapContainer, TileLayer } from "react-leaflet";
+import { toast } from "sonner";
 
 export default function MapLayerComponent() {
     const { selectedLayer, setSelectedLayer } = useMapLayerStore();
@@ -36,9 +37,10 @@ export default function MapLayerComponent() {
                         <TileLayer url={tileLayers[selectedLayer]} />
                     </MapContainer>
                     <Select
-                        onValueChange={(value) =>
-                            setSelectedLayer(value as keyof typeof tileLayers)
-                        }
+                        onValueChange={(value) => {
+                            setSelectedLayer(value as keyof typeof tileLayers);
+                            toast.success("Map layer updated to " + value);
+                        }}
                         value={selectedLayer}
                     >
                         <SelectTrigger className="mb-8 w-full">

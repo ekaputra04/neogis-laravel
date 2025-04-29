@@ -45,6 +45,8 @@ import { centerPoints } from "@/consts/centerPoints";
 import { Badge } from "@/Components/ui/badge";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { tileLayers } from "@/consts/tileLayers";
 
 interface MapOverviewCircleComponentProps {
     currentPath: string;
@@ -55,6 +57,7 @@ export default function MapOverviewCircleComponent({
     currentPath,
     circles: initialCircles,
 }: MapOverviewCircleComponentProps) {
+    const { selectedLayer } = useMapLayerStore();
     const [circles, setCircles] = useState<CircleInterface[]>(initialCircles);
     const [filteredCircles, setFilteredCircles] =
         useState<CircleInterface[]>(initialCircles);
@@ -182,10 +185,8 @@ export default function MapOverviewCircleComponent({
                                     mapCenter.longitude,
                                 ]}
                             />
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            />
+                            <TileLayer url={tileLayers[selectedLayer]} />
+
                             {circles &&
                                 circles.map((circle) => (
                                     <Circle

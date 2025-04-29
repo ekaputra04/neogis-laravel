@@ -39,6 +39,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { tileLayers } from "@/consts/tileLayers";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -66,6 +68,7 @@ export default function MapEditLineComponent({
     line,
     categories,
 }: MapEditLineComponentProps) {
+    const { selectedLayer } = useMapLayerStore();
     const [lineCoordinates, setLineCoordinates] = useState<
         [number, number][] | null
     >(line.coordinates);
@@ -281,10 +284,7 @@ export default function MapEditLineComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                />
+                                <TileLayer url={tileLayers[selectedLayer]} />
 
                                 <FeatureGroup>
                                     <EditControl

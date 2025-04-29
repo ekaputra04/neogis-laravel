@@ -35,6 +35,8 @@ import {
 } from "@/Components/ui/select";
 import HowToUse from "@/Components/HowToUseComponent";
 import { HowToUseMarkerAdd } from "@/consts/howToUse";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { tileLayers } from "@/consts/tileLayers";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -60,6 +62,7 @@ export default function MapAddLineComponent({
     currentPath,
     categories,
 }: MapAddLineComponentProps) {
+    const { selectedLayer } = useMapLayerStore();
     const [lineCoordinates, setLineCoordinates] = useState<
         CoordinatesInterface[] | null
     >([]);
@@ -305,10 +308,7 @@ export default function MapAddLineComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                />
+                                <TileLayer url={tileLayers[selectedLayer]} />
 
                                 <FeatureGroup>
                                     <EditControl

@@ -18,14 +18,19 @@ import {
 import { Eye } from "lucide-react";
 import { centerPoints } from "@/consts/centerPoints";
 import { Badge } from "../ui/badge";
+import { tileLayers } from "@/consts/tileLayers";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
+
+interface MapOverviewComponentProps {
+    currentPath: string;
+    markers: MarkerInterface[];
+}
 
 export default function MapOverviewComponent({
     currentPath,
     markers,
-}: {
-    currentPath: string;
-    markers: MarkerInterface[];
-}) {
+}: MapOverviewComponentProps) {
+    const { selectedLayer } = useMapLayerStore();
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
         markers && markers.length > 0
             ? {
@@ -94,10 +99,7 @@ export default function MapOverviewComponent({
                                     mapCenter.longitude,
                                 ]}
                             />
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            />
+                            <TileLayer url={tileLayers[selectedLayer]} />
 
                             {markers &&
                                 markers.map((marker, index) => (

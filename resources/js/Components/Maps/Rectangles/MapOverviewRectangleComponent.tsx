@@ -34,6 +34,8 @@ import { centerPoints } from "@/consts/centerPoints";
 import { Badge } from "@/Components/ui/badge";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { tileLayers } from "@/consts/tileLayers";
 
 interface MapOverviewRectangleComponentProps {
     currentPath: string;
@@ -44,6 +46,7 @@ export default function MapOverviewRectangleComponent({
     currentPath,
     rectangles: initialRectangles,
 }: MapOverviewRectangleComponentProps) {
+    const { selectedLayer } = useMapLayerStore();
     const [rectangles, setRectangles] = useState<RectangleInterface[] | null>(
         initialRectangles
     );
@@ -177,10 +180,8 @@ export default function MapOverviewRectangleComponent({
                                     mapCenter.longitude,
                                 ]}
                             />
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            />
+                            <TileLayer url={tileLayers[selectedLayer]} />
+
                             {rectangles &&
                                 rectangles.map((rectangle) => (
                                     <Polygon

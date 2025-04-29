@@ -39,6 +39,8 @@ import {
 } from "@/Components/ui/select";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerUpdate } from "@/consts/howToUse";
+import { tileLayers } from "@/consts/tileLayers";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -66,6 +68,7 @@ export default function MapEditCircleComponent({
     circle,
     categories,
 }: MapEditCircleComponentProps) {
+    const { selectedLayer } = useMapLayerStore();
     const [centerPoint, setCenterPoint] = useState<CoordinatesInterface | null>(
         {
             latitude: circle.latitude,
@@ -284,10 +287,7 @@ export default function MapEditCircleComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                />
+                                <TileLayer url={tileLayers[selectedLayer]} />
 
                                 <FeatureGroup>
                                     <EditControl
