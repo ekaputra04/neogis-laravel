@@ -16,23 +16,6 @@ class RectangleController extends Controller
 
     public function getAllRectangles()
     {
-        // $rectangles = DB::table('rectangles')
-        //     ->select(
-        //         'id',
-        //         'name',
-        //         'description',
-        //         DB::raw('ST_AsGeoJSON(coordinates) AS coordinates')
-        //     )
-        //     ->get()
-        //     ->map(function ($rectangle) {
-        //         $geojson = json_decode($rectangle->coordinates, true);
-
-        //         // Pastikan hanya ambil bagian pertama dari koordinat Polygon
-        //         $rectangle->coordinates = $geojson['coordinates'][0] ?? [];
-
-        //         return $rectangle;
-        //     });
-
         $rectangles = DB::table('rectangles')
             ->join('rectangle_categories', 'rectangles.category_id', '=', 'rectangle_categories.id')
             ->select(
