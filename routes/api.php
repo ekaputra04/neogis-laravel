@@ -4,6 +4,7 @@ use App\Http\Controllers\LineCategoryController;
 use App\Http\Controllers\LineController;
 use App\Http\Controllers\MarkerCategoryController;
 use App\Http\Controllers\MarkerController;
+use App\Http\Controllers\PolygonCategoryController;
 use App\Http\Controllers\RectangleCategoryController;
 use App\Http\Controllers\RectangleController;
 use Illuminate\Http\Request;
@@ -27,6 +28,11 @@ Route::get('/maps/rectangles-categories', [RectangleCategoryController::class, '
 Route::post('/maps/rectangles-categories', [RectangleCategoryController::class, 'store']);
 Route::put('/maps/rectangles-categories/{id}', [RectangleCategoryController::class, 'update']);
 Route::delete('/maps/rectangles-categories/{id}', [RectangleCategoryController::class, 'destroy']);
+
+Route::get('/maps/polygons-categories', [PolygonCategoryController::class, 'getAllPolygonCategories']);
+Route::post('/maps/polygons-categories', [PolygonCategoryController::class, 'store']);
+Route::put('/maps/polygons-categories/{id}', [PolygonCategoryController::class, 'update']);
+Route::delete('/maps/polygons-categories/{id}', [PolygonCategoryController::class, 'destroy']);
 
 Route::get('/maps/markers', [MarkerController::class, 'getAllMarkers']);
 Route::get('/maps/markers/{id}', [MarkerController::class, 'getMarkerById']);
