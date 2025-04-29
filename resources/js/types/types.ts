@@ -43,15 +43,11 @@ export interface LineInterface {
 export interface RectangleInterface extends LineInterface {}
 
 export interface PolygonInterface extends LineInterface {}
-// export interface PolygonInterface {
-//     id: number;
-//     name: string;
-//     description: string;
-//     coordinates: [number, number][];
-//     category_id?: number;
-//     category_name?: string;
-//     color: string;
-// }
+
+export interface CircleInterface extends MarkerInterface {
+    color: string;
+    radius: number;
+}
 
 export interface tutorialProps {
     description: string;

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CircleCategoryController;
+use App\Http\Controllers\CircleController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LineCategoryController;
 use App\Http\Controllers\LineController;
@@ -49,6 +50,9 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
     Route::get('/polygon/edit/{id}', [PolygonController::class, 'editPolygon'])->name('polygon.edit');
     Route::get('/polygon/categories', [PolygonCategoryController::class, 'index'])->name('polygon.categories');
 
+    Route::get('/circle', [CircleController::class, 'overviewCircle'])->name('circle');
+    Route::get('/circle/add', [CircleController::class, 'addCircle'])->name('circle.add');
+    Route::get('/circle/edit/{id}', [CircleController::class, 'editcircle'])->name('circle.edit');
     Route::get('/circle/categories', [CircleCategoryController::class, 'index'])->name('circle.categories');
 
     // Route::get('/rectangle', [RectangleController::class, 'overviewRectangle'])->name('rectangle');

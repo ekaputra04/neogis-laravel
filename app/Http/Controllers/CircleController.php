@@ -8,6 +8,7 @@ use App\Http\Requests\StoreCircleRequest;
 use App\Http\Requests\UpdateCircleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class CircleController extends Controller
 {
@@ -167,6 +168,27 @@ class CircleController extends Controller
 
         return response()->json([
             'message' => 'Circle deleted successfully.'
+        ]);
+    }
+
+    public function overviewCircle()
+    {
+        $circles = Circle::with('category')->get()->map(function ($circle) {
+            return [
+                'id' => $circle->id,
+                'name' => $circle->name,
+                'description' => $circle->description,
+                'latitude' => $circle->latitude,
+                'longitude' => $circle->longitude,
+                'radius' => $circle->radius,
+                'category_name' => $circle->category?->name,
+                'color' => $circle->category?->color,
+            ];
+        });
+
+        return Inertia::render('MapOverviewCircle', [
+            'currentPath' => '/dashboard/circle',
+            'circles' => $circles,
         ]);
     }
 }

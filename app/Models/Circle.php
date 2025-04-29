@@ -28,11 +28,11 @@ class Circle extends Model
 
     public function getLatitudeAttribute()
     {
-        return optional(DB::selectOne("SELECT ST_Y(coordinates) AS latitude FROM `circles` WHERE id = ?", [$this->id]))->latitude;
+        return optional(DB::selectOne("SELECT ST_Y(center) AS latitude FROM `circles` WHERE id = ?", [$this->id]))->latitude;
     }
 
     public function getLongitudeAttribute()
     {
-        return optional(DB::selectOne("SELECT ST_X(coordinates) AS longitude FROM `circles` WHERE id = ?", [$this->id]))->longitude;
+        return optional(DB::selectOne("SELECT ST_X(center) AS longitude FROM `circles` WHERE id = ?", [$this->id]))->longitude;
     }
 }
