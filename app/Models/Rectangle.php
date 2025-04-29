@@ -22,6 +22,11 @@ class Rectangle extends Model
         'coordinates', // Menyembunyikan kolom coordinates spasial
     ];
 
+    public function category()
+    {
+        return $this->belongsTo(RectangleCategory::class, 'category_id');
+    }
+
     // Menetapkan accessor untuk mendapatkan koordinat dalam format GeoJSON
     public function getCoordinatesGeoJsonAttribute()
     {

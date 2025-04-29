@@ -16,8 +16,8 @@ class LineCategory extends Model
         'color',
     ];
 
-    // public function markers()
-    // {
-    //     return $this->hasMany(Marker::class, 'category_id');
-    // }
+    public function lines()
+    {
+        return $this->hasMany(Line::class, 'category_id');
+    }
 }

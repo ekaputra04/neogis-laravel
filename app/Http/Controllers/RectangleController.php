@@ -6,20 +6,43 @@ use App\Models\Rectangle;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRectangleRequest;
 use App\Http\Requests\UpdateRectangleRequest;
+use App\Models\RectangleCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class RectangleController extends Controller
 {
 
     public function getAllRectangles()
     {
+        // $rectangles = DB::table('rectangles')
+        //     ->select(
+        //         'id',
+        //         'name',
+        //         'description',
+        //         DB::raw('ST_AsGeoJSON(coordinates) AS coordinates')
+        //     )
+        //     ->get()
+        //     ->map(function ($rectangle) {
+        //         $geojson = json_decode($rectangle->coordinates, true);
+
+        //         // Pastikan hanya ambil bagian pertama dari koordinat Polygon
+        //         $rectangle->coordinates = $geojson['coordinates'][0] ?? [];
+
+        //         return $rectangle;
+        //     });
+
         $rectangles = DB::table('rectangles')
+            ->join('rectangle_categories', 'rectangles.category_id', '=', 'rectangle_categories.id')
             ->select(
-                'id',
-                'name',
-                'description',
-                DB::raw('ST_AsGeoJSON(coordinates) AS coordinates')
+                'rectangles.id',
+                'rectangles.name',
+                'rectangles.description',
+                'rectangles.category_id',
+                'rectangle_categories.name as category_name',
+                'rectangle_categories.color as category_color',
+                DB::raw('ST_AsGeoJSON(rectangles.coordinates) AS coordinates')
             )
             ->get()
             ->map(function ($rectangle) {
@@ -30,6 +53,7 @@ class RectangleController extends Controller
 
                 return $rectangle;
             });
+
 
         return response()->json($rectangles);
     }
@@ -280,5 +304,47 @@ class RectangleController extends Controller
                 'message' => 'Failed to delete rectangle: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function overviewRectangle()
+    {
+        $rectangles = DB::table('rectangles')
+            ->join('rectangle_categories', 'rectangles.category_id', '=', 'rectangle_categories.id')
+            ->select(
+                'rectangles.id',
+                'rectangles.name',
+                'rectangles.description',
+                'rectangles.category_id',
+                'rectangle_categories.name as category_name',
+                'rectangle_categories.color as color',
+                DB::raw('ST_AsGeoJSON(rectangles.coordinates) AS coordinates')
+            )
+            ->get()
+            ->map(function ($rectangle) {
+                $geojson = json_decode($rectangle->coordinates, true);
+
+                // Pastikan hanya ambil bagian pertama dari koordinat Polygon
+                $rectangle->coordinates = $geojson['coordinates'][0] ?? [];
+
+                return $rectangle;
+            });
+
+        // dd($rectangles);
+
+        return Inertia::render('MapOverviewRectangle', [
+            'currentPath' => '/dashboard/rectangle',
+            'rectangles' => $rectangles,
+        ]);
+
+        // return Inertia::render('MapOverviewRectangle',);
+    }
+
+    public function addRectangle()
+    {
+        $categories = RectangleCategory::all();
+        return Inertia::render('MapAddRectangle', [
+            'currentPath' => "/dashboard/rectangle/add",
+            'categories' => $categories
+        ]);
     }
 }

@@ -24,6 +24,8 @@ import {
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
+import { capitalizeFirstLetter } from "@/lib/utils";
+import { Pencil } from "lucide-react";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -80,7 +82,9 @@ export default function EditCategoryDialog({
                 throw new Error(`Failed to update ${type} category`);
             }
 
-            toast.success(`${type} category updated successfully!`);
+            toast.success(
+                `${capitalizeFirstLetter(type)} category updated successfully!`
+            );
             setIsOpen(false);
             onCategoryUpdated();
         } catch (error) {
@@ -94,7 +98,7 @@ export default function EditCategoryDialog({
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger className="inline-flex justify-center items-center gap-2 bg-background hover:bg-accent disabled:opacity-50 shadow-sm px-3 py-1 border border-input rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&_svg]:size-4 font-medium text-sm whitespace-nowrap transition-colors hover:text-accent-foreground [&_svg]:pointer-events-none disabled:pointer-events-none [&_svg]:shrink-0">
-                Edit
+                <Pencil /> Edit
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

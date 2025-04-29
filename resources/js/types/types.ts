@@ -40,6 +40,16 @@ export interface LineInterface {
     color: string;
 }
 
+export interface RectangleInterface {
+    id: number;
+    name: string;
+    description: string;
+    coordinates: [number, number][];
+    category_id?: number;
+    category_name?: string;
+    color: string;
+}
+
 export interface tutorialProps {
     description: string;
     image: string;

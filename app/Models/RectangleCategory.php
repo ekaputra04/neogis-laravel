@@ -15,4 +15,9 @@ class RectangleCategory extends Model
         'description',
         'color',
     ];
+
+    public function rectangles()
+    {
+        return $this->hasMany(Rectangle::class, 'category_id');
+    }
 }

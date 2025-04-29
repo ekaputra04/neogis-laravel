@@ -11,6 +11,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
+import { Trash } from "lucide-react";
 
 interface DeleteCategoryDialogProps {
     type: "markers" | "lines" | "polygons" | "rectangles" | "circles";
@@ -58,6 +59,7 @@ export default function DeleteCategoryDialog({
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger className="inline-flex justify-center items-center gap-2 bg-destructive hover:bg-destructive/90 disabled:opacity-50 shadow-sm px-3 py-1 rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&_svg]:size-4 font-medium text-destructive-foreground text-sm whitespace-nowrap transition-colors [&_svg]:pointer-events-none disabled:pointer-events-none [&_svg]:shrink-0">
+                <Trash />
                 Delete
             </AlertDialogTrigger>
             <AlertDialogContent>
