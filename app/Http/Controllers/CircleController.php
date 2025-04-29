@@ -6,6 +6,7 @@ use App\Models\Circle;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCircleRequest;
 use App\Http\Requests\UpdateCircleRequest;
+use App\Models\CircleCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -189,6 +190,15 @@ class CircleController extends Controller
         return Inertia::render('MapOverviewCircle', [
             'currentPath' => '/dashboard/circle',
             'circles' => $circles,
+        ]);
+    }
+
+    public function addCircle()
+    {
+        $categories = CircleCategory::all();
+        return Inertia::render('MapAddCircle', [
+            'currentPath' => "/dashboard/circle/add",
+            'categories' => $categories
         ]);
     }
 }
