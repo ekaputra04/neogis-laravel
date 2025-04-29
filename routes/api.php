@@ -13,12 +13,6 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/maps/markers', [MarkerController::class, 'getAllMarkers']);
-Route::get('/maps/markers/{id}', [MarkerController::class, 'getMarkerById']);
-Route::post('/maps/markers', [MarkerController::class, 'store']);
-Route::put('/maps/markers/{id}', [MarkerController::class, 'update']);
-Route::delete('/maps/markers/{id}', [MarkerController::class, 'destroy']);
-
 Route::get('/maps/markers-categories', [MarkerCategoryController::class, 'getAllMarkerCategories']);
 Route::post('/maps/markers-categories', [MarkerCategoryController::class, 'store']);
 Route::put('/maps/markers-categories/{id}', [MarkerCategoryController::class, 'update']);
@@ -34,9 +28,18 @@ Route::post('/maps/rectangles-categories', [RectangleCategoryController::class, 
 Route::put('/maps/rectangles-categories/{id}', [RectangleCategoryController::class, 'update']);
 Route::delete('/maps/rectangles-categories/{id}', [RectangleCategoryController::class, 'destroy']);
 
+Route::get('/maps/markers', [MarkerController::class, 'getAllMarkers']);
+Route::get('/maps/markers/{id}', [MarkerController::class, 'getMarkerById']);
+Route::post('/maps/markers', [MarkerController::class, 'store']);
+Route::put('/maps/markers/{id}', [MarkerController::class, 'update']);
+Route::delete('/maps/markers/{id}', [MarkerController::class, 'destroy']);
+
 Route::get('/maps/lines', [LineController::class, 'getAllLines']);
 Route::post('/maps/lines', [LineController::class, 'store']);
 Route::put('/maps/lines/{id}', [LineController::class, 'update']);
 Route::delete('/maps/lines/{id}', [LineController::class, 'destroy']);
 
 Route::get('/maps/rectangles', [RectangleController::class, 'getAllRectangles']);
+Route::post('/maps/rectangles', [RectangleController::class, 'store']);
+Route::put('/maps/rectangles/{id}', [RectangleController::class, 'update']);
+Route::delete('/maps/rectangles/{id}', [RectangleController::class, 'destroy']);

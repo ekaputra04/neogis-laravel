@@ -23,7 +23,7 @@ return new class extends Migration
         });
 
         // Kalau migration biasa belum support spatial types:
-        DB::statement('ALTER TABLE `rectangles` ADD `coordinates` POLYGON NULL');
+        DB::statement('ALTER TABLE `rectangles` ADD `coordinates` POLYGON NULL;');
     }
 
     /**
