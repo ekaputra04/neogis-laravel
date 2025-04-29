@@ -6,6 +6,7 @@ use App\Http\Controllers\LineController;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\MarkerCategoryController;
 use App\Http\Controllers\MarkerController;
+use App\Http\Controllers\PolygonCategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RectangleCategoryController;
 use App\Http\Controllers\RectangleController;
@@ -41,9 +42,11 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
     Route::get('/line/edit/{id}', [LineController::class, 'editLine'])->name('line.edit');
     Route::get('/line/categories', [LineCategoryController::class, 'index'])->name('line.categories');
 
-    Route::get('/rectangle', [RectangleController::class, 'overviewRectangle'])->name('rectangle');
-    Route::get('/rectangle/add', [RectangleController::class, 'addRectangle'])->name('rectangle.add');
-    Route::get('/rectangle/categories', [RectangleCategoryController::class, 'index'])->name('rectangle.categories');
+    Route::get('/polygon/categories', [PolygonCategoryController::class, 'index'])->name('line.categories');
+
+    // Route::get('/rectangle', [RectangleController::class, 'overviewRectangle'])->name('rectangle');
+    // Route::get('/rectangle/add', [RectangleController::class, 'addRectangle'])->name('rectangle.add');
+    // Route::get('/rectangle/categories', [RectangleCategoryController::class, 'index'])->name('rectangle.categories');
 });
 
 

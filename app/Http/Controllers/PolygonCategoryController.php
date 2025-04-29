@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePolygonCategoryRequest;
 use App\Http\Requests\UpdatePolygonCategoryRequest;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PolygonCategoryController extends Controller
 {
@@ -22,9 +23,13 @@ class PolygonCategoryController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $polygonCategories = PolygonCategory::all();
 
+        return Inertia::render('PolygonCategories', [
+            'currentPath' => "/dashboard/polygon/add",
+            'categories' => $polygonCategories
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */
