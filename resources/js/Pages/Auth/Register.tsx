@@ -6,9 +6,29 @@ import { FormEventHandler } from "react";
 import image from "@/images/background/sign-up-bg.jpg";
 import { Button } from "@/Components/ui/button";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
+import { Badge } from "@/Components/ui/badge";
 
-export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm({
+type RegisterErrors = {
+    name?: string;
+    email?: string;
+    password?: string;
+    password_confirmation?: string;
+    external?: string;
+};
+
+type Props = {
+    errors: RegisterErrors;
+};
+
+export default function Register({ errors: backendErrors }: Props) {
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors: formErrors,
+        reset,
+    } = useForm({
         name: "",
         email: "",
         password: "",
@@ -38,6 +58,13 @@ export default function Register() {
                                 unlock full access!
                             </p>
 
+                            {/* Error dari backend */}
+                            {backendErrors.external && (
+                                <Badge variant={"destructive"}>
+                                    {backendErrors.external}
+                                </Badge>
+                            )}
+
                             <form onSubmit={submit}>
                                 <div>
                                     <InputLabel htmlFor="name" value="Name" />
@@ -56,7 +83,7 @@ export default function Register() {
                                     />
 
                                     <InputError
-                                        message={errors.name}
+                                        message={formErrors.name}
                                         className="mt-2"
                                     />
                                 </div>
@@ -78,7 +105,7 @@ export default function Register() {
                                     />
 
                                     <InputError
-                                        message={errors.email}
+                                        message={formErrors.email}
                                         className="mt-2"
                                     />
                                 </div>
@@ -103,7 +130,7 @@ export default function Register() {
                                     />
 
                                     <InputError
-                                        message={errors.password}
+                                        message={formErrors.password}
                                         className="mt-2"
                                     />
                                 </div>
@@ -131,7 +158,9 @@ export default function Register() {
                                     />
 
                                     <InputError
-                                        message={errors.password_confirmation}
+                                        message={
+                                            formErrors.password_confirmation
+                                        }
                                         className="mt-2"
                                     />
                                 </div>
@@ -139,7 +168,7 @@ export default function Register() {
                                 <div className="flex justify-end items-center mt-4">
                                     <Link
                                         href={route("login")}
-                                        className="rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-gray-600 hover:text-gray-900 text-sm underline"
+                                        className="rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 text-foreground text-sm underline"
                                     >
                                         Already registered?
                                     </Link>
@@ -148,7 +177,9 @@ export default function Register() {
                                         className="ms-4 px-8 py-2"
                                         disabled={processing}
                                     >
-                                        Register
+                                        {processing
+                                            ? "Registering..."
+                                            : "Register"}
                                     </Button>
                                 </div>
                             </form>

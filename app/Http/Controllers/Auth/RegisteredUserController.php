@@ -43,41 +43,52 @@ class RegisteredUserController extends Controller
         try {
             DB::beginTransaction();
 
-            // Simpan user lokal
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->string('password')),
+                'password' => Hash::make($request->password),
             ]);
 
-            // Register ke API eksternal
-            $response = Http::asForm()->post($API_URL, [
+            if (!$user) {
+                DB::rollBack();
+                return redirect()->back()->withErrors([
+                    'external' => 'Gagal menyimpan user lokal.',
+                ]);
+            }
+
+            // Kirim sebagai x-www-form-urlencoded
+            $response = Http::asForm()->post($API_URL . "/register", [
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password,
             ]);
 
-            if (!$response->successful()) {
+
+            logger('External Register Response', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+                'headers' => $response->headers(),
+            ]);
+
+
+            if (!in_array($response->status(), [200, 201])) {
                 DB::rollBack();
-                return response()->json([
-                    'message' => 'Gagal register ke sistem eksternal.',
-                    'error' => $response->json(),
-                ], 500);
+                return redirect()->back()->withErrors([
+                    'external' => 'Gagal register ke sistem eksternal: ' . $response->json('message'),
+                ]);
             }
+
 
             DB::commit();
 
-            // Trigger event jika diperlukan
             event(new Registered($user));
 
-            // Redirect ke login page
             return redirect()->route('login');
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat register.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return redirect()->back()->withErrors([
+                'external' => 'Terjadi kesalahan saat register: ' . $e->getMessage(),
+            ]);
         }
     }
 }
