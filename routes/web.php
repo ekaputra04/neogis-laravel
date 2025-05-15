@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RectangleCategoryController;
 use App\Http\Controllers\RectangleController;
 use App\Http\Controllers\SettingController;
+use App\Http\Middleware\CheckExternalApiToken;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -31,9 +32,17 @@ use Inertia\Inertia;
 //     return Inertia::render('Dashboard',);
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+Route::get('/api/token', function () {
+    return response()->json([
+        'token' => session('external_api_token'),
+    ]);
+})->middleware('auth'); // hanya user login yang bisa akses
+
+
 Route::get('/', [HomeController::class, 'homePage'])->name('home');
 
-Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->group(function () {
+Route::middleware(['auth', 'verified', CheckExternalApiToken::class])->prefix('dashboard')->name('maps.')->group(function () {
     Route::get('/', [MapController::class, 'mapOverview'])->name('index');
 
     Route::get('/marker', [MarkerController::class, 'overviewMarker'])->name('marker');

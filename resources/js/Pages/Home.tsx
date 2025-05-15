@@ -11,6 +11,7 @@ import { ThemeProvider } from "@/Components/ui/theme-provider";
 import { UserInterface } from "@/types/types";
 import { Head, Link } from "@inertiajs/react";
 import { GithubIcon, Home, LayoutDashboard, User } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface HomePageProps {
     auth: {
@@ -39,6 +40,25 @@ const navItems = [
 ];
 
 export default function HomePage({ auth }: HomePageProps) {
+    // cara mengambil token
+    // const [token, setToken] = useState<string | null>(null);
+
+    // useEffect(() => {
+    //     async function getToken() {
+    //         try {
+    //             const res = await fetch("/api/token");
+    //             const data = await res.json();
+    //             console.log("Token:", data.token);
+    //             setToken(data.token); // simpan langsung token string
+    //         } catch (error) {
+    //             console.error("Gagal ambil token:", error);
+    //             setToken(null);
+    //         }
+    //     }
+
+    //     getToken();
+    // }, []);
+
     return (
         <ThemeProvider>
             <div className="relative w-full">

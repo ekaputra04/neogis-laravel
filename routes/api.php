@@ -57,6 +57,7 @@ Route::post('/maps/circles', [CircleController::class, 'store']);
 Route::put('/maps/circles/{id}', [CircleController::class, 'update']);
 Route::delete('/maps/circles/{id}', [CircleController::class, 'destroy']);
 
+
 // Route::get('/maps/rectangles-categories', [RectangleCategoryController::class, 'getAllRectangleCategories']);
 // Route::post('/maps/rectangles-categories', [RectangleCategoryController::class, 'store']);
 // Route::put('/maps/rectangles-categories/{id}', [RectangleCategoryController::class, 'update']);
