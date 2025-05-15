@@ -67,3 +67,7 @@ export interface StreetInterface {
     jenisjalan_id: number;
     keterangan: string;
 }
+
+export interface StreetWithCoordinatesInterface extends StreetInterface {
+    coordinates: [number, number][];
+}

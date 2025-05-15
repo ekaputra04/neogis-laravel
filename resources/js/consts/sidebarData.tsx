@@ -56,6 +56,27 @@ export const sidebarData = {
             ],
         },
         {
+            title: "Street",
+            url: "/dashboard/street",
+            items: [
+                {
+                    title: "Street Overview",
+                    url: "/dashboard/street",
+                    icon: <Map className="size-4" />,
+                },
+                {
+                    title: "Location",
+                    url: "/dashboard/street/location",
+                    icon: <ListPlus className="size-4" />,
+                },
+                {
+                    title: "Add Street",
+                    url: "/dashboard/street/add",
+                    icon: <PlusCircle className="size-4" />,
+                },
+            ],
+        },
+        {
             title: "Line",
             url: "/dashboard/line",
             items: [

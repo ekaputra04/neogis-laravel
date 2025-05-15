@@ -17,7 +17,6 @@ class StreetController extends Controller
         $token = Session::get('external_api_token');
 
         $streets = [];
-        $fullResponse = null;
 
         try {
             $response = Http::withHeaders(['Authorization' => "Bearer $token",])->get("$API_URL/ruasjalan");
@@ -30,7 +29,6 @@ class StreetController extends Controller
             if ($response->successful()) {
                 $data = $response->json();
                 $streets = $data['ruasjalan'] ?? [];
-                $fullResponse = $data;
 
                 Log::info('Streets data for frontend', ['streets' => $streets]);
             } else {
@@ -48,7 +46,6 @@ class StreetController extends Controller
 
         return Inertia::render('MapOverviewStreet', [
             'streets' => $streets,
-            'apiResponse' => $fullResponse,
         ]);
     }
 }

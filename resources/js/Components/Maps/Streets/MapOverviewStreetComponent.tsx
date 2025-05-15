@@ -9,7 +9,11 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import { CoordinatesInterface, LineInterface } from "@/types/types";
+import {
+    CoordinatesInterface,
+    StreetInterface,
+    StreetWithCoordinatesInterface,
+} from "@/types/types";
 import { Button } from "@/Components/ui/button";
 import {
     AlertDialog,
@@ -42,81 +46,102 @@ import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
+import { decode } from "@mapbox/polyline";
 
-interface MapOverviewLineComponentProps {
-    currentPath: string;
-    lines: LineInterface[];
+interface MapOverviewStreetComponentProps {
+    streets: StreetInterface[];
 }
 
-export default function MapOverviewLineComponent({
-    currentPath,
-    lines: initialLines,
-}: MapOverviewLineComponentProps) {
+export default function MapOverviewStreetComponent({
+    streets: initialStreets,
+}: MapOverviewStreetComponentProps) {
     const { selectedLayer } = useMapLayerStore();
-    const [lines, setLines] = useState<LineInterface[] | null>(initialLines);
-    const [filteredLines, setFilteredLines] =
-        useState<LineInterface[]>(initialLines);
+    const [streets, setStreets] = useState<StreetWithCoordinatesInterface[]>(
+        initialStreets.map((street) => ({
+            ...street,
+            coordinates: decode(street.paths).map(([lat, lng]) => [
+                lat,
+                lng,
+            ]) as [number, number][],
+        }))
+    );
+
+    const [filteredStreets, setFilteredStreets] = useState<
+        StreetWithCoordinatesInterface[]
+    >(
+        initialStreets.map((street) => ({
+            ...street,
+            coordinates: decode(street.paths).map(([lat, lng]) => [
+                lng,
+                lat,
+            ]) as [number, number][],
+        }))
+    );
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
-        lines && lines.length > 0
+        streets && streets.length > 0
             ? {
-                  latitude: lines[0].coordinates[0][0],
-                  longitude: lines[0].coordinates[0][1],
+                  latitude: streets[0].coordinates[0][0],
+                  longitude: streets[0].coordinates[0][1],
               }
             : {
-                  latitude: centerPoints[0], // fallback jika lines kosong
+                  latitude: centerPoints[0], // fallback jika streets kosong
                   longitude: centerPoints[1],
               }
     );
     const [searchValue, setSearchValue] = useState<string>("");
 
-    const fetchlines = async (): Promise<void> => {
+    const fetchStreets = async (): Promise<void> => {
         try {
-            const response = await axios.get(`/api/maps/lines`);
-            setLines(response.data);
+            const response = await axios.get(`/api/maps/streets`);
+            setStreets(response.data);
         } catch (error: any) {
             console.error(error.response?.data?.message || error.message);
         }
     };
 
-    const handleDeleted = async (lineId: number): Promise<void> => {
+    const handleDeleted = async (streetId: number): Promise<void> => {
         try {
-            const response = await axios.delete(`/api/maps/lines/${lineId}`);
-            await fetchlines();
-            toast.success("Line deleted successfully!");
+            const response = await axios.delete(
+                `/api/maps/streets/${streetId}`
+            );
+            await fetchStreets();
+            toast.success("Street deleted successfully!");
         } catch (error: any) {
             console.error(
-                "Error deleting line:",
+                "Error deleting street:",
                 error.response?.data?.message || error.message
             );
             toast.error(
-                error.response?.data?.message || "Error deleting line."
+                error.response?.data?.message || "Error deleting street."
             );
         }
     };
 
     useEffect(() => {
-        if (lines) {
-            const filtered = lines.filter((marker) =>
-                marker.name.toLowerCase().includes(searchValue.toLowerCase())
+        if (streets) {
+            const filtered = streets.filter((street) =>
+                street.nama_ruas
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase())
             );
-            setFilteredLines(filtered);
+            setFilteredStreets(filtered);
         } else {
-            setFilteredLines([]);
+            setFilteredStreets([]);
         }
-    }, [searchValue, lines]);
+    }, [searchValue, streets]);
 
     return (
         <>
-            <DashboardMapLayout currentPath={currentPath as string}>
-                <Head title="Line" />
+            <DashboardMapLayout currentPath={"/dashboard/street"}>
+                <Head title="Street" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
                         <HowToUseComponent tutorials={HowToUseMarkerOverview} />
 
-                        <Link href={route("maps.line.add")}>
+                        <Link href={route("maps.street.add")}>
                             <Button className="mb-4 w-full">
                                 <PlusCircle />
-                                Add New Line
+                                Add New Street
                             </Button>
                         </Link>
                         <hr />
@@ -130,31 +155,31 @@ export default function MapOverviewLineComponent({
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead className="flex justify-between items-center">
-                                            <p>Line</p>
+                                            <p>Street</p>
                                             <p>
-                                                ({filteredLines.length}/
-                                                {lines?.length})
+                                                ({filteredStreets.length}/
+                                                {streets?.length})
                                             </p>
                                         </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody className="block w-full">
-                                    {filteredLines.map((line, index) => (
+                                    {filteredStreets.map((street, index) => (
                                         <TableRow
                                             key={index}
                                             className="block w-full"
                                         >
                                             <TableCell className="flex justify-between items-center">
-                                                {line.name}
+                                                {street.nama_ruas}
                                                 <Button
                                                     variant={"outline"}
                                                     onClick={() =>
                                                         setMapCenter({
                                                             latitude:
-                                                                line
+                                                                street
                                                                     .coordinates[0][0],
                                                             longitude:
-                                                                line
+                                                                street
                                                                     .coordinates[0][1],
                                                         })
                                                     }
@@ -171,7 +196,7 @@ export default function MapOverviewLineComponent({
                     <div className="z-0 md:col-span-3">
                         <MapContainer
                             center={[mapCenter.latitude, mapCenter.longitude]}
-                            zoom={13}
+                            zoom={15}
                             style={{ height: "500px", width: "100%" }}
                         >
                             <MapCenterUpdater
@@ -182,39 +207,35 @@ export default function MapOverviewLineComponent({
                             />
                             <TileLayer url={tileLayers[selectedLayer]} />
 
-                            {lines &&
-                                lines.map((line) => (
+                            {streets &&
+                                streets.map((street) => (
                                     <Polyline
-                                        key={line.id}
-                                        positions={line.coordinates}
-                                        color={line.color || "blue"}
+                                        key={street.id}
+                                        positions={street.coordinates}
+                                        color={"blue"}
                                     >
                                         <Popup>
-                                            {line.name ? (
-                                                <strong>{line.name}</strong>
+                                            {street.nama_ruas ? (
+                                                <strong>
+                                                    {street.nama_ruas}
+                                                </strong>
                                             ) : (
                                                 "Lokasi tanpa nama"
                                             )}
                                             <br />
                                             <br />
-                                            {line.description ||
+                                            {street.keterangan ||
                                                 "Tidak ada deskripsi"}
                                             <br />
                                             <br />
-                                            {line.category_name && (
-                                                <>
-                                                    <Badge variant={"default"}>
-                                                        {line.category_name}
-                                                    </Badge>
-                                                </>
-                                            )}
+
                                             <br />
                                             <br />
                                             <Button
                                                 className="mr-2"
                                                 onClick={() => {
                                                     router.visit(
-                                                        `/dashboard/line/edit/${line.id}`
+                                                        `/dashboard/street/edit/${street.id}`
                                                     );
                                                 }}
                                                 variant={"outline"}
@@ -235,7 +256,7 @@ export default function MapOverviewLineComponent({
                                                             This action cannot
                                                             be undone. This will
                                                             permanently delete
-                                                            line from our
+                                                            street from our
                                                             servers.
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
@@ -246,7 +267,7 @@ export default function MapOverviewLineComponent({
                                                         <AlertDialogAction
                                                             onClick={() =>
                                                                 handleDeleted(
-                                                                    line.id
+                                                                    street.id
                                                                 )
                                                             }
                                                         >
