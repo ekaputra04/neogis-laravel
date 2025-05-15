@@ -215,20 +215,22 @@ export default function MapOverviewStreetComponent({
                                         color={"blue"}
                                     >
                                         <Popup>
-                                            {street.nama_ruas ? (
-                                                <strong>
-                                                    {street.nama_ruas}
-                                                </strong>
-                                            ) : (
-                                                "Lokasi tanpa nama"
-                                            )}
+                                            <strong>
+                                                {street.nama_ruas ||
+                                                    "Jalan Tanpa Nama"}
+                                            </strong>
                                             <br />
                                             <br />
                                             {street.keterangan ||
                                                 "Tidak ada deskripsi"}
                                             <br />
                                             <br />
-
+                                            Panjang: {street.panjang ||
+                                                "-"}{" "}
+                                            meter
+                                            <br />
+                                            <br />
+                                            Lebar: {street.lebar || "-"} meter
                                             <br />
                                             <br />
                                             <Button
