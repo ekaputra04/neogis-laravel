@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RectangleCategoryController;
 use App\Http\Controllers\RectangleController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\StreetController;
 use App\Http\Middleware\CheckExternalApiToken;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -69,6 +70,8 @@ Route::middleware(['auth', 'verified', CheckExternalApiToken::class])->prefix('d
     // Route::get('/rectangle', [RectangleController::class, 'overviewRectangle'])->name('rectangle');
     // Route::get('/rectangle/add', [RectangleController::class, 'addRectangle'])->name('rectangle.add');
     // Route::get('/rectangle/categories', [RectangleCategoryController::class, 'index'])->name('rectangle.categories');
+
+    Route::get('/street', [StreetController::class, 'overviewStreet'])->name('street');
 });
 
 
