@@ -94,3 +94,8 @@ export interface DesaInterface {
     kec_id: number;
     desa: string;
 }
+
+export interface LocationCounterInterface {
+    title: string;
+    value: number;
+}

@@ -3,6 +3,7 @@ import {
     DesaInterface,
     KabupatenInterface,
     KecamatanInterface,
+    LocationCounterInterface,
     ProvinsiInterface,
 } from "@/types/types";
 import { Head, usePage } from "@inertiajs/react";
@@ -16,9 +17,10 @@ import {
     TableRow,
 } from "@/Components/ui/table";
 import { Button } from "@/Components/ui/button";
-import { Eye } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Eye, Map } from "lucide-react";
+import { useState } from "react";
 import { capitalizeWords } from "@/lib/utils";
+import StreetLocationCard from "./StreetLocationCard";
 
 export default function StreetLocationComponent() {
     const { provinsi, kabupaten, kecamatan, desa } = usePage().props;
@@ -37,6 +39,25 @@ export default function StreetLocationComponent() {
         KecamatanInterface[]
     >([]);
     const [filteredDesa, setFilteredDesa] = useState<DesaInterface[]>([]);
+
+    const LocationCounter: LocationCounterInterface[] = [
+        {
+            title: "Total Provinsi",
+            value: (provinsi as ProvinsiInterface[]).length,
+        },
+        {
+            title: "Total Kabupaten",
+            value: (kabupaten as KabupatenInterface[]).length,
+        },
+        {
+            title: "Total Kecamatan",
+            value: (kecamatan as KecamatanInterface[]).length,
+        },
+        {
+            title: "Total Desa",
+            value: (desa as DesaInterface[]).length,
+        },
+    ];
 
     const handleFilterKabupaten = (provinsiId: number) => {
         const kab = (kabupaten as KabupatenInterface[]).filter(
@@ -65,10 +86,19 @@ export default function StreetLocationComponent() {
             <DashboardMapLayout currentPath={"/dashboard/street/location"}>
                 <Head title="Street Location" />
                 <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                    {LocationCounter.map((counter, index) => (
+                        <StreetLocationCard
+                            key={index}
+                            title={counter.title}
+                            value={counter.value}
+                        />
+                    ))}
                     <div className="p-4 border rounded-lg h-fit">
                         <Table>
                             <TableCaption>
-                                {filteredProvinsi.length} Provinsi found
+                                {filteredProvinsi.length
+                                    ? `${filteredProvinsi.length} Provinsi found`
+                                    : `Provinsi not found`}
                             </TableCaption>
                             <TableHeader>
                                 <TableRow>
@@ -116,7 +146,9 @@ export default function StreetLocationComponent() {
                     <div className="p-4 border rounded-lg h-fit">
                         <Table>
                             <TableCaption>
-                                {filteredKabupaten.length} Kabupaten found
+                                {filteredKabupaten.length
+                                    ? `${filteredKabupaten.length} Kabupaten found`
+                                    : `Please select Provinsi first`}
                             </TableCaption>
                             <TableHeader>
                                 <TableRow>
@@ -165,7 +197,9 @@ export default function StreetLocationComponent() {
                     <div className="p-4 border rounded-lg h-fit">
                         <Table>
                             <TableCaption>
-                                {filteredKecamatan.length} Kecamatan found
+                                {filteredKecamatan.length
+                                    ? `${filteredKecamatan.length} Kecamatan found`
+                                    : `Please select Kabupaten first`}
                             </TableCaption>
                             <TableHeader>
                                 <TableRow>
@@ -213,7 +247,9 @@ export default function StreetLocationComponent() {
                     <div className="p-4 border rounded-lg h-fit">
                         <Table>
                             <TableCaption>
-                                {filteredDesa.length} Desa found
+                                {filteredDesa.length
+                                    ? `${filteredDesa.length} Desa found`
+                                    : `Please select Kecamatan first`}
                             </TableCaption>
                             <TableHeader>
                                 <TableRow>
