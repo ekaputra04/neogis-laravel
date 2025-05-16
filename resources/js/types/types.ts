@@ -71,3 +71,26 @@ export interface StreetInterface {
 export interface StreetWithCoordinatesInterface extends StreetInterface {
     coordinates: [number, number][];
 }
+
+export interface ProvinsiInterface {
+    id: number;
+    provinsi: string;
+}
+
+export interface KabupatenInterface {
+    id: number;
+    prov_id: number;
+    kabupaten: string;
+}
+
+export interface KecamatanInterface {
+    id: number;
+    kab_id: number;
+    kecamatan: string;
+}
+
+export interface DesaInterface {
+    id: number;
+    kec_id: number;
+    desa: string;
+}

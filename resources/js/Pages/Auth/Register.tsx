@@ -7,6 +7,8 @@ import image from "@/images/background/sign-up-bg.jpg";
 import { Button } from "@/Components/ui/button";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
 import { Badge } from "@/Components/ui/badge";
+import { Label } from "@/Components/ui/label";
+import { Input } from "@/Components/ui/input";
 
 type RegisterErrors = {
     name?: string;
@@ -67,19 +69,19 @@ export default function Register({ errors: backendErrors }: Props) {
 
                             <form onSubmit={submit}>
                                 <div>
-                                    <InputLabel htmlFor="name" value="Name" />
+                                    <Label htmlFor="name">Name</Label>
 
-                                    <TextInput
+                                    <Input
                                         id="name"
                                         name="name"
                                         value={data.name}
                                         className="block mt-1 w-full"
                                         autoComplete="name"
-                                        isFocused={true}
                                         onChange={(e) =>
                                             setData("name", e.target.value)
                                         }
                                         required
+                                        disabled={processing}
                                     />
 
                                     <InputError
@@ -89,9 +91,9 @@ export default function Register({ errors: backendErrors }: Props) {
                                 </div>
 
                                 <div className="mt-4">
-                                    <InputLabel htmlFor="email" value="Email" />
+                                    <Label htmlFor="email">Email</Label>
 
-                                    <TextInput
+                                    <Input
                                         id="email"
                                         type="email"
                                         name="email"
@@ -102,6 +104,7 @@ export default function Register({ errors: backendErrors }: Props) {
                                             setData("email", e.target.value)
                                         }
                                         required
+                                        disabled={processing}
                                     />
 
                                     <InputError
@@ -111,12 +114,9 @@ export default function Register({ errors: backendErrors }: Props) {
                                 </div>
 
                                 <div className="mt-4">
-                                    <InputLabel
-                                        htmlFor="password"
-                                        value="Password"
-                                    />
+                                    <Label htmlFor="password">Password</Label>
 
-                                    <TextInput
+                                    <Input
                                         id="password"
                                         type="password"
                                         name="password"
@@ -127,6 +127,7 @@ export default function Register({ errors: backendErrors }: Props) {
                                             setData("password", e.target.value)
                                         }
                                         required
+                                        disabled={processing}
                                     />
 
                                     <InputError
@@ -136,12 +137,11 @@ export default function Register({ errors: backendErrors }: Props) {
                                 </div>
 
                                 <div className="mt-4">
-                                    <InputLabel
-                                        htmlFor="password_confirmation"
-                                        value="Confirm Password"
-                                    />
+                                    <Label htmlFor="password_confirmation">
+                                        Confirm Password
+                                    </Label>
 
-                                    <TextInput
+                                    <Input
                                         id="password_confirmation"
                                         type="password"
                                         name="password_confirmation"
@@ -155,6 +155,7 @@ export default function Register({ errors: backendErrors }: Props) {
                                             )
                                         }
                                         required
+                                        disabled={processing}
                                     />
 
                                     <InputError
@@ -166,13 +167,6 @@ export default function Register({ errors: backendErrors }: Props) {
                                 </div>
 
                                 <div className="flex justify-end items-center mt-4">
-                                    <Link
-                                        href={route("login")}
-                                        className="rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 text-foreground text-sm underline"
-                                    >
-                                        Already registered?
-                                    </Link>
-
                                     <Button
                                         className="ms-4 px-8 py-2"
                                         disabled={processing}

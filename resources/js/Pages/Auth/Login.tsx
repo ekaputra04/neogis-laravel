@@ -68,6 +68,7 @@ export default function Login({
                                         onChange={(e) =>
                                             setData("email", e.target.value)
                                         }
+                                        disabled={processing}
                                     />
 
                                     <InputError
@@ -92,6 +93,7 @@ export default function Login({
                                         onChange={(e) =>
                                             setData("password", e.target.value)
                                         }
+                                        disabled={processing}
                                     />
 
                                     <InputError
@@ -123,7 +125,7 @@ export default function Login({
                                     {canResetPassword && (
                                         <Link
                                             href={route("password.request")}
-                                            className="rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-gray-600 hover:text-gray-900 text-sm underline"
+                                            className="rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-primary/50 text-sm underline"
                                         >
                                             Forgot your password?
                                         </Link>
