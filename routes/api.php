@@ -10,6 +10,7 @@ use App\Http\Controllers\PolygonCategoryController;
 use App\Http\Controllers\PolygonController;
 use App\Http\Controllers\RectangleCategoryController;
 use App\Http\Controllers\RectangleController;
+use App\Http\Controllers\StreetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,7 @@ Route::post('/maps/circles', [CircleController::class, 'store']);
 Route::put('/maps/circles/{id}', [CircleController::class, 'update']);
 Route::delete('/maps/circles/{id}', [CircleController::class, 'destroy']);
 
+Route::post('/maps/streets', [StreetController::class, 'store']);
 
 // Route::get('/maps/rectangles-categories', [RectangleCategoryController::class, 'getAllRectangleCategories']);
 // Route::post('/maps/rectangles-categories', [RectangleCategoryController::class, 'store']);

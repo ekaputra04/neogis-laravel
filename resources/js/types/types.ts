@@ -99,3 +99,18 @@ export interface LocationCounterInterface {
     title: string;
     value: number;
 }
+
+export interface EksistingJalanInterface {
+    id: number;
+    eksisting: string;
+}
+
+export interface JenisJalanInterface {
+    id: number;
+    jenisjalan: string;
+}
+
+export interface KondisiJalanInterface {
+    id: number;
+    kondisi: string;
+}

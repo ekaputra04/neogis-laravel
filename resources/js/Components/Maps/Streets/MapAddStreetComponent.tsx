@@ -1,0 +1,694 @@
+import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
+import { Head, Link, usePage } from "@inertiajs/react";
+import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/Components/ui/form";
+import { Input } from "@/Components/ui/input";
+import { Button } from "@/Components/ui/button";
+import { Textarea } from "@/Components/ui/textarea";
+import { EditControl } from "react-leaflet-draw";
+import "leaflet/dist/leaflet.css";
+import "leaflet-draw/dist/leaflet.draw.css";
+import L from "leaflet";
+import { useEffect, useState } from "react";
+import {
+    CategoriesInterface,
+    CoordinatesInterface,
+    DesaInterface,
+    EksistingJalanInterface,
+    JenisJalanInterface,
+    KabupatenInterface,
+    KecamatanInterface,
+    KondisiJalanInterface,
+    ProvinsiInterface,
+} from "@/types/types";
+import { toast } from "sonner";
+import FormSkeleton from "@/Components/FormSkeleton";
+import { Skeleton } from "@/Components/ui/skeleton";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
+import HowToUse from "@/Components/HowToUseComponent";
+import { HowToUseMarkerAdd } from "@/consts/howToUse";
+import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { tileLayers } from "@/consts/tileLayers";
+import { Label } from "@/Components/ui/label";
+import { capitalizeWords } from "@/lib/utils";
+import { decode, encode } from "@mapbox/polyline";
+
+const formSchema = z.object({
+    desa_id: z.number(),
+    kode_ruas: z.string().min(2).max(50),
+    nama_ruas: z.string().min(2).max(50),
+    lebar: z.number(),
+    eksisting_id: z.number(),
+    kondisi_id: z.number(),
+    jenisjalan_id: z.number(),
+    keterangan: z.string().min(2).max(255),
+});
+
+interface DrawCreatedEvent {
+    layerType: string;
+    layer: L.Layer;
+}
+
+interface DrawEditedEvent {
+    layers: L.LayerGroup;
+}
+
+export default function MapAddStreetComponent() {
+    const { provinsi, kabupaten, kecamatan, desa, eksisting, jenis, kondisi } =
+        usePage().props;
+
+    const { selectedLayer } = useMapLayerStore();
+    const [streetCoordinates, setStreetCoordinates] = useState<
+        CoordinatesInterface[] | null
+    >([]);
+    const [loading, setLoading] = useState(false);
+    const [mapKey, setMapKey] = useState(0);
+
+    const [selectedProvinsi, setSelectedProvinsi] = useState<number>();
+    const [selectedKabupaten, setSelectedKabupaten] = useState<number>();
+    const [selectedKecamatan, setSelectedKecamatan] = useState<number>();
+
+    const [filteredProvinsi, setFilteredProvinsi] = useState<
+        ProvinsiInterface[]
+    >(provinsi as ProvinsiInterface[]);
+    const [filteredKabupaten, setFilteredKabupaten] = useState<
+        KabupatenInterface[]
+    >([]);
+    const [filteredKecamatan, setFilteredKecamatan] = useState<
+        KecamatanInterface[]
+    >([]);
+    const [filteredDesa, setFilteredDesa] = useState<DesaInterface[]>([]);
+
+    const handleFilterKabupaten = (provinsiId: number) => {
+        const kab = (kabupaten as KabupatenInterface[]).filter(
+            (kabupaten) => kabupaten.prov_id === provinsiId
+        );
+        setSelectedProvinsi(provinsiId);
+        setFilteredKabupaten(kab);
+    };
+
+    const handleFilterKecamatan = (kabupatenId: number) => {
+        const kec = (kecamatan as KecamatanInterface[]).filter(
+            (kecamatan) => kecamatan.kab_id === kabupatenId
+        );
+        setSelectedKabupaten(kabupatenId);
+        setFilteredKecamatan(kec);
+    };
+
+    const handleFilterDesa = (kecamatanId: number) => {
+        const des = (desa as DesaInterface[]).filter(
+            (desa) => desa.kec_id === kecamatanId
+        );
+        setSelectedKecamatan(kecamatanId);
+        setFilteredDesa(des);
+    };
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            nama_ruas: "",
+            keterangan: "",
+            lebar: undefined,
+        },
+    });
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        if (!streetCoordinates) {
+            toast.error("Please add a street coordinates first.");
+            return;
+        }
+
+        const formattedCoordinates: [number, number][] = streetCoordinates.map(
+            (coord): [number, number] => [coord.latitude, coord.longitude]
+        );
+
+        const encodeCoordinates = encode(formattedCoordinates);
+
+        const data = {
+            paths: encodeCoordinates,
+            desa_id: values.desa_id,
+            kode_ruas: values.kode_ruas,
+            nama_ruas: values.nama_ruas,
+            panjang: 0,
+            lebar: values.lebar,
+            eksisting_id: values.eksisting_id,
+            kondisi_id: values.kondisi_id,
+            jenisjalan_id: values.jenisjalan_id,
+            keterangan: values.keterangan,
+        };
+
+        console.log(data);
+
+        setLoading(true);
+
+        try {
+            // const response = await fetch(`${origin}/api/maps/streets`, {
+            //     method: "POST",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify(data),
+            // });
+            // if (!response.ok) {
+            //     throw new Error("Failed to save street");
+            // }
+            // toast.success("Street saved successfully!");
+            // form.reset();
+            // setStreetCoordinates(null);
+        } catch (error) {
+            console.error("Error saving street:", error);
+            toast.error("Error saving street.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleCreated = (e: DrawCreatedEvent) => {
+        const { layer } = e;
+
+        if (layer instanceof L.Polyline) {
+            // Ambil seluruh koordinat polyline
+            const latLngs = layer.getLatLngs() as L.LatLng[];
+
+            // Transformasikan koordinat ke format yang sesuai
+            const coordinates: CoordinatesInterface[] = latLngs.map(
+                (latLng) => ({
+                    latitude: latLng.lat,
+                    longitude: latLng.lng,
+                })
+            );
+
+            // Simpan koordinat tersebut ke dalam state (atau tempat lain yang sesuai)
+            setStreetCoordinates(coordinates);
+        }
+    };
+
+    const handleEdited = (e: DrawEditedEvent) => {
+        const event = e as DrawEditedEvent;
+
+        // Variabel untuk menyimpan seluruh koordinat polyline yang diedit
+        let updatedCoordinates: CoordinatesInterface[] = [];
+
+        event.layers.eachLayer((layer) => {
+            if (layer instanceof L.Polyline) {
+                // Ambil seluruh koordinat polyline yang diedit
+                const latLngs = layer.getLatLngs() as L.LatLng[];
+
+                // Map koordinat ke format yang sesuai
+                updatedCoordinates = latLngs.map((latLng) => ({
+                    latitude: latLng.lat,
+                    longitude: latLng.lng,
+                }));
+            }
+        });
+
+        // Update state dengan koordinat yang telah diedit
+        setStreetCoordinates(updatedCoordinates);
+    };
+
+    const handleDeleted = (e: any) => {
+        e.layers.eachLayer((layer: any) => {
+            if (layer instanceof L.Marker) {
+                setStreetCoordinates(null);
+            }
+        });
+    };
+
+    useEffect(() => {
+        if (streetCoordinates === null) {
+            setMapKey((prevKey) => prevKey + 1);
+        }
+    }, [streetCoordinates]);
+
+    return (
+        <>
+            <DashboardMapLayout currentPath={"/dashboard/street/add"}>
+                <Head title="Add Street" />
+                <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
+                    Add Street
+                </h2>
+                <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
+                    <div className="">
+                        <HowToUse tutorials={HowToUseMarkerAdd} />
+
+                        {loading ? (
+                            <>
+                                <FormSkeleton count={2} />
+                            </>
+                        ) : (
+                            <>
+                                <Form {...form}>
+                                    <form
+                                        onSubmit={form.handleSubmit(onSubmit)}
+                                        className="space-y-4"
+                                    >
+                                        <FormField
+                                            control={form.control}
+                                            name="nama_ruas"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Nama</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            placeholder="Nama..."
+                                                            {...field}
+                                                            disabled={loading}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={form.control}
+                                            name="kode_ruas"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Kode</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            placeholder="Kode..."
+                                                            {...field}
+                                                            disabled={loading}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={form.control}
+                                            name="keterangan"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>
+                                                        Keterangan
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Textarea
+                                                            placeholder="Keterangan"
+                                                            {...field}
+                                                            disabled={loading}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <div className="gap-4 grid grid-cols-2">
+                                            <div className="space-y-2">
+                                                <Label>Panjang (m)</Label>
+                                                <Input
+                                                    type="number"
+                                                    placeholder="Panjang"
+                                                    value={"0"}
+                                                    disabled
+                                                />
+                                            </div>
+
+                                            <FormField
+                                                control={form.control}
+                                                name="lebar"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>
+                                                            Lebar (m)
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder="Lebar"
+                                                                // {...field}
+                                                                disabled={
+                                                                    loading
+                                                                }
+                                                                type="number"
+                                                                onChange={(
+                                                                    e
+                                                                ) => {
+                                                                    form.setValue(
+                                                                        "lebar",
+                                                                        Number(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    );
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Provinsi</Label>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    setFilteredKabupaten([]);
+                                                    setFilteredKecamatan([]);
+                                                    setFilteredDesa([]);
+                                                    handleFilterKabupaten(
+                                                        Number(value)
+                                                    );
+                                                }}
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Provinsi" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {(
+                                                        provinsi as ProvinsiInterface[]
+                                                    ).map((provinsi) => (
+                                                        <SelectItem
+                                                            value={provinsi.id.toString()}
+                                                            key={provinsi.id}
+                                                        >
+                                                            {capitalizeWords(
+                                                                provinsi.provinsi
+                                                            )}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Kabupaten</Label>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    setFilteredKecamatan([]);
+                                                    setFilteredDesa([]);
+                                                    handleFilterKecamatan(
+                                                        Number(value)
+                                                    );
+                                                }}
+                                                disabled={
+                                                    filteredKabupaten.length ==
+                                                    0
+                                                }
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue
+                                                        placeholder={
+                                                            filteredKabupaten.length >
+                                                            0
+                                                                ? "Kabupaten"
+                                                                : "Please select provinsi first"
+                                                        }
+                                                    />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {filteredKabupaten.map(
+                                                        (kabupaten) => (
+                                                            <SelectItem
+                                                                value={kabupaten.id.toString()}
+                                                                key={
+                                                                    kabupaten.id
+                                                                }
+                                                            >
+                                                                {capitalizeWords(
+                                                                    kabupaten.kabupaten
+                                                                )}
+                                                            </SelectItem>
+                                                        )
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Kecamatan</Label>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    setFilteredDesa([]);
+                                                    handleFilterDesa(
+                                                        Number(value)
+                                                    );
+                                                }}
+                                                disabled={
+                                                    filteredKecamatan.length ==
+                                                    0
+                                                }
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue
+                                                        placeholder={
+                                                            filteredKecamatan.length >
+                                                            0
+                                                                ? "Kecamatan"
+                                                                : "Please select kabupaten first"
+                                                        }
+                                                    />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {filteredKecamatan.map(
+                                                        (kecamatan) => (
+                                                            <SelectItem
+                                                                value={kecamatan.id.toString()}
+                                                                key={
+                                                                    kecamatan.id
+                                                                }
+                                                            >
+                                                                {capitalizeWords(
+                                                                    kecamatan.kecamatan
+                                                                )}
+                                                            </SelectItem>
+                                                        )
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Desa</Label>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    form.setValue(
+                                                        "desa_id",
+                                                        Number(value)
+                                                    );
+                                                }}
+                                                disabled={
+                                                    filteredDesa.length == 0
+                                                }
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue
+                                                        placeholder={
+                                                            filteredDesa.length >
+                                                            0
+                                                                ? "Desa"
+                                                                : "Please select kecamatan first"
+                                                        }
+                                                    />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {filteredDesa.map(
+                                                        (desa) => (
+                                                            <SelectItem
+                                                                value={desa.id.toString()}
+                                                                key={desa.id}
+                                                            >
+                                                                {capitalizeWords(
+                                                                    desa.desa
+                                                                )}
+                                                            </SelectItem>
+                                                        )
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Eksisting</Label>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    form.setValue(
+                                                        "eksisting_id",
+                                                        Number(value)
+                                                    );
+                                                }}
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Eksisting" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {(
+                                                        eksisting as EksistingJalanInterface[]
+                                                    ).map((eksisting) => (
+                                                        <SelectItem
+                                                            value={eksisting.id.toString()}
+                                                            key={eksisting.id}
+                                                        >
+                                                            {
+                                                                eksisting.eksisting
+                                                            }
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Kondisi</Label>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    form.setValue(
+                                                        "kondisi_id",
+                                                        Number(value)
+                                                    );
+                                                }}
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Kondisi" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {(
+                                                        kondisi as KondisiJalanInterface[]
+                                                    ).map((eksisting) => (
+                                                        <SelectItem
+                                                            value={eksisting.id.toString()}
+                                                            key={eksisting.id}
+                                                        >
+                                                            {eksisting.kondisi}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Jenis</Label>
+                                            <Select
+                                                onValueChange={(value) => {
+                                                    form.setValue(
+                                                        "jenisjalan_id",
+                                                        Number(value)
+                                                    );
+                                                }}
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Jenis" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {(
+                                                        jenis as JenisJalanInterface[]
+                                                    ).map((eksisting) => (
+                                                        <SelectItem
+                                                            value={eksisting.id.toString()}
+                                                            key={eksisting.id}
+                                                        >
+                                                            {
+                                                                eksisting.jenisjalan
+                                                            }
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        {/* <Select
+                                            required
+                                            onValueChange={(value) => {
+                                                const selectedCategory =
+                                                    categories.find(
+                                                        (cat) =>
+                                                            cat.name === value
+                                                    );
+                                                if (selectedCategory) {
+                                                    form.setValue(
+                                                        "category_id",
+                                                        selectedCategory.id
+                                                    );
+                                                }
+                                            }}
+                                            disabled={categories.length == 0}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a category" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {categories.map((category) => (
+                                                    <SelectItem
+                                                        value={category.name}
+                                                        key={category.id}
+                                                    >
+                                                        {category.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select> */}
+                                        <Button
+                                            type="submit"
+                                            disabled={loading}
+                                        >
+                                            {loading
+                                                ? "Adding Street..."
+                                                : "Add Street"}
+                                        </Button>
+                                    </form>
+                                </Form>
+                            </>
+                        )}
+                    </div>
+                    <div className="md:col-span-2">
+                        {loading ? (
+                            <>
+                                <Skeleton className="w-full h-screen" />
+                            </>
+                        ) : (
+                            <MapContainer
+                                key={mapKey}
+                                center={[-8.65, 115.21]}
+                                zoom={13}
+                                style={{ height: "500px", width: "100%" }}
+                                className="z-10"
+                            >
+                                <TileLayer url={tileLayers[selectedLayer]} />
+
+                                <FeatureGroup>
+                                    <EditControl
+                                        position="topright"
+                                        onCreated={handleCreated}
+                                        onEdited={handleEdited}
+                                        onDeleted={handleDeleted}
+                                        draw={{
+                                            rectangle: false,
+                                            polygon: false,
+                                            circle: false,
+                                            marker: false,
+                                            polyline:
+                                                streetCoordinates?.length == 0,
+                                            circlemarker: false,
+                                        }}
+                                    />
+                                </FeatureGroup>
+                            </MapContainer>
+                        )}
+                    </div>
+                </div>
+            </DashboardMapLayout>
+        </>
+    );
+}

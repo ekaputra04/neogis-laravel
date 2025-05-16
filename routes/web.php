@@ -72,7 +72,7 @@ Route::middleware(['auth', 'verified', CheckExternalApiToken::class])->prefix('d
     // Route::get('/rectangle/categories', [RectangleCategoryController::class, 'index'])->name('rectangle.categories');
 
     Route::get('/street', [StreetController::class, 'overviewStreet'])->name('street');
-    Route::get('/street/add', [StreetController::class, 'overviewStreet'])->name('street.add');
+    Route::get('/street/add', [StreetController::class, 'addStreet'])->name('street.add');
     Route::get('/street/location', [StreetController::class, 'overviewLocation'])->name('street.location');
 });
 

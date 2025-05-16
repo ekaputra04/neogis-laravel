@@ -66,6 +66,7 @@ export default function StreetLocationComponent() {
         setSelectedProvinsi(provinsiId);
         setFilteredKabupaten(kab);
     };
+
     const handleFilterKecamatan = (kabupatenId: number) => {
         const kec = (kecamatan as KecamatanInterface[]).filter(
             (kecamatan) => kecamatan.kab_id === kabupatenId
@@ -73,6 +74,7 @@ export default function StreetLocationComponent() {
         setSelectedKabupaten(kabupatenId);
         setFilteredKecamatan(kec);
     };
+
     const handleFilterDesa = (kecamatanId: number) => {
         const des = (desa as DesaInterface[]).filter(
             (desa) => desa.kec_id === kecamatanId
