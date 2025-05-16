@@ -64,7 +64,7 @@ export default function MapAddLineComponent({
 }: MapAddLineComponentProps) {
     const { selectedLayer } = useMapLayerStore();
     const [lineCoordinates, setLineCoordinates] = useState<
-        CoordinatesInterface[] | null
+        CoordinatesInterface[]
     >([]);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
@@ -110,7 +110,7 @@ export default function MapAddLineComponent({
 
             toast.success("Line saved successfully!");
             form.reset();
-            setLineCoordinates(null);
+            setLineCoordinates([]);
         } catch (error) {
             console.error("Error saving line:", error);
             toast.error("Error saving line.");
@@ -164,14 +164,14 @@ export default function MapAddLineComponent({
 
     const handleDeleted = (e: any) => {
         e.layers.eachLayer((layer: any) => {
-            if (layer instanceof L.Marker) {
-                setLineCoordinates(null);
+            if (layer instanceof L.Polyline) {
+                setLineCoordinates([]);
             }
         });
     };
 
     useEffect(() => {
-        if (lineCoordinates === null) {
+        if (lineCoordinates.length == 0) {
             setMapKey((prevKey) => prevKey + 1);
         }
     }, [lineCoordinates]);

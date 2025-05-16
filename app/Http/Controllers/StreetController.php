@@ -193,36 +193,55 @@ class StreetController extends Controller
             'desa' => $desa,
             'eksisting' => $eksisting,
             'jenis' => $jenis,
-            'kondisi' => $kondisi
+            'kondisi' => $kondisi,
+            'token' => $token
         ]);
     }
 
-    public function store(Request $request)
+    public function editStreet($id)
     {
         $API_URL = env('API_URL');
         $token = Session::get('external_api_token');
 
-        // Validasi input dasar
-        $validated = $request->validate([
-            'path' => 'required|string',
-            'desa_id' => 'required|numeric',
-            'kode_ruas' => 'required|string',
-            'nama_ruas' => 'required|string',
-            'panjang' => 'required|numeric',
-            'lebar' => 'required|numeric',
-            'eksisting_id' => 'required|numeric',
-            'kondisi_id' => 'required|numeric',
-            'jenisjalan_id' => 'required|numeric',
-            'keterangan' => 'required|string',
-        ]);
+        $editedStreet = null;
+        $provinsi = [];
+        $kabupaten = [];
+        $kecamatan = [];
+        $desa = [];
+        $selectedProvinsi = [];
+        $selectedKabupaten = [];
+        $selectedKecamatan = [];
+        $selectedDesa = [];
+        $eksisting = [];
+        $jenis = [];
+        $kondisi = [];
 
         try {
-            $response = Http::withHeaders(['Authorization' => "Bearer $token",])->post("$API_URL/ruasjalan")->json($validated);
+            $response = Http::withHeaders([
+                'Authorization' => "Bearer $token",
+            ])->get("$API_URL/ruasjalan");
 
             Log::info('API Response', [
                 'status' => $response->status(),
                 'body' => $response->json()
             ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $streets = $data['ruasjalan'] ?? [];
+
+                $editedStreet = collect($streets)->firstWhere('id', (int) $id);
+
+                Log::info('Edited street data', ['editedStreet' => $editedStreet]);
+                if (!$editedStreet) {
+                    return Inertia::render('NotFound');
+                }
+            } else {
+                Log::error('API request failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
+            }
         } catch (\Exception $e) {
             Log::error('Exception during API request', [
                 'message' => $e->getMessage(),
@@ -230,6 +249,130 @@ class StreetController extends Controller
             ]);
         }
 
-        return response()->json($validated, 201);
+        try {
+            $desa_id = $editedStreet["desa_id"];
+
+            $responseSelected = Http::withHeaders([
+                'Authorization' => "Bearer $token",
+            ])->get("$API_URL/kecamatanbydesaid/$desa_id");
+
+            Log::info('API Response', [
+                'status' => $responseSelected->status(),
+                'body' => $responseSelected->json()
+            ]);
+
+            if ($responseSelected->successful()) {
+                $data = $responseSelected->json();
+                $selectedProvinsi = $data['provinsi'] ?? [];
+                $selectedKabupaten = $data['kabupaten'] ?? [];
+                $selectedKecamatan = $data['kecamatan'] ?? [];
+                $selectedDesa = $data['desa'] ?? [];
+            } else {
+                Log::error('API request failed', [
+                    'status' => $responseSelected->status(),
+                    'body' => $responseSelected->body()
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Exception during API request', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+
+        try {
+            $responseLocation = Http::withHeaders(['Authorization' => "Bearer $token",])->get("$API_URL/mregion");
+
+            if ($responseLocation->successful()) {
+                $data = $responseLocation->json();
+                $provinsi = $data['provinsi'] ?? [];
+                $kabupaten = $data['kabupaten'] ?? [];
+                $kecamatan = $data['kecamatan'] ?? [];
+                $desa = $data['desa'] ?? [];
+            } else {
+                Log::error('API request failed', [
+                    'status' => $responseLocation->status(),
+                    'body' => $responseLocation->body()
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Exception during API request', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+
+        try {
+            $responseEksisting = Http::withHeaders(['Authorization' => "Bearer $token",])->get("$API_URL/meksisting");
+
+            if ($responseEksisting->successful()) {
+                $data = $responseEksisting->json();
+                $eksisting = $data['eksisting'] ?? [];
+            } else {
+                Log::error('API request failed', [
+                    'status' => $responseEksisting->status(),
+                    'body' => $responseEksisting->body()
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Exception during API request', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+
+        try {
+            $responseJenis = Http::withHeaders(['Authorization' => "Bearer $token",])->get("$API_URL/mjenisjalan");
+
+            if ($responseJenis->successful()) {
+                $data = $responseJenis->json();
+                $jenis = $data['eksisting'] ?? [];
+            } else {
+                Log::error('API request failed', [
+                    'status' => $responseJenis->status(),
+                    'body' => $responseJenis->body()
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Exception during API request', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+
+        try {
+            $responseKondisi = Http::withHeaders(['Authorization' => "Bearer $token",])->get("$API_URL/mkondisi");
+
+            if ($responseKondisi->successful()) {
+                $data = $responseKondisi->json();
+                $kondisi = $data['eksisting'] ?? [];
+            } else {
+                Log::error('API request failed', [
+                    'status' => $responseKondisi->status(),
+                    'body' => $responseKondisi->body()
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Exception during API request', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+
+        return Inertia::render('MapEditStreet', [
+            'street' => $editedStreet,
+            'provinsi' => $provinsi,
+            'kabupaten' => $kabupaten,
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'eksisting' => $eksisting,
+            'jenis' => $jenis,
+            'kondisi' => $kondisi,
+            'token' => $token,
+            'selectedProvinsi' => $selectedProvinsi,
+            'selectedKabupaten' => $selectedKabupaten,
+            'selectedKecamatan' => $selectedKecamatan,
+            'selectedDesa' => $selectedDesa
+        ]);
     }
 }

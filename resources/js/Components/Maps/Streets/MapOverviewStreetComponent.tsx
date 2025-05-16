@@ -47,6 +47,7 @@ import { HowToUseMarkerOverview } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
 import { decode } from "@mapbox/polyline";
+import { roundToTwo } from "@/lib/utils";
 
 interface MapOverviewStreetComponentProps {
     streets: StreetInterface[];
@@ -225,7 +226,8 @@ export default function MapOverviewStreetComponent({
                                                 "Tidak ada deskripsi"}
                                             <br />
                                             <br />
-                                            Panjang: {street.panjang ||
+                                            Panjang:{" "}
+                                            {roundToTwo(street.panjang) ||
                                                 "-"}{" "}
                                             meter
                                             <br />
@@ -236,6 +238,9 @@ export default function MapOverviewStreetComponent({
                                             <Button
                                                 className="mr-2"
                                                 onClick={() => {
+                                                    toast.info(
+                                                        "Sedang memproses, mohon tunggu sebentar..."
+                                                    );
                                                     router.visit(
                                                         `/dashboard/street/edit/${street.id}`
                                                     );

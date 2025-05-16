@@ -72,27 +72,38 @@ export interface StreetWithCoordinatesInterface extends StreetInterface {
     coordinates: [number, number][];
 }
 
-export interface ProvinsiInterface {
+export interface SelectedProvinsiInterface {
     id: number;
     provinsi: string;
 }
 
-export interface KabupatenInterface {
+export interface ProvinsiInterface extends SelectedProvinsiInterface {}
+
+export interface SelectedKabupatenInterface {
     id: number;
-    prov_id: number;
     kabupaten: string;
 }
 
-export interface KecamatanInterface {
+export interface KabupatenInterface extends SelectedKabupatenInterface {
+    prov_id: number;
+}
+
+export interface SelectedKecamatanInterface {
     id: number;
-    kab_id: number;
     kecamatan: string;
 }
 
-export interface DesaInterface {
+export interface KecamatanInterface extends SelectedKecamatanInterface {
+    kab_id: number;
+}
+
+export interface SelectedDesaInterface {
     id: number;
-    kec_id: number;
     desa: string;
+}
+
+export interface DesaInterface extends SelectedDesaInterface {
+    kec_id: number;
 }
 
 export interface LocationCounterInterface {

@@ -1,4 +1,5 @@
 import { Button } from "@/Components/ui/button";
+import { ThemeProvider } from "@/Components/ui/theme-provider";
 import { Head } from "@inertiajs/react";
 import NotFound from "react-notfound-page";
 
@@ -12,12 +13,14 @@ export default function NotFoundPage() {
     return (
         <>
             <Head title="Page Not Found" />
-            <NotFound
-                ButtonComponent={CustomButton}
-                text="Page Not Found"
-                textClassName="text-red-500"
-                rootClassName="my-custom-class"
-            />
+            <ThemeProvider>
+                <NotFound
+                    ButtonComponent={CustomButton}
+                    text="Page Not Found"
+                    textClassName="text-red-500"
+                    rootClassName="my-custom-class"
+                />
+            </ThemeProvider>
         </>
     );
 }

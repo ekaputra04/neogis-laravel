@@ -74,6 +74,7 @@ Route::middleware(['auth', 'verified', CheckExternalApiToken::class])->prefix('d
     Route::get('/street', [StreetController::class, 'overviewStreet'])->name('street');
     Route::get('/street/add', [StreetController::class, 'addStreet'])->name('street.add');
     Route::get('/street/location', [StreetController::class, 'overviewLocation'])->name('street.location');
+    Route::get('/street/edit/{id}', [StreetController::class, 'editStreet'])->name('street.edit');
 });
 
 

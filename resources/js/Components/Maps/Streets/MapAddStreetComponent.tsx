@@ -74,23 +74,24 @@ interface DrawEditedEvent {
 }
 
 export default function MapAddStreetComponent() {
-    const { provinsi, kabupaten, kecamatan, desa, eksisting, jenis, kondisi } =
-        usePage().props;
+    const {
+        provinsi,
+        kabupaten,
+        kecamatan,
+        desa,
+        eksisting,
+        jenis,
+        kondisi,
+        token,
+    } = usePage().props;
 
     const { selectedLayer } = useMapLayerStore();
     const [streetCoordinates, setStreetCoordinates] = useState<
-        CoordinatesInterface[] | null
+        CoordinatesInterface[]
     >([]);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
 
-    const [selectedProvinsi, setSelectedProvinsi] = useState<number>();
-    const [selectedKabupaten, setSelectedKabupaten] = useState<number>();
-    const [selectedKecamatan, setSelectedKecamatan] = useState<number>();
-
-    const [filteredProvinsi, setFilteredProvinsi] = useState<
-        ProvinsiInterface[]
-    >(provinsi as ProvinsiInterface[]);
     const [filteredKabupaten, setFilteredKabupaten] = useState<
         KabupatenInterface[]
     >([]);
@@ -103,7 +104,6 @@ export default function MapAddStreetComponent() {
         const kab = (kabupaten as KabupatenInterface[]).filter(
             (kabupaten) => kabupaten.prov_id === provinsiId
         );
-        setSelectedProvinsi(provinsiId);
         setFilteredKabupaten(kab);
     };
 
@@ -111,7 +111,6 @@ export default function MapAddStreetComponent() {
         const kec = (kecamatan as KecamatanInterface[]).filter(
             (kecamatan) => kecamatan.kab_id === kabupatenId
         );
-        setSelectedKabupaten(kabupatenId);
         setFilteredKecamatan(kec);
     };
 
@@ -119,7 +118,6 @@ export default function MapAddStreetComponent() {
         const des = (desa as DesaInterface[]).filter(
             (desa) => desa.kec_id === kecamatanId
         );
-        setSelectedKecamatan(kecamatanId);
         setFilteredDesa(des);
     };
 
@@ -129,6 +127,12 @@ export default function MapAddStreetComponent() {
             nama_ruas: "",
             keterangan: "",
             lebar: undefined,
+            desa_id: undefined,
+            eksisting_id: undefined,
+            jenisjalan_id: undefined,
+            kode_ruas: "",
+            kondisi_id: undefined,
+            panjang: undefined,
         },
     });
 
@@ -144,35 +148,45 @@ export default function MapAddStreetComponent() {
 
         const encodeCoordinates = encode(formattedCoordinates);
 
-        const data = {
-            paths: encodeCoordinates,
-            desa_id: values.desa_id,
-            kode_ruas: values.kode_ruas,
-            nama_ruas: values.nama_ruas,
-            panjang: values.panjang,
-            lebar: values.lebar,
-            eksisting_id: values.eksisting_id,
-            kondisi_id: values.kondisi_id,
-            jenisjalan_id: values.jenisjalan_id,
-            keterangan: values.keterangan,
-        };
-
-        console.log(data);
+        const formBody = new URLSearchParams();
+        formBody.append("paths", encodeCoordinates);
+        formBody.append("desa_id", values.desa_id.toString());
+        formBody.append("kode_ruas", values.kode_ruas);
+        formBody.append("nama_ruas", values.nama_ruas);
+        formBody.append("panjang", values.panjang.toString());
+        formBody.append("lebar", values.lebar.toString());
+        formBody.append("eksisting_id", values.eksisting_id.toString());
+        formBody.append("kondisi_id", values.kondisi_id.toString());
+        formBody.append("jenisjalan_id", values.jenisjalan_id.toString());
+        formBody.append("keterangan", values.keterangan);
 
         setLoading(true);
 
         try {
-            // const response = await fetch(`${origin}/api/maps/streets`, {
-            //     method: "POST",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify(data),
-            // });
-            // if (!response.ok) {
-            //     throw new Error("Failed to save street");
-            // }
-            // toast.success("Street saved successfully!");
-            // form.reset();
-            // setStreetCoordinates(null);
+            const response = await fetch(
+                "https://gisapis.manpits.xyz/api/ruasjalan",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: formBody.toString(),
+                }
+            );
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API error response:", errorText);
+                throw new Error("Failed to save street to external API.");
+            }
+
+            const result = await response.json();
+            console.log("API success:", result);
+
+            toast.success("Street saved successfully to external API!");
+            form.reset();
+            setStreetCoordinates([]);
         } catch (error) {
             console.error("Error saving street:", error);
             toast.error("Error saving street.");
@@ -248,14 +262,14 @@ export default function MapAddStreetComponent() {
     const handleDeleted = (e: any) => {
         e.layers.eachLayer((layer: any) => {
             if (layer instanceof L.Polyline) {
-                setStreetCoordinates(null);
+                setStreetCoordinates([]);
                 form.setValue("panjang", 0);
             }
         });
     };
 
     useEffect(() => {
-        if (streetCoordinates === null) {
+        if (streetCoordinates.length == 0) {
             setMapKey((prevKey) => prevKey + 1);
         }
     }, [streetCoordinates]);
