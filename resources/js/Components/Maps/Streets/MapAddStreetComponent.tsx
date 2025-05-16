@@ -48,13 +48,15 @@ import { HowToUseMarkerAdd } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
 import { Label } from "@/Components/ui/label";
-import { capitalizeWords } from "@/lib/utils";
+import { capitalizeWords, roundToTwo } from "@/lib/utils";
 import { decode, encode } from "@mapbox/polyline";
+import { lineString, length } from "@turf/turf";
 
 const formSchema = z.object({
     desa_id: z.number(),
     kode_ruas: z.string().min(2).max(50),
     nama_ruas: z.string().min(2).max(50),
+    panjang: z.number(),
     lebar: z.number(),
     eksisting_id: z.number(),
     kondisi_id: z.number(),
@@ -147,7 +149,7 @@ export default function MapAddStreetComponent() {
             desa_id: values.desa_id,
             kode_ruas: values.kode_ruas,
             nama_ruas: values.nama_ruas,
-            panjang: 0,
+            panjang: values.panjang,
             lebar: values.lebar,
             eksisting_id: values.eksisting_id,
             kondisi_id: values.kondisi_id,
@@ -196,6 +198,16 @@ export default function MapAddStreetComponent() {
 
             // Simpan koordinat tersebut ke dalam state (atau tempat lain yang sesuai)
             setStreetCoordinates(coordinates);
+
+            const formattedCoordinates: [number, number][] =
+                latLngs.map((latLng): [number, number] => [
+                    latLng.lat,
+                    latLng.lng,
+                ]) ?? [];
+
+            const line = lineString(formattedCoordinates);
+            const distanceInMeter = length(line, { units: "meters" });
+            form.setValue("panjang", distanceInMeter);
         }
     };
 
@@ -204,6 +216,7 @@ export default function MapAddStreetComponent() {
 
         // Variabel untuk menyimpan seluruh koordinat polyline yang diedit
         let updatedCoordinates: CoordinatesInterface[] = [];
+        let formattedCoordinates: [number, number][] = [];
 
         event.layers.eachLayer((layer) => {
             if (layer instanceof L.Polyline) {
@@ -215,17 +228,28 @@ export default function MapAddStreetComponent() {
                     latitude: latLng.lat,
                     longitude: latLng.lng,
                 }));
+
+                formattedCoordinates =
+                    latLngs.map((latLng): [number, number] => [
+                        latLng.lat,
+                        latLng.lng,
+                    ]) ?? [];
             }
         });
 
         // Update state dengan koordinat yang telah diedit
         setStreetCoordinates(updatedCoordinates);
+
+        const line = lineString(formattedCoordinates);
+        const distanceInMeter = length(line, { units: "meters" });
+        form.setValue("panjang", distanceInMeter);
     };
 
     const handleDeleted = (e: any) => {
         e.layers.eachLayer((layer: any) => {
-            if (layer instanceof L.Marker) {
+            if (layer instanceof L.Polyline) {
                 setStreetCoordinates(null);
+                form.setValue("panjang", 0);
             }
         });
     };
@@ -320,7 +344,11 @@ export default function MapAddStreetComponent() {
                                                 <Input
                                                     type="number"
                                                     placeholder="Panjang"
-                                                    value={"0"}
+                                                    value={roundToTwo(
+                                                        form.getValues(
+                                                            "panjang"
+                                                        )
+                                                    )}
                                                     disabled
                                                 />
                                             </div>
