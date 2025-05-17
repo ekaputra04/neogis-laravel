@@ -8,7 +8,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -73,14 +75,54 @@ class AuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
+    // public function destroy(Request $request): RedirectResponse
+    // {
+    //     Auth::guard('web')->logout();
+
+    //     $request->session()->invalidate();
+
+    //     $request->session()->regenerateToken();
+
+    //     return redirect('/');
+    // }
+
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        $API_URL = env('API_URL');
+        $token = Session::get('external_api_token');
 
-        $request->session()->invalidate();
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => "Bearer $token"
+            ])->post("$API_URL/logout");
 
-        $request->session()->regenerateToken();
+            Log::info('API Logout Response', [
+                'status' => $response->status(),
+                'body' => $response->json()
+            ]);
 
-        return redirect('/');
+            if ($response->successful()) {
+                // Logout dari Laravel
+                Auth::guard('web')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect('/')->with('message', 'Logout berhasil');
+            } else {
+                Log::error('External API logout failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
+
+                return redirect()->back()->withErrors('Gagal logout dari server eksternal.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Exception during API logout', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->withErrors('Terjadi kesalahan saat logout.');
+        }
     }
 }
