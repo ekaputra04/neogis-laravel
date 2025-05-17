@@ -17,6 +17,9 @@ class StreetController extends Controller
         $token = Session::get('external_api_token');
 
         $streets = [];
+        $eksisting = [];
+        $jenis = [];
+        $kondisi = [];
 
         try {
             $response = Http::withHeaders(['Authorization' => "Bearer $token",])->get("$API_URL/ruasjalan");
@@ -44,9 +47,69 @@ class StreetController extends Controller
             ]);
         }
 
+        try {
+            $responseEksisting = Http::withHeaders(['Authorization' => "Bearer $token",])->get("$API_URL/meksisting");
+
+            if ($responseEksisting->successful()) {
+                $data = $responseEksisting->json();
+                $eksisting = $data['eksisting'] ?? [];
+            } else {
+                Log::error('API request failed', [
+                    'status' => $responseEksisting->status(),
+                    'body' => $responseEksisting->body()
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Exception during API request', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+
+        try {
+            $responseJenis = Http::withHeaders(['Authorization' => "Bearer $token",])->get("$API_URL/mjenisjalan");
+
+            if ($responseJenis->successful()) {
+                $data = $responseJenis->json();
+                $jenis = $data['eksisting'] ?? [];
+            } else {
+                Log::error('API request failed', [
+                    'status' => $responseJenis->status(),
+                    'body' => $responseJenis->body()
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Exception during API request', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+
+        try {
+            $responseKondisi = Http::withHeaders(['Authorization' => "Bearer $token",])->get("$API_URL/mkondisi");
+
+            if ($responseKondisi->successful()) {
+                $data = $responseKondisi->json();
+                $kondisi = $data['eksisting'] ?? [];
+            } else {
+                Log::error('API request failed', [
+                    'status' => $responseKondisi->status(),
+                    'body' => $responseKondisi->body()
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Exception during API request', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+
         return Inertia::render('MapOverviewStreet', [
             'streets' => $streets,
-            'token' => $token
+            'token' => $token,
+            'eksisting' => $eksisting,
+            'jenis' => $jenis,
+            'kondisi' => $kondisi,
         ]);
     }
 

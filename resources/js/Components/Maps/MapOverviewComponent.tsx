@@ -152,7 +152,7 @@ export default function MapOverviewComponent({
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
                 <Head title="Maps" />
-                <div className="gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
                     {dashboardCounter.map((counter, index) => (
                         <DashboardCounterCard
                             key={index}

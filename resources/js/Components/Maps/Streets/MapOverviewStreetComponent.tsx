@@ -41,7 +41,6 @@ import {
 import { Input } from "@/Components/ui/input";
 import { Eye, PlusCircle } from "lucide-react";
 import { centerPoints } from "@/consts/centerPoints";
-import { Badge } from "@/Components/ui/badge";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
@@ -49,6 +48,7 @@ import { tileLayers } from "@/consts/tileLayers";
 import { decode } from "@mapbox/polyline";
 import { roundToTwo } from "@/lib/utils";
 import { Skeleton } from "@/Components/ui/skeleton";
+import DialogFilterStreetComponent from "./DialogFilterStreetComponent";
 
 interface MapOverviewStreetComponentProps {
     streets: StreetInterface[];
@@ -88,7 +88,7 @@ export default function MapOverviewStreetComponent({
                   longitude: streets[0].coordinates[0][1],
               }
             : {
-                  latitude: centerPoints[0], // fallback jika streets kosong
+                  latitude: centerPoints[0],
                   longitude: centerPoints[1],
               }
     );
@@ -117,9 +117,6 @@ export default function MapOverviewStreetComponent({
                     ]) as [number, number][],
                 }))
             );
-            console.log("RESPONSE FETCH:", responseData);
-
-            // setStreets(response.data);
         } catch (error: any) {
             console.error(error.response?.data?.message || error.message);
         }
@@ -193,6 +190,7 @@ export default function MapOverviewStreetComponent({
                             Add New Street
                         </Button>
                         <hr />
+                        <DialogFilterStreetComponent />
                         <Input
                             placeholder="Search..."
                             className="my-4"
