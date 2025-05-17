@@ -46,6 +46,7 @@ class StreetController extends Controller
 
         return Inertia::render('MapOverviewStreet', [
             'streets' => $streets,
+            'token' => $token
         ]);
     }
 

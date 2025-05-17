@@ -5,7 +5,7 @@ import MapOverviewStreetComponent from "@/Components/Maps/Streets/MapOverviewStr
 import { StreetInterface } from "@/types/types";
 
 export default function MapOverviewStreet() {
-    const { streets } = usePage().props;
+    const { streets, token } = usePage().props;
 
     // const [streets, setStreets] = useState<StreetInterface[]>(
     //     initialStreets as StreetInterface[]
@@ -22,6 +22,7 @@ export default function MapOverviewStreet() {
                 {/* {JSON.stringify(streets)} */}
                 <MapOverviewStreetComponent
                     streets={streets as StreetInterface[]}
+                    token={token as string}
                 />
             </div>
         </>
