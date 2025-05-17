@@ -44,6 +44,10 @@ interface MapOverviewComponentProps {
     lines: LineInterface[];
     polygons: PolygonInterface[];
     circles: CircleInterface[];
+    markerCategories: number;
+    lineCategories: number;
+    polygonCategories: number;
+    circleCategories: number;
 }
 
 export default function MapOverviewComponent({
@@ -52,6 +56,10 @@ export default function MapOverviewComponent({
     lines,
     polygons,
     circles,
+    markerCategories,
+    lineCategories,
+    polygonCategories,
+    circleCategories,
 }: MapOverviewComponentProps) {
     const { selectedLayer } = useMapLayerStore();
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
@@ -75,20 +83,36 @@ export default function MapOverviewComponent({
 
     const dashboardCounter = [
         {
-            title: "Total Markers",
+            title: "Markers",
             value: markers.length,
         },
         {
-            title: "Total Lines",
+            title: "Lines",
             value: lines.length,
         },
         {
-            title: "Total Polygons",
+            title: "Polygons",
             value: polygons.length,
         },
         {
-            title: "Total Circles",
+            title: "Circles",
             value: circles.length,
+        },
+        {
+            title: "Marker Categories",
+            value: markerCategories,
+        },
+        {
+            title: "Line Categories",
+            value: lineCategories,
+        },
+        {
+            title: "Polygon Categories",
+            value: polygonCategories,
+        },
+        {
+            title: "Circle Categories",
+            value: circleCategories,
         },
     ];
 

@@ -8,19 +8,31 @@ import {
 import { usePage } from "@inertiajs/react";
 
 export default function MapOverview() {
-    const { currentPath, markers, lines, polygons, circles } = usePage().props;
+    const {
+        currentPath,
+        markers,
+        lines,
+        polygons,
+        circles,
+        markerCategories,
+        lineCategories,
+        polygonCategories,
+        circleCategories,
+    } = usePage().props;
 
     return (
         <>
-            <div className="">
-                <MapOverviewComponent
-                    currentPath={currentPath as string}
-                    markers={markers as MarkerInterface[]}
-                    lines={lines as LineInterface[]}
-                    polygons={polygons as PolygonInterface[]}
-                    circles={circles as CircleInterface[]}
-                />
-            </div>
+            <MapOverviewComponent
+                currentPath={currentPath as string}
+                markers={markers as MarkerInterface[]}
+                lines={lines as LineInterface[]}
+                polygons={polygons as PolygonInterface[]}
+                circles={circles as CircleInterface[]}
+                markerCategories={markerCategories as number}
+                lineCategories={lineCategories as number}
+                polygonCategories={polygonCategories as number}
+                circleCategories={circleCategories as number}
+            />
         </>
     );
 }

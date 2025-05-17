@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Circle;
+use App\Models\CircleCategory;
 use App\Models\Line;
+use App\Models\LineCategory;
 use App\Models\Marker;
+use App\Models\MarkerCategory;
+use App\Models\PolygonCategory;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -69,12 +73,22 @@ class MapController extends Controller
                 'color' => $circle->category?->color,
             ];
         });
+
+        $markerCategories = MarkerCategory::count();
+        $lineCategories = LineCategory::count();
+        $polygonCategories = PolygonCategory::count();
+        $circleCategories = CircleCategory::count();
+
         return Inertia::render('MapOverview', [
             'currentPath' => '/dashboard',
             'markers' => $markers,
             'lines' => $lines,
             'polygons' => $polygons,
-            'circles' => $circles
+            'circles' => $circles,
+            'markerCategories' => $markerCategories,
+            'lineCategories' => $lineCategories,
+            'polygonCategories' => $polygonCategories,
+            'circleCategories' => $circleCategories
         ]);
     }
 }
