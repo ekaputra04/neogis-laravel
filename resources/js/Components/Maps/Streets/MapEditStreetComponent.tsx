@@ -75,6 +75,7 @@ const formSchema = z.object({
     kondisi_id: z.number(),
     jenisjalan_id: z.number(),
     keterangan: z.string().min(2).max(255),
+    paths: z.string(),
 });
 
 interface DrawCreatedEvent {
@@ -113,7 +114,18 @@ export default function MapEditStreetComponent() {
 
     const [streetCoordinates, setStreetCoordinates] = useState<
         CoordinatesInterface[]
-    >([]);
+    >(() => {
+        try {
+            const decoded = decode((initialStreet as StreetInterface).paths);
+            return decoded.map(([latitude, longitude]) => ({
+                latitude,
+                longitude,
+            }));
+        } catch (error) {
+            console.error("Error decoding paths:", error);
+            return [];
+        }
+    });
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
 
@@ -162,6 +174,7 @@ export default function MapEditStreetComponent() {
             kode_ruas: street.kode_ruas,
             kondisi_id: street.kondisi_id,
             panjang: street.panjang,
+            paths: street.paths,
         },
     });
 
@@ -397,7 +410,7 @@ export default function MapEditStreetComponent() {
                     <div className="">
                         {loading ? (
                             <>
-                                <FormSkeleton count={2} />
+                                <FormSkeleton count={11} />
                             </>
                         ) : (
                             <Form {...form}>

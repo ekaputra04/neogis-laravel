@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -187,6 +187,7 @@ export default function MapAddStreetComponent() {
             toast.success("Street saved successfully to external API!");
             form.reset();
             setStreetCoordinates([]);
+            router.visit("/dashboard/street");
         } catch (error) {
             console.error("Error saving street:", error);
             toast.error("Error saving street.");
@@ -287,7 +288,7 @@ export default function MapAddStreetComponent() {
 
                         {loading ? (
                             <>
-                                <FormSkeleton count={2} />
+                                <FormSkeleton count={11} />
                             </>
                         ) : (
                             <>
