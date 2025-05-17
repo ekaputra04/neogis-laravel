@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, router, usePage } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
     FeatureGroup,
     MapContainer,
@@ -62,6 +62,8 @@ import { decode, encode } from "@mapbox/polyline";
 import { capitalizeWords, roundToTwo } from "@/lib/utils";
 import { Label } from "@/Components/ui/label";
 import { length, lineString } from "@turf/turf";
+import { RefreshCcw } from "lucide-react";
+import { buttonDestructiveCss } from "@/consts/buttonCss";
 
 const formSchema = z.object({
     desa_id: z.number(),
@@ -95,10 +97,10 @@ export default function MapEditStreetComponent() {
         jenis,
         kondisi,
         token,
-        selectedProvinsi,
-        selectedKabupaten,
-        selectedKecamatan,
-        selectedDesa,
+        selectedProvinsi: initialSelectedProvinsi,
+        selectedKabupaten: initialSelectedKabupaten,
+        selectedKecamatan: initialSelectedKecamatan,
+        selectedDesa: initialSelectedDesa,
     } = usePage().props;
 
     const { selectedLayer } = useMapLayerStore();
@@ -114,13 +116,39 @@ export default function MapEditStreetComponent() {
     >([]);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
+
+    const [selectedProvinsiId, setSelectedProvinsiId] = useState<number>(
+        (initialSelectedProvinsi as SelectedProvinsiInterface).id
+    );
+    const [selectedKabupatenId, setSelectedKabupatenId] = useState<number>(
+        (initialSelectedKabupaten as SelectedKabupatenInterface).id
+    );
+    const [selectedKecamatanId, setSelectedKecamatanId] = useState<number>(
+        (initialSelectedKecamatan as SelectedKecamatanInterface).id
+    );
+    const [selectedDesaId, setSelectedDesaId] = useState<number>(
+        (initialSelectedDesa as SelectedDesaInterface).id
+    );
+
     const [filteredKabupaten, setFilteredKabupaten] = useState<
         KabupatenInterface[]
-    >([]);
+    >(
+        (kabupaten as KabupatenInterface[]).filter((kabupaten) => {
+            return kabupaten.prov_id == selectedProvinsiId;
+        })
+    );
     const [filteredKecamatan, setFilteredKecamatan] = useState<
         KecamatanInterface[]
-    >([]);
-    const [filteredDesa, setFilteredDesa] = useState<DesaInterface[]>([]);
+    >(
+        (kecamatan as KecamatanInterface[]).filter((kecamatan) => {
+            return kecamatan.kab_id == selectedKabupatenId;
+        })
+    );
+    const [filteredDesa, setFilteredDesa] = useState<DesaInterface[]>(
+        (desa as DesaInterface[]).filter((desa) => {
+            return desa.kec_id == selectedKecamatanId;
+        })
+    );
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -186,9 +214,9 @@ export default function MapEditStreetComponent() {
 
         try {
             const response = await fetch(
-                "https://gisapis.manpits.xyz/api/ruasjalan",
+                `https://gisapis.manpits.xyz/api/ruasjalan/${street.id}`,
                 {
-                    method: "POST",
+                    method: "PUT",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
                         Authorization: `Bearer ${token}`,
@@ -209,9 +237,71 @@ export default function MapEditStreetComponent() {
             toast.success("Street saved successfully to external API!");
             form.reset();
             setStreetCoordinates([]);
+            router.visit("/dashboard/street");
         } catch (error) {
             console.error("Error saving street:", error);
             toast.error("Error saving street.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function fetchLocation() {
+        setLoading(true);
+
+        try {
+            const response = await fetch(
+                "https://gisapis.manpits.xyz/api/mregion",
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API error response:", errorText);
+                throw new Error("Failed to save street to external API.");
+            }
+
+            const result = await response.json();
+            const kabupatenData = result.kabupaten;
+            const kecamatanData = result.kecamatan;
+            const desaData = result.desa;
+            setSelectedProvinsiId(
+                (initialSelectedProvinsi as SelectedProvinsiInterface).id
+            );
+            setSelectedKabupatenId(
+                (initialSelectedKabupaten as SelectedKabupatenInterface).id
+            );
+            setSelectedKecamatanId(
+                (initialSelectedKecamatan as SelectedKecamatanInterface).id
+            );
+            setSelectedDesaId(
+                (initialSelectedDesa as SelectedDesaInterface).id
+            );
+            setFilteredKabupaten(
+                (kabupatenData as KabupatenInterface[]).filter((kabupaten) => {
+                    return kabupaten.prov_id == selectedProvinsiId;
+                })
+            );
+            setFilteredKecamatan(
+                (kecamatanData as KecamatanInterface[]).filter((kecamatan) => {
+                    return kecamatan.kab_id == selectedKabupatenId;
+                })
+            );
+            setFilteredDesa(
+                (desaData as DesaInterface[]).filter((desa) => {
+                    return desa.kec_id == selectedKecamatanId;
+                })
+            );
+
+            toast.success("Fetch location successfully!");
+        } catch (error) {
+            console.error("Error fetching location:", error);
+            toast.error("Error fetching location.");
         } finally {
             setLoading(false);
         }
@@ -300,22 +390,6 @@ export default function MapEditStreetComponent() {
         <>
             <DashboardMapLayout currentPath={"/dashboard/street/edit"}>
                 <Head title="Edit Line" />
-
-                {JSON.stringify(selectedDesa)}
-                <br />
-                {JSON.stringify(selectedKecamatan)}
-                <br />
-                {JSON.stringify(selectedKabupaten)}
-                <br />
-                {JSON.stringify(selectedProvinsi)}
-                <br />
-                {JSON.stringify(provinsi)}
-                <br />
-                {JSON.stringify(kabupaten)}
-                <br />
-                {JSON.stringify(street)}
-                <br />
-
                 <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
                     Edit Street
                 </h2>
@@ -433,9 +507,20 @@ export default function MapEditStreetComponent() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label>Provinsi</Label>
+                                        <Label className="flex justify-between items-center">
+                                            <p>Provinsi</p>
+                                            <Button
+                                                variant={"outline"}
+                                                onClick={fetchLocation}
+                                            >
+                                                <RefreshCcw className="w-4 h-4" />
+                                            </Button>
+                                        </Label>
                                         <Select
                                             onValueChange={(value) => {
+                                                setSelectedProvinsiId(
+                                                    Number(value)
+                                                );
                                                 setFilteredKabupaten([]);
                                                 setFilteredKecamatan([]);
                                                 setFilteredDesa([]);
@@ -450,9 +535,7 @@ export default function MapEditStreetComponent() {
                                                     .find(
                                                         (provinsi) =>
                                                             provinsi.id ==
-                                                            (
-                                                                selectedProvinsi as SelectedProvinsiInterface
-                                                            ).id
+                                                            selectedProvinsiId
                                                     )
                                                     ?.id.toString() ?? ""
                                             }
@@ -481,27 +564,27 @@ export default function MapEditStreetComponent() {
                                         <Label>Kabupaten</Label>
                                         <Select
                                             onValueChange={(value) => {
+                                                setSelectedKabupatenId(
+                                                    Number(value)
+                                                );
                                                 setFilteredKecamatan([]);
                                                 setFilteredDesa([]);
                                                 handleFilterKecamatan(
                                                     Number(value)
                                                 );
                                             }}
-                                            // disabled={
-                                            //     filteredKabupaten.length == 0
-                                            // }
+                                            disabled={
+                                                filteredKabupaten.length == 0
+                                            }
                                             value={
-                                                (
-                                                    kabupaten as KabupatenInterface[]
+                                                selectedKabupatenId &&
+                                                filteredKabupaten.some(
+                                                    (k) =>
+                                                        k.id ==
+                                                        selectedKabupatenId
                                                 )
-                                                    .find(
-                                                        (kabupaten) =>
-                                                            kabupaten.id ==
-                                                            (
-                                                                selectedKabupaten as SelectedKabupatenInterface
-                                                            ).id
-                                                    )
-                                                    ?.id.toString() ?? ""
+                                                    ? selectedKabupatenId.toString()
+                                                    : ""
                                             }
                                         >
                                             <SelectTrigger className="w-full">
@@ -535,24 +618,24 @@ export default function MapEditStreetComponent() {
                                         <Label>Kecamatan</Label>
                                         <Select
                                             onValueChange={(value) => {
+                                                setSelectedKecamatanId(
+                                                    Number(value)
+                                                );
                                                 setFilteredDesa([]);
                                                 handleFilterDesa(Number(value));
                                             }}
-                                            // disabled={
-                                            //     filteredKecamatan.length == 0
-                                            // }
-                                            defaultValue={
-                                                (
-                                                    kecamatan as KecamatanInterface[]
+                                            disabled={
+                                                filteredKecamatan.length == 0
+                                            }
+                                            value={
+                                                selectedKecamatanId &&
+                                                filteredKecamatan.some(
+                                                    (k) =>
+                                                        k.id ==
+                                                        selectedKecamatanId
                                                 )
-                                                    .find(
-                                                        (kecamatan) =>
-                                                            kecamatan.id ==
-                                                            (
-                                                                selectedKecamatan as SelectedKecamatanInterface
-                                                            ).id
-                                                    )
-                                                    ?.id.toString() ?? ""
+                                                    ? selectedKecamatanId.toString()
+                                                    : ""
                                             }
                                         >
                                             <SelectTrigger className="w-full">
@@ -586,13 +669,24 @@ export default function MapEditStreetComponent() {
                                         <Label>Desa</Label>
                                         <Select
                                             onValueChange={(value) => {
+                                                setSelectedDesaId(
+                                                    Number(value)
+                                                );
                                                 form.setValue(
                                                     "desa_id",
                                                     Number(value)
                                                 );
                                             }}
-                                            // disabled={filteredDesa.length == 0}
-                                            // value={street.desa_id.toString()}
+                                            disabled={filteredDesa.length == 0}
+                                            value={
+                                                selectedDesaId &&
+                                                filteredDesa.some(
+                                                    (k) =>
+                                                        k.id == selectedDesaId
+                                                )
+                                                    ? selectedDesaId.toString()
+                                                    : ""
+                                            }
                                         >
                                             <SelectTrigger className="w-full">
                                                 <SelectValue
@@ -622,6 +716,10 @@ export default function MapEditStreetComponent() {
                                         <Label>Eksisting</Label>
                                         <Select
                                             onValueChange={(value) => {
+                                                setStreet({
+                                                    ...street,
+                                                    eksisting_id: Number(value),
+                                                });
                                                 form.setValue(
                                                     "eksisting_id",
                                                     Number(value)
@@ -651,6 +749,10 @@ export default function MapEditStreetComponent() {
                                         <Label>Kondisi</Label>
                                         <Select
                                             onValueChange={(value) => {
+                                                setStreet({
+                                                    ...street,
+                                                    kondisi_id: Number(value),
+                                                });
                                                 form.setValue(
                                                     "kondisi_id",
                                                     Number(value)
@@ -680,6 +782,11 @@ export default function MapEditStreetComponent() {
                                         <Label>Jenis</Label>
                                         <Select
                                             onValueChange={(value) => {
+                                                setStreet({
+                                                    ...street,
+                                                    jenisjalan_id:
+                                                        Number(value),
+                                                });
                                                 form.setValue(
                                                     "jenisjalan_id",
                                                     Number(value)
@@ -705,11 +812,23 @@ export default function MapEditStreetComponent() {
                                         </Select>
                                     </div>
 
-                                    <Button type="submit" disabled={loading}>
-                                        {loading
-                                            ? "Adding Street..."
-                                            : "Add Street"}
-                                    </Button>
+                                    <div className="flex justify-between items-center">
+                                        <Button
+                                            type="submit"
+                                            disabled={loading}
+                                        >
+                                            {loading
+                                                ? "Editing Street..."
+                                                : "Edit Street"}
+                                        </Button>
+                                        <Link href="/dashboard/street">
+                                            <div
+                                                className={`${buttonDestructiveCss}`}
+                                            >
+                                                Cancel
+                                            </div>
+                                        </Link>
+                                    </div>
                                 </form>
                             </Form>
                         )}
