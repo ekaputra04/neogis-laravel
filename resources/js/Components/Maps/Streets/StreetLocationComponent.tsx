@@ -20,7 +20,7 @@ import { Button } from "@/Components/ui/button";
 import { Eye, Map } from "lucide-react";
 import { useState } from "react";
 import { capitalizeWords } from "@/lib/utils";
-import StreetLocationCard from "./StreetLocationCard";
+import DashboardCounterCard from "../DashboardCounterCard";
 
 export default function StreetLocationComponent() {
     const { provinsi, kabupaten, kecamatan, desa } = usePage().props;
@@ -89,7 +89,7 @@ export default function StreetLocationComponent() {
                 <Head title="Street Location" />
                 <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                     {LocationCounter.map((counter, index) => (
-                        <StreetLocationCard
+                        <DashboardCounterCard
                             key={index}
                             title={counter.title}
                             value={counter.value}
@@ -256,7 +256,7 @@ export default function StreetLocationComponent() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>No</TableHead>
-                                    <TableHead>Kecamatan</TableHead>
+                                    <TableHead>Desa</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

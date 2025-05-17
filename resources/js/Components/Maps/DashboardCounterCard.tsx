@@ -8,15 +8,15 @@ import {
 } from "@/Components/ui/card";
 import { Map } from "lucide-react";
 
-interface StreetLocationCardProps {
+interface DashboardCounterCardProps {
     title: string;
     value: number;
 }
 
-export default function StreetLocationCard({
+export default function DashboardCounterCard({
     title,
     value,
-}: StreetLocationCardProps) {
+}: DashboardCounterCardProps) {
     return (
         <>
             <Card>
