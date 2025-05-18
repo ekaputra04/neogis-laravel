@@ -21,7 +21,7 @@ interface StreetListProps {
 
 export const StreetList = memo(
     ({ streets, filteredStreets, loading, onCenterMap }: StreetListProps) => {
-        console.log("StreetList rendered");
+        console.log("STREET LIST RENDER");
 
         return (
             <div className="justify-between w-full h-80 overflow-y-auto">

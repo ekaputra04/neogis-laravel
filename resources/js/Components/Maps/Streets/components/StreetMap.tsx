@@ -1,10 +1,4 @@
-import {
-    MapContainer,
-    Polyline,
-    Popup,
-    TileLayer,
-    useMap,
-} from "react-leaflet";
+import { MapContainer, Polyline, Popup, TileLayer } from "react-leaflet";
 import { Button } from "@/Components/ui/button";
 import {
     AlertDialog,
@@ -19,7 +13,7 @@ import {
 } from "@/Components/ui/alert-dialog";
 import { roundToTwo } from "@/lib/utils";
 import { StreetWithCoordinatesInterface } from "@/types/types";
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { Skeleton } from "@/Components/ui/skeleton";
 import { tileLayers } from "@/consts/tileLayers";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
@@ -37,7 +31,7 @@ export const StreetMap = memo(
     ({ streets, center, onEdit, onDelete, loading }: StreetMapProps) => {
         if (loading) return <Skeleton className="w-full h-[500px]" />;
         const { selectedLayer } = useMapLayerStore();
-        console.log("Streetmap rerender");
+        console.log("STREET MAP RENDER");
 
         return (
             <MapContainer

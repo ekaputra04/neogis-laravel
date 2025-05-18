@@ -18,9 +18,13 @@ import {
 } from "@/Components/ui/table";
 import { Button } from "@/Components/ui/button";
 import { Eye, Map } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { capitalizeWords } from "@/lib/utils";
 import DashboardCounterCard from "../DashboardCounterCard";
+import { ProvinsiTable } from "./components/ProvinsiTable";
+import { KabupatenTable } from "./components/KabupatenTable";
+import { KecamatanTable } from "./components/KecamatanTable";
+import { DesaTable } from "./components/DesaTable";
 
 export default function StreetLocationComponent() {
     const { provinsi, kabupaten, kecamatan, desa } = usePage().props;
@@ -59,29 +63,67 @@ export default function StreetLocationComponent() {
         },
     ];
 
-    const handleFilterKabupaten = (provinsiId: number) => {
-        const kab = (kabupaten as KabupatenInterface[]).filter(
-            (kabupaten) => kabupaten.prov_id === provinsiId
-        );
-        setSelectedProvinsi(provinsiId);
-        setFilteredKabupaten(kab);
-    };
+    const handleFilterKabupaten = useCallback(
+        (provinsiId: number) => {
+            const kab = (kabupaten as KabupatenInterface[]).filter(
+                (kabupaten) => kabupaten.prov_id === provinsiId
+            );
+            setSelectedProvinsi(provinsiId);
+            setFilteredKabupaten(kab);
+        },
+        [kabupaten]
+    );
 
-    const handleFilterKecamatan = (kabupatenId: number) => {
-        const kec = (kecamatan as KecamatanInterface[]).filter(
-            (kecamatan) => kecamatan.kab_id === kabupatenId
-        );
-        setSelectedKabupaten(kabupatenId);
-        setFilteredKecamatan(kec);
-    };
+    const handleFilterKecamatan = useCallback(
+        (kabupatenId: number) => {
+            const kec = (kecamatan as KecamatanInterface[]).filter(
+                (kecamatan) => kecamatan.kab_id === kabupatenId
+            );
+            setSelectedKabupaten(kabupatenId);
+            setFilteredKecamatan(kec);
+        },
+        [kecamatan]
+    );
 
-    const handleFilterDesa = (kecamatanId: number) => {
-        const des = (desa as DesaInterface[]).filter(
-            (desa) => desa.kec_id === kecamatanId
-        );
-        setSelectedKecamatan(kecamatanId);
-        setFilteredDesa(des);
-    };
+    const handleFilterDesa = useCallback(
+        (kecamatanId: number) => {
+            const des = (desa as DesaInterface[]).filter(
+                (desa) => desa.kec_id === kecamatanId
+            );
+            setSelectedKecamatan(kecamatanId);
+            setFilteredDesa(des);
+        },
+        [desa]
+    );
+
+    const handleSelectProvinsi = useCallback(
+        (provinsiId: number) => {
+            setFilteredKabupaten([]);
+            setFilteredKecamatan([]);
+            setFilteredDesa([]);
+            handleFilterKabupaten(provinsiId);
+        },
+        [handleFilterKabupaten]
+    );
+
+    const handleSelectKabupaten = useCallback(
+        (kabupatenId: number) => {
+            setFilteredKecamatan([]);
+            setFilteredDesa([]);
+            handleFilterKecamatan(kabupatenId);
+        },
+        [handleFilterKecamatan]
+    );
+
+    const handleSelectKecamatan = useCallback(
+        (kecamatanId: number) => {
+            setFilteredDesa([]);
+            handleFilterDesa(kecamatanId);
+        },
+        [handleFilterDesa]
+    );
+
+    console.log("STREET LOCATION RENDER");
 
     return (
         <>
@@ -95,184 +137,26 @@ export default function StreetLocationComponent() {
                             value={counter.value}
                         />
                     ))}
-                    <div className="p-4 border rounded-lg h-fit">
-                        <Table>
-                            <TableCaption>
-                                {filteredProvinsi.length
-                                    ? `${filteredProvinsi.length} Provinsi found`
-                                    : `Provinsi not found`}
-                            </TableCaption>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>No</TableHead>
-                                    <TableHead>Provinsi</TableHead>
-                                    <TableHead>Detail</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredProvinsi.map((provinsi, index) => (
-                                    <TableRow
-                                        key={provinsi.id}
-                                        className={`${
-                                            provinsi.id == selectedProvinsi
-                                                ? "bg-muted/50"
-                                                : ""
-                                        }`}
-                                    >
-                                        <TableCell className="font-medium">
-                                            {index + 1}
-                                        </TableCell>
-                                        <TableCell>
-                                            {capitalizeWords(provinsi.provinsi)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant={"outline"}
-                                                onClick={() => {
-                                                    setFilteredKabupaten([]);
-                                                    setFilteredKecamatan([]);
-                                                    setFilteredDesa([]);
-                                                    handleFilterKabupaten(
-                                                        provinsi.id
-                                                    );
-                                                }}
-                                            >
-                                                <Eye />
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                    <div className="p-4 border rounded-lg h-fit">
-                        <Table>
-                            <TableCaption>
-                                {filteredKabupaten.length
-                                    ? `${filteredKabupaten.length} Kabupaten found`
-                                    : `Please select Provinsi first`}
-                            </TableCaption>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>No</TableHead>
-                                    <TableHead>Kabupaten</TableHead>
-                                    <TableHead>Detail</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredKabupaten.map((kabupaten, index) => (
-                                    <TableRow
-                                        key={kabupaten.id}
-                                        className={`${
-                                            kabupaten.id == selectedKabupaten
-                                                ? "bg-muted/50"
-                                                : ""
-                                        }`}
-                                    >
-                                        <TableCell className="font-medium">
-                                            {index + 1}
-                                        </TableCell>
-                                        <TableCell>
-                                            {capitalizeWords(
-                                                kabupaten.kabupaten
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant={"outline"}
-                                                onClick={() => {
-                                                    setFilteredKecamatan([]);
-                                                    setFilteredDesa([]);
-                                                    handleFilterKecamatan(
-                                                        kabupaten.id
-                                                    );
-                                                }}
-                                            >
-                                                <Eye />
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                    <div className="p-4 border rounded-lg h-fit">
-                        <Table>
-                            <TableCaption>
-                                {filteredKecamatan.length
-                                    ? `${filteredKecamatan.length} Kecamatan found`
-                                    : `Please select Kabupaten first`}
-                            </TableCaption>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>No</TableHead>
-                                    <TableHead>Kecamatan</TableHead>
-                                    <TableHead>Detail</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredKecamatan.map((kecamatan, index) => (
-                                    <TableRow
-                                        key={kecamatan.id}
-                                        className={`${
-                                            kecamatan.id == selectedKecamatan
-                                                ? "bg-muted/50"
-                                                : ""
-                                        }`}
-                                    >
-                                        <TableCell className="font-medium">
-                                            {index + 1}
-                                        </TableCell>
-                                        <TableCell>
-                                            {capitalizeWords(
-                                                kecamatan.kecamatan
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant={"outline"}
-                                                onClick={() => {
-                                                    setFilteredDesa([]);
-                                                    handleFilterDesa(
-                                                        kecamatan.id
-                                                    );
-                                                }}
-                                            >
-                                                <Eye />
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                    <div className="p-4 border rounded-lg h-fit">
-                        <Table>
-                            <TableCaption>
-                                {filteredDesa.length
-                                    ? `${filteredDesa.length} Desa found`
-                                    : `Please select Kecamatan first`}
-                            </TableCaption>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>No</TableHead>
-                                    <TableHead>Desa</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredDesa.map((desa, index) => (
-                                    <TableRow key={desa.id}>
-                                        <TableCell className="font-medium">
-                                            {index + 1}
-                                        </TableCell>
-                                        <TableCell>
-                                            {capitalizeWords(desa.desa)}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
+
+                    <ProvinsiTable
+                        filteredProvinsi={filteredProvinsi}
+                        onSelectProvinsi={handleSelectProvinsi}
+                        selectedProvinsi={selectedProvinsi}
+                    />
+
+                    <KabupatenTable
+                        filteredKabupaten={filteredKabupaten}
+                        onSelectKabupaten={handleSelectKabupaten}
+                        selectedKabupaten={selectedKabupaten}
+                    />
+
+                    <KecamatanTable
+                        filteredKecamatan={filteredKecamatan}
+                        onSelectKecamatan={handleSelectKecamatan}
+                        selectedKecamatan={selectedKecamatan}
+                    />
+
+                    <DesaTable filteredDesa={filteredDesa} />
                 </div>
             </DashboardMapLayout>
         </>

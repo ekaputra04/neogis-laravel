@@ -13,6 +13,7 @@ import {
 import { StreetControls } from "./components/StreetControls";
 import { StreetList } from "./components/StreetList";
 import { StreetMap } from "./components/StreetMap";
+import TableStreetFilterCounter from "./components/TableStreetFilterCounter";
 
 interface MapOverviewStreetComponentProps {
     streets: StreetInterface[];
@@ -23,7 +24,7 @@ export default function MapOverviewStreetComponent({
     streets: initialStreets,
     token,
 }: MapOverviewStreetComponentProps) {
-    console.log("PARENT RENDER");
+    console.log("PARENT STREET OVERVIEW RENDER");
 
     const [streets, setStreets] = useState<StreetWithCoordinatesInterface[]>(
         () =>
@@ -43,8 +44,11 @@ export default function MapOverviewStreetComponent({
     });
 
     const [mapCenter, setMapCenter] = useState<[number, number]>(
-        streets.length > 0
-            ? streets[0].coordinates[0]
+        initialStreets.length > 0
+            ? [
+                  decode(initialStreets[0].paths)[0][0],
+                  decode(initialStreets[0].paths)[0][1],
+              ]
             : [centerPoints[0], centerPoints[1]]
     );
     const [searchValue, setSearchValue] = useState("");
@@ -146,14 +150,55 @@ export default function MapOverviewStreetComponent({
         setSearchValue(value);
     }, []);
 
-    return (
-        <DashboardMapLayout currentPath="/dashboard/street">
-            <Head title="Street" />
-            <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
+    const memoizedCards = useMemo(
+        () => (
+            <>
                 <DashboardCounterCard
                     title="Total Streets"
                     value={initialStreets.length}
                 />
+                <TableStreetFilterCounter
+                    title="Eksisting"
+                    streets={initialStreets}
+                />
+                <TableStreetFilterCounter
+                    title="Jenis"
+                    streets={initialStreets}
+                />
+                <TableStreetFilterCounter
+                    title="Kondisi"
+                    streets={initialStreets}
+                />
+            </>
+        ),
+        [initialStreets.length]
+    );
+
+    const memoizedMaps = useMemo(
+        () => (
+            <StreetMap
+                streets={initialStreets.map((street) => ({
+                    ...street,
+                    coordinates: decode(street.paths).map(([lat, lng]) => [
+                        lat,
+                        lng,
+                    ]) as [number, number][],
+                }))}
+                center={mapCenter}
+                onEdit={handleEditStreet}
+                onDelete={handleDeleted}
+                loading={loading}
+            />
+        ),
+        [initialStreets.length, mapCenter]
+    );
+
+    return (
+        <DashboardMapLayout currentPath="/dashboard/street">
+            <Head title="Street" />
+
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                {memoizedCards}
             </div>
             <hr />
             <div className="gap-8 grid grid-cols-1 lg:grid-cols-4 mt-8">
@@ -171,15 +216,7 @@ export default function MapOverviewStreetComponent({
                         onCenterMap={handleCenterMap}
                     />
                 </div>
-                <div className="z-0 md:col-span-3">
-                    <StreetMap
-                        streets={filteredStreets}
-                        center={mapCenter}
-                        onEdit={handleEditStreet}
-                        onDelete={handleDeleted}
-                        loading={loading}
-                    />
-                </div>
+                <div className="z-0 md:col-span-3">{memoizedMaps}</div>
             </div>
         </DashboardMapLayout>
     );

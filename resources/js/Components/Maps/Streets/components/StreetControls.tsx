@@ -21,7 +21,7 @@ export const StreetControls = memo(
         onSearch,
         initialFilters,
     }: StreetControlsProps) => {
-        console.log("Streetcontrols");
+        console.log("STREET CONTROL RENDER");
 
         return (
             <>
