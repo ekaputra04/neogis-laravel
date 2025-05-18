@@ -36,7 +36,7 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                                     <span className="font-semibold">
                                         NeoGIS
                                     </span>
-                                    <span className="">v2.0.0</span>
+                                    <span className="">v3.1.0</span>
                                 </div>
                             </a>
                         </SidebarMenuButton>

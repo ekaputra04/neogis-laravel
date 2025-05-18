@@ -125,8 +125,8 @@ export default function MapOverviewLineComponent({
                             placeholder="Search..."
                             className="my-4"
                             onChange={(e) => setSearchValue(e.target.value)}
-                        ></Input>
-                        <div className="justify-between w-full h-80 overflow-y-auto">
+                        />
+                        <div className="justify-between w-full max-h-80 overflow-y-auto">
                             <Table>
                                 <TableHeader>
                                     <TableRow>

@@ -51,25 +51,32 @@ export default function BreadCrumbMaps({
     const breadcrumbs = findBreadcrumbItems();
 
     return (
-        <Breadcrumb>
-            <BreadcrumbList>
-                {breadcrumbs.map((crumb, index) => (
-                    <React.Fragment key={crumb.url}>
-                        <BreadcrumbItem>
-                            {index === breadcrumbs.length - 1 ? (
-                                <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
-                            ) : (
-                                <BreadcrumbLink href={crumb.url}>
-                                    {crumb.title}
-                                </BreadcrumbLink>
-                            )}
-                        </BreadcrumbItem>
-                        {index < breadcrumbs.length - 1 && (
-                            <BreadcrumbSeparator />
-                        )}
-                    </React.Fragment>
-                ))}
-            </BreadcrumbList>
-        </Breadcrumb>
+        <>
+            <h1 className="md:hidden font-semibold">Neogis</h1>
+            <div className="hidden md:block">
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        {breadcrumbs.map((crumb, index) => (
+                            <React.Fragment key={crumb.url}>
+                                <BreadcrumbItem>
+                                    {index === breadcrumbs.length - 1 ? (
+                                        <BreadcrumbPage>
+                                            {crumb.title}
+                                        </BreadcrumbPage>
+                                    ) : (
+                                        <BreadcrumbLink href={crumb.url}>
+                                            {crumb.title}
+                                        </BreadcrumbLink>
+                                    )}
+                                </BreadcrumbItem>
+                                {index < breadcrumbs.length - 1 && (
+                                    <BreadcrumbSeparator />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </BreadcrumbList>
+                </Breadcrumb>
+            </div>
+        </>
     );
 }

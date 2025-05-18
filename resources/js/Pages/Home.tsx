@@ -69,29 +69,24 @@ export default function HomePage({ auth }: HomePageProps) {
                         <ToolsUsed />
                     </div>
 
-                    <div className="flex justify-center items-center gap-4 w-full">
-                        <div className="">
-                            <Link href={"/dashboard"} className="my-16">
-                                <RainbowButton className="gap-2 rounded-full">
-                                    <LayoutDashboard className="w-6 h-6" />
-                                    Explore Dashboard
-                                </RainbowButton>
-                            </Link>
-                        </div>
-                        <div className="">
-                            <a
-                                href="https://github.com/ekaputra04/neogis-laravel.git"
-                                className="flex justify-center mx-auto my-16 w-full"
-                                target="_blank"
-                            >
-                                <InteractiveHoverButton>
-                                    <div className="flex gap-2">
-                                        <GithubIcon className="w-6 h-6" />{" "}
-                                        Github
-                                    </div>
-                                </InteractiveHoverButton>
-                            </a>
-                        </div>
+                    <div className="flex md:flex-row flex-col justify-center items-center gap-4 w-full">
+                        <Link href={"/dashboard"} className="md:my-16 mt-16">
+                            <RainbowButton className="gap-2 rounded-full">
+                                <LayoutDashboard className="w-6 h-6" />
+                                Explore Dashboard
+                            </RainbowButton>
+                        </Link>
+                        <a
+                            href="https://github.com/ekaputra04/neogis-laravel.git"
+                            className="flex justify-center mx-auto md:my-16 w-full"
+                            target="_blank"
+                        >
+                            <InteractiveHoverButton>
+                                <div className="flex gap-2">
+                                    <GithubIcon className="w-6 h-6" /> Github
+                                </div>
+                            </InteractiveHoverButton>
+                        </a>
                     </div>
 
                     <HeroParallaxDemo />

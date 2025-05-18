@@ -31,7 +31,7 @@ export const MarkerList = memo(
 
         return (
             <div className="">
-                <div className="justify-between w-full h-80 overflow-y-auto">
+                <div className="justify-between w-full max-h-80 overflow-y-auto">
                     {loading ? (
                         <div className="space-y-2">
                             {filteredMarkers.map((_, index) => (

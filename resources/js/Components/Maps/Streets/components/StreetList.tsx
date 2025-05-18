@@ -29,7 +29,7 @@ export const StreetList = memo(
         console.log("STREET LIST RENDER");
 
         return (
-            <div className="justify-between w-full h-80 overflow-y-auto">
+            <div className="justify-between w-full max-h-80 overflow-y-auto">
                 {loading ? (
                     <div className="space-y-2">
                         {filteredStreets.map((_, index) => (
