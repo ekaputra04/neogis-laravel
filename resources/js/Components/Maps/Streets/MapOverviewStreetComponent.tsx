@@ -14,6 +14,7 @@ import { StreetControls } from "./components/StreetControls";
 import { StreetList } from "./components/StreetList";
 import { StreetMap } from "./components/StreetMap";
 import TableStreetFilterCounter from "./components/TableStreetFilterCounter";
+import { Skeleton } from "@/Components/ui/skeleton";
 
 interface MapOverviewStreetComponentProps {
     streets: StreetInterface[];
@@ -177,7 +178,7 @@ export default function MapOverviewStreetComponent({
     const memoizedMaps = useMemo(
         () => (
             <StreetMap
-                streets={initialStreets.map((street) => ({
+                streets={streets.map((street) => ({
                     ...street,
                     coordinates: decode(street.paths).map(([lat, lng]) => [
                         lat,
@@ -216,7 +217,13 @@ export default function MapOverviewStreetComponent({
                         onCenterMap={handleCenterMap}
                     />
                 </div>
-                <div className="z-0 md:col-span-3">{memoizedMaps}</div>
+                <div className="z-0 md:col-span-3">
+                    {loading ? (
+                        <Skeleton className="w-full h-[500px]" />
+                    ) : (
+                        memoizedMaps
+                    )}
+                </div>
             </div>
         </DashboardMapLayout>
     );

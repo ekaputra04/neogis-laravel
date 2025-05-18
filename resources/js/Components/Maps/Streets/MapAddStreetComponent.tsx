@@ -74,6 +74,8 @@ interface DrawEditedEvent {
 }
 
 export default function MapAddStreetComponent() {
+    console.log("MAP ADD STREET RENDER");
+
     const {
         provinsi,
         kabupaten,
