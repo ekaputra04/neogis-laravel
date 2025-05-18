@@ -25,18 +25,17 @@ export default function HowToUseComponent({ tutorials }: HowToUseProps) {
                     <DialogTitle className="mb-4">
                         Petunjuk Penggunaan
                     </DialogTitle>
-                    <DialogDescription className="space-y-4">
-                        {tutorials.map((tutorial, index) => (
-                            <div key={index} className="space-y-2">
-                                <h1>{tutorial.description}</h1>
-                                <img
-                                    src={tutorial.image}
-                                    alt={`Tutorial ${index + 1}`}
-                                />
-                            </div>
-                        ))}
-                    </DialogDescription>
+                    <DialogDescription className=""></DialogDescription>
                 </DialogHeader>
+                {tutorials.map((tutorial, index) => (
+                    <div key={index} className="space-y-2">
+                        <h1>{tutorial.description}</h1>
+                        <img
+                            src={tutorial.image}
+                            alt={`Tutorial ${index + 1}`}
+                        />
+                    </div>
+                ))}
             </DialogContent>
         </Dialog>
     );

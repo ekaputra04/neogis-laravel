@@ -85,28 +85,28 @@ export default function TableStreetFilterCounter({
 
             setData(result);
         }
-
-        // Jika nanti kamu ingin support title === "Jenis" atau "Kondisi", bisa tambahkan else if di sini
     }, [title, streets]);
 
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>{title}</TableHead>
-                    <TableHead>Count</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {data.map((item) => (
-                    <TableRow key={item.id}>
-                        <TableCell className="font-medium">
-                            {item.name}
-                        </TableCell>
-                        <TableCell>{item.count}</TableCell>
+        <div className="shadow-md p-2 border rounded-lg max-h-32 overflow-y-auto">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>{title}</TableHead>
+                        <TableHead>Count</TableHead>
                     </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+                </TableHeader>
+                <TableBody>
+                    {data.map((item) => (
+                        <TableRow key={item.id}>
+                            <TableCell className="font-medium">
+                                {item.name}
+                            </TableCell>
+                            <TableCell>{item.count}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
     );
 }
