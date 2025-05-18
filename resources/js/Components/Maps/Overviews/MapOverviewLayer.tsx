@@ -67,7 +67,10 @@ export const MapOverviewLayer = memo(
         return (
             <div className="gap-4 grid grid-cols-1 lg:grid-cols-4">
                 <div className="col-span-1">
-                    <SearchAddress handleSelectAddress={handleSelectAddress} />
+                    <SearchAddress
+                        handleSelectAddress={handleSelectAddress}
+                        addressId={address?.place_id || 0}
+                    />
                 </div>
                 <div className="col-span-1 lg:col-span-3">
                     <div className="z-0 relative mb-8">

@@ -211,7 +211,7 @@ export default function MapOverviewStreetComponent({
                         initialFilters={filters}
                     />
                     <StreetList
-                        streets={streets}
+                        streetLength={streets.length}
                         filteredStreets={filteredStreets}
                         loading={loading}
                         onCenterMap={handleCenterMap}

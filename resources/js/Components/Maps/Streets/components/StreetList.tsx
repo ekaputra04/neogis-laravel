@@ -13,21 +13,26 @@ import { StreetWithCoordinatesInterface } from "@/types/types";
 import { memo } from "react";
 
 interface StreetListProps {
-    streets: StreetWithCoordinatesInterface[];
+    streetLength: number;
     filteredStreets: StreetWithCoordinatesInterface[];
     loading: boolean;
     onCenterMap: (coords: [number, number]) => void;
 }
 
 export const StreetList = memo(
-    ({ streets, filteredStreets, loading, onCenterMap }: StreetListProps) => {
+    ({
+        streetLength,
+        filteredStreets,
+        loading,
+        onCenterMap,
+    }: StreetListProps) => {
         console.log("STREET LIST RENDER");
 
         return (
             <div className="justify-between w-full h-80 overflow-y-auto">
                 {loading ? (
                     <div className="space-y-2">
-                        {streets.map((_, index) => (
+                        {filteredStreets.map((_, index) => (
                             <Skeleton key={index} className="w-full h-8" />
                         ))}
                     </div>
@@ -38,8 +43,8 @@ export const StreetList = memo(
                                 <TableHead className="flex justify-between items-center">
                                     <p>Street</p>
                                     <p>
-                                        ({filteredStreets.length}/
-                                        {streets?.length})
+                                        ({filteredStreets.length}/{streetLength}
+                                        )
                                     </p>
                                 </TableHead>
                             </TableRow>

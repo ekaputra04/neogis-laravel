@@ -23,10 +23,12 @@ const formSchema = z.object({
 
 interface SearchAddressProps {
     handleSelectAddress: (address: GeocodingResponseInterface) => void;
+    addressId: number;
 }
 
 export default function SearchAddress({
     handleSelectAddress,
+    addressId,
 }: SearchAddressProps) {
     const { API_KEY_GEOCODING } = usePage().props;
     const [geocodingResponses, setGeocodingResponses] = useState<
@@ -100,12 +102,16 @@ export default function SearchAddress({
                 </form>
             </Form>
             {geocodingResponses.length > 0 && (
-                <div className="space-y-2">
+                <div className="space-y-2 max-h-[350px] overflow-y-auto">
                     <h2 className="py-2 text-sm">Address found :</h2>
                     {geocodingResponses.map((response) => (
                         <div
                             key={response.place_id}
-                            className="hover:bg-green-50 shadow-md p-2 border hover:border-green-500 rounded-md text-sm hover:cursor-pointer"
+                            className={
+                                response.place_id === addressId
+                                    ? `bg-green-50 shadow-md p-2 border border-green-500 rounded-md text-sm hover:cursor-pointer`
+                                    : `hover:bg-green-50 shadow-md p-2 border hover:border-green-500 rounded-md text-sm hover:cursor-pointer`
+                            }
                             onClick={() => {
                                 handleSelectAddress(response);
                             }}
