@@ -1,55 +1,18 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
+import { useCallback, useMemo, useState } from "react";
+import { decode } from "@mapbox/polyline";
+import { toast } from "sonner";
+import { centerPoints } from "@/consts/centerPoints";
+import DashboardCounterCard from "../DashboardCounterCard";
 import {
-    MapContainer,
-    Polyline,
-    Popup,
-    TileLayer,
-    useMap,
-} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import "leaflet-draw/dist/leaflet.draw.css";
-import {
-    CoordinatesInterface,
     FilterStateInterface,
     StreetInterface,
     StreetWithCoordinatesInterface,
 } from "@/types/types";
-import { Button } from "@/Components/ui/button";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
-import axios from "axios";
-import { toast } from "sonner";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
-import { Input } from "@/Components/ui/input";
-import { Eye, PlusCircle } from "lucide-react";
-import { centerPoints } from "@/consts/centerPoints";
-import HowToUseComponent from "@/Components/HowToUseComponent";
-import { HowToUseMarkerOverview } from "@/consts/howToUse";
-import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { tileLayers } from "@/consts/tileLayers";
-import { decode } from "@mapbox/polyline";
-import { roundToTwo } from "@/lib/utils";
-import { Skeleton } from "@/Components/ui/skeleton";
-import DialogFilterStreetComponent from "./DialogFilterStreetComponent";
+import { StreetControls } from "./components/StreetControls";
+import { StreetList } from "./components/StreetList";
+import { StreetMap } from "./components/StreetMap";
 
 interface MapOverviewStreetComponentProps {
     streets: StreetInterface[];
@@ -60,137 +23,96 @@ export default function MapOverviewStreetComponent({
     streets: initialStreets,
     token,
 }: MapOverviewStreetComponentProps) {
-    const { selectedLayer } = useMapLayerStore();
+    console.log("PARENT RENDER");
+
     const [streets, setStreets] = useState<StreetWithCoordinatesInterface[]>(
-        initialStreets.map((street) => ({
-            ...street,
-            coordinates: decode(street.paths).map(([lat, lng]) => [
-                lat,
-                lng,
-            ]) as [number, number][],
-        }))
+        () =>
+            initialStreets.map((street) => ({
+                ...street,
+                coordinates: decode(street.paths).map(([lat, lng]) => [
+                    lat,
+                    lng,
+                ]) as [number, number][],
+            }))
     );
+
     const [filters, setFilters] = useState<FilterStateInterface>({
         eksisting: {},
         jenis: {},
         kondisi: {},
     });
 
-    const [filteredStreets, setFilteredStreets] = useState<
-        StreetWithCoordinatesInterface[]
-    >(
-        initialStreets.map((street) => ({
-            ...street,
-            coordinates: decode(street.paths).map(([lat, lng]) => [
-                lng,
-                lat,
-            ]) as [number, number][],
-        }))
+    const [mapCenter, setMapCenter] = useState<[number, number]>(
+        streets.length > 0
+            ? streets[0].coordinates[0]
+            : [centerPoints[0], centerPoints[1]]
     );
-    const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
-        streets && streets.length > 0
-            ? {
-                  latitude: streets[0].coordinates[0][0],
-                  longitude: streets[0].coordinates[0][1],
-              }
-            : {
-                  latitude: centerPoints[0],
-                  longitude: centerPoints[1],
-              }
-    );
-    const [searchValue, setSearchValue] = useState<string>("");
+    const [searchValue, setSearchValue] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const fetchStreets = async (): Promise<void> => {
+    const fetchStreets = useCallback(async () => {
         try {
             const response = await fetch(
                 `https://gisapis.manpits.xyz/api/ruasjalan`,
                 {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            const responseData = await response.json(); // Tunggu parsing JSON
-            const ruasJalan = responseData.ruasjalan as StreetInterface[];
+            const { ruasjalan } = await response.json();
             setStreets(
-                ruasJalan.map((street) => ({
+                ruasjalan.map((street: StreetInterface) => ({
                     ...street,
                     coordinates: decode(street.paths).map(([lat, lng]) => [
                         lat,
                         lng,
-                    ]) as [number, number][],
+                    ]),
                 }))
             );
-        } catch (error: any) {
-            console.error(error.response?.data?.message || error.message);
+        } catch (error) {
+            console.error("Fetch error:", error);
         }
-    };
+    }, [token]);
 
-    const handleDeleted = async (streetId: number): Promise<void> => {
-        setLoading(true);
-        try {
-            const response = await fetch(
-                `https://gisapis.manpits.xyz/api/ruasjalan/${streetId}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                }
-            );
-
-            const responseData = await response.json(); // Tunggu parsing JSON
-            console.log("RESPONSE DELETE:", responseData);
-
-            if (!response.ok) {
-                throw new Error(
-                    responseData.message || "Failed to delete street"
+    const handleDeleted = useCallback(
+        async (streetId: number) => {
+            setLoading(true);
+            try {
+                await fetch(
+                    `https://gisapis.manpits.xyz/api/ruasjalan/${streetId}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
                 );
+                await fetchStreets();
+                toast.success("Street deleted successfully!");
+            } catch (error) {
+                toast.error("Error deleting street");
+            } finally {
+                setLoading(false);
             }
+        },
+        [token, fetchStreets]
+    );
 
-            await fetchStreets();
-            toast.success("Street deleted successfully!");
-        } catch (error: any) {
-            console.error("Error deleting street:", error.message);
-            toast.error(error.message || "Error deleting street.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Gabungkan kedua filter dalam satu useMemo
-    const combinedFilteredStreets = useMemo(() => {
+    const filteredStreets = useMemo(() => {
         if (!streets) return [];
-
-        // Filter berdasarkan kriteria (eksisting, jenis, kondisi)
         const { eksisting, jenis, kondisi } = filters;
-
-        const selectedEksisting = Object.keys(eksisting).filter(
-            (k) => eksisting[k]
-        );
-        const selectedJenis = Object.keys(jenis).filter((k) => jenis[k]);
-        const selectedKondisi = Object.keys(kondisi).filter((k) => kondisi[k]);
-
-        // Filter berdasarkan search value (nama jalan)
         const searchLower = searchValue.toLowerCase();
 
         return streets.filter((street) => {
-            // Filter kriteria
             const eksistingMatch =
-                selectedEksisting.length === 0 ||
-                selectedEksisting.includes(street.eksisting_id.toString());
+                !Object.values(eksisting).some(Boolean) ||
+                eksisting[street.eksisting_id];
             const jenisMatch =
-                selectedJenis.length === 0 ||
-                selectedJenis.includes(street.jenisjalan_id.toString());
+                !Object.values(jenis).some(Boolean) ||
+                jenis[street.jenisjalan_id];
             const kondisiMatch =
-                selectedKondisi.length === 0 ||
-                selectedKondisi.includes(street.kondisi_id.toString());
-
-            // Filter pencarian nama
+                !Object.values(kondisi).some(Boolean) ||
+                kondisi[street.kondisi_id];
             const nameMatch = street.nama_ruas
                 .toLowerCase()
                 .includes(searchLower);
@@ -199,219 +121,66 @@ export default function MapOverviewStreetComponent({
         });
     }, [streets, filters, searchValue]);
 
-    // Update filteredStreets ketika hasil filter berubah
-    useEffect(() => {
-        setFilteredStreets(combinedFilteredStreets);
-    }, [combinedFilteredStreets]);
+    const handleCenterMap = useCallback((coords: [number, number]) => {
+        setMapCenter(coords);
+    }, []);
 
-    // Handler untuk perubahan filter dari dialog
-    const handleFilterChange = useCallback((newFilters: typeof filters) => {
-        setFilters(newFilters);
+    const handleEditStreet = useCallback((id: number) => {
+        toast.info("Processing request...");
+        router.visit(`/dashboard/street/edit/${id}`);
+    }, []);
+
+    const handleAddNew = useCallback(() => {
+        toast.info("Processing request...");
+        router.visit("/dashboard/street/add");
+    }, []);
+
+    const handleFilterChange = useCallback(
+        (newFilters: FilterStateInterface) => {
+            setFilters(newFilters);
+        },
+        []
+    );
+
+    const handleSearch = useCallback((value: string) => {
+        setSearchValue(value);
     }, []);
 
     return (
-        <>
-            <DashboardMapLayout currentPath={"/dashboard/street"}>
-                <Head title="Street" />
-                <div className="gap-8 grid md:grid-cols-4">
-                    <div className="">
-                        <HowToUseComponent tutorials={HowToUseMarkerOverview} />
-
-                        <Button
-                            className="mb-4 w-full"
-                            onClick={() => {
-                                toast.info(
-                                    "Processing request, please wait..."
-                                );
-                                router.visit("/dashboard/street/add");
-                            }}
-                        >
-                            <PlusCircle />
-                            Add New Street
-                        </Button>
-                        <hr />
-                        <DialogFilterStreetComponent
-                            onFilterChange={handleFilterChange}
-                            initialFilters={filters}
-                        />
-                        <Input
-                            placeholder="Search..."
-                            className="my-4"
-                            onChange={(e) => setSearchValue(e.target.value)}
-                        />
-                        <div className="justify-between w-full h-80 overflow-y-auto">
-                            {loading ? (
-                                <div className="space-y-2">
-                                    {streets.map((street, index) => (
-                                        <Skeleton
-                                            key={index}
-                                            className="w-full h-8"
-                                        />
-                                    ))}
-                                </div>
-                            ) : (
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="flex justify-between items-center">
-                                                <p>Street</p>
-                                                <p>
-                                                    ({filteredStreets.length}/
-                                                    {streets?.length})
-                                                </p>
-                                            </TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody className="block w-full">
-                                        {filteredStreets.map(
-                                            (street, index) => (
-                                                <TableRow
-                                                    key={index}
-                                                    className="block w-full"
-                                                >
-                                                    <TableCell className="flex justify-between items-center">
-                                                        {street.nama_ruas}
-                                                        <Button
-                                                            variant={"outline"}
-                                                            onClick={() =>
-                                                                setMapCenter({
-                                                                    latitude:
-                                                                        street
-                                                                            .coordinates[0][0],
-                                                                    longitude:
-                                                                        street
-                                                                            .coordinates[0][1],
-                                                                })
-                                                            }
-                                                        >
-                                                            <Eye />
-                                                        </Button>
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            )}
-                        </div>
-                    </div>
-                    <div className="z-0 md:col-span-3">
-                        {loading ? (
-                            <Skeleton className="w-full h-[500px]" />
-                        ) : (
-                            <MapContainer
-                                center={[
-                                    mapCenter.latitude,
-                                    mapCenter.longitude,
-                                ]}
-                                zoom={15}
-                                style={{ height: "500px", width: "100%" }}
-                            >
-                                <MapCenterUpdater
-                                    center={[
-                                        mapCenter.latitude,
-                                        mapCenter.longitude,
-                                    ]}
-                                />
-                                <TileLayer url={tileLayers[selectedLayer]} />
-
-                                {filteredStreets &&
-                                    filteredStreets.map((street) => (
-                                        <Polyline
-                                            key={street.id}
-                                            positions={street.coordinates}
-                                            color={"blue"}
-                                        >
-                                            <Popup>
-                                                <strong>
-                                                    {street.nama_ruas ||
-                                                        "Jalan Tanpa Nama"}
-                                                </strong>
-                                                <br />
-                                                <br />
-                                                {street.keterangan ||
-                                                    "Tidak ada deskripsi"}
-                                                <br />
-                                                <br />
-                                                Panjang:{" "}
-                                                {roundToTwo(street.panjang) ||
-                                                    "-"}{" "}
-                                                meter
-                                                <br />
-                                                <br />
-                                                Lebar: {street.lebar ||
-                                                    "-"}{" "}
-                                                meter
-                                                <br />
-                                                <br />
-                                                <Button
-                                                    className="mr-2"
-                                                    onClick={() => {
-                                                        toast.info(
-                                                            "Sedang memproses, mohon tunggu sebentar..."
-                                                        );
-                                                        router.visit(
-                                                            `/dashboard/street/edit/${street.id}`
-                                                        );
-                                                    }}
-                                                    variant={"outline"}
-                                                >
-                                                    Edit
-                                                </Button>
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger className="inline-flex justify-center items-center gap-2 bg-destructive hover:bg-destructive/90 disabled:opacity-50 shadow-sm px-3 py-1 rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&_svg]:size-4 font-medium text-destructive-foreground text-sm whitespace-nowrap transition-colors [&_svg]:pointer-events-none disabled:pointer-events-none [&_svg]:shrink-0">
-                                                        Delete
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent>
-                                                        <AlertDialogHeader>
-                                                            <AlertDialogTitle>
-                                                                Are you
-                                                                absolutely sure?
-                                                            </AlertDialogTitle>
-                                                            <AlertDialogDescription>
-                                                                This action
-                                                                cannot be
-                                                                undone. This
-                                                                will permanently
-                                                                delete street
-                                                                from our
-                                                                servers.
-                                                            </AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel>
-                                                                Cancel
-                                                            </AlertDialogCancel>
-                                                            <AlertDialogAction
-                                                                onClick={() =>
-                                                                    handleDeleted(
-                                                                        street.id
-                                                                    )
-                                                                }
-                                                            >
-                                                                Continue
-                                                            </AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
-                                            </Popup>
-                                        </Polyline>
-                                    ))}
-                            </MapContainer>
-                        )}
-                    </div>
+        <DashboardMapLayout currentPath="/dashboard/street">
+            <Head title="Street" />
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                <DashboardCounterCard
+                    title="Total Streets"
+                    value={initialStreets.length}
+                />
+            </div>
+            <hr />
+            <div className="gap-8 grid grid-cols-1 lg:grid-cols-4 mt-8">
+                <div>
+                    <StreetControls
+                        onAddNew={handleAddNew}
+                        onFilterChange={handleFilterChange}
+                        onSearch={handleSearch}
+                        initialFilters={filters}
+                    />
+                    <StreetList
+                        streets={streets}
+                        filteredStreets={filteredStreets}
+                        loading={loading}
+                        onCenterMap={handleCenterMap}
+                    />
                 </div>
-            </DashboardMapLayout>
-        </>
+                <div className="z-0 md:col-span-3">
+                    <StreetMap
+                        streets={filteredStreets}
+                        center={mapCenter}
+                        onEdit={handleEditStreet}
+                        onDelete={handleDeleted}
+                        loading={loading}
+                    />
+                </div>
+            </div>
+        </DashboardMapLayout>
     );
 }
-
-const MapCenterUpdater = ({ center }: { center: [number, number] }) => {
-    const map = useMap();
-
-    useEffect(() => {
-        map.flyTo(center, map.getZoom()); // bisa juga pakai map.setView(center, map.getZoom())
-    }, [center, map]);
-
-    return null;
-};

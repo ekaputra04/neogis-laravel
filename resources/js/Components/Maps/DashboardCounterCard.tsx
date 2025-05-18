@@ -13,7 +13,7 @@ import { useThemeStore } from "@/Store/themeStore";
 interface DashboardCounterCardProps {
     title: string;
     value: number;
-    link: string;
+    link?: string;
 }
 
 export default function DashboardCounterCard({
@@ -25,7 +25,7 @@ export default function DashboardCounterCard({
     return (
         <>
             <Card
-                onClick={() => router.visit(link)}
+                onClick={link ? () => router.visit(link) : () => {}}
                 className="group hover:bg-gradient-to-br hover:from-yellow-200 hover:to-green-200 transition-all animate-in animate-out duration-100 hover:cursor-pointer"
             >
                 <CardHeader>
