@@ -32,7 +32,7 @@ export const StreetControls = memo(
 
             const link = document.createElement("a");
             link.href = url;
-            link.download = "streets.json";
+            link.download = new Date().toISOString() + ".json";
             link.click();
 
             URL.revokeObjectURL(url);

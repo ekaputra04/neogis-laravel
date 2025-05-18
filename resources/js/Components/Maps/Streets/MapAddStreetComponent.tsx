@@ -51,6 +51,7 @@ import { Label } from "@/Components/ui/label";
 import { capitalizeWords, roundToTwo } from "@/lib/utils";
 import { decode, encode } from "@mapbox/polyline";
 import { lineString, length } from "@turf/turf";
+import UploadFileDialog from "@/Components/UploadFileDialog";
 
 const formSchema = z.object({
     desa_id: z.number(),
@@ -281,9 +282,12 @@ export default function MapAddStreetComponent() {
         <>
             <DashboardMapLayout currentPath={"/dashboard/street/add"}>
                 <Head title="Add Street" />
-                <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
-                    Add Street
-                </h2>
+                <div className="flex justify-between items-start">
+                    <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
+                        Add Street
+                    </h2>
+                    <UploadFileDialog />
+                </div>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
                         <HowToUse tutorials={HowToUseMarkerAdd} />
