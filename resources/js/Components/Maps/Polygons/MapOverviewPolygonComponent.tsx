@@ -36,6 +36,7 @@ import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
+import { MapCenterUpdater } from "@/Components/MapCenterUpdater";
 
 interface MapOverviewPolygonComponentProps {
     currentPath: string;
@@ -263,13 +264,3 @@ export default function MapOverviewPolygonComponent({
         </>
     );
 }
-
-const MapCenterUpdater = ({ center }: { center: [number, number] }) => {
-    const map = useMap();
-
-    useEffect(() => {
-        map.flyTo(center, map.getZoom()); // bisa juga pakai map.setView(center, map.getZoom())
-    }, [center, map]);
-
-    return null;
-};

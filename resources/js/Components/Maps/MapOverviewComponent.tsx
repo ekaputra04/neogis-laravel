@@ -37,6 +37,7 @@ import { tileLayers } from "@/consts/tileLayers";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import DashboardCounterCard from "./DashboardCounterCard";
 import { Input } from "../ui/input";
+import { MapCenterUpdater } from "../MapCenterUpdater";
 
 interface MapOverviewComponentProps {
     currentPath: string;
@@ -489,13 +490,3 @@ export default function MapOverviewComponent({
         </>
     );
 }
-
-const MapCenterUpdater = ({ center }: { center: [number, number] }) => {
-    const map = useMap();
-
-    useEffect(() => {
-        map.flyTo(center, map.getZoom());
-    }, [center, map]);
-
-    return null;
-};

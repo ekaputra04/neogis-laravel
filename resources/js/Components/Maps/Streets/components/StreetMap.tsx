@@ -23,6 +23,7 @@ import { memo, useEffect } from "react";
 import { Skeleton } from "@/Components/ui/skeleton";
 import { tileLayers } from "@/consts/tileLayers";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { MapCenterUpdater } from "@/Components/MapCenterUpdater";
 
 interface StreetMapProps {
     streets: StreetWithCoordinatesInterface[];
@@ -109,11 +110,3 @@ export const StreetMap = memo(
         );
     }
 );
-
-const MapCenterUpdater = memo(({ center }: { center: [number, number] }) => {
-    const map = useMap();
-    useEffect(() => {
-        map.flyTo(center, map.getZoom());
-    }, [center, map]);
-    return null;
-});
