@@ -11,6 +11,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import {
     CoordinatesInterface,
+    FilterStateInterface,
     StreetInterface,
     StreetWithCoordinatesInterface,
 } from "@/types/types";
@@ -28,7 +29,7 @@ import {
 } from "@/Components/ui/alert-dialog";
 import axios from "axios";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
     Table,
     TableBody,
@@ -69,6 +70,11 @@ export default function MapOverviewStreetComponent({
             ]) as [number, number][],
         }))
     );
+    const [filters, setFilters] = useState<FilterStateInterface>({
+        eksisting: {},
+        jenis: {},
+        kondisi: {},
+    });
 
     const [filteredStreets, setFilteredStreets] = useState<
         StreetWithCoordinatesInterface[]
@@ -156,18 +162,52 @@ export default function MapOverviewStreetComponent({
         }
     };
 
+    // Gabungkan kedua filter dalam satu useMemo
+    const combinedFilteredStreets = useMemo(() => {
+        if (!streets) return [];
+
+        // Filter berdasarkan kriteria (eksisting, jenis, kondisi)
+        const { eksisting, jenis, kondisi } = filters;
+
+        const selectedEksisting = Object.keys(eksisting).filter(
+            (k) => eksisting[k]
+        );
+        const selectedJenis = Object.keys(jenis).filter((k) => jenis[k]);
+        const selectedKondisi = Object.keys(kondisi).filter((k) => kondisi[k]);
+
+        // Filter berdasarkan search value (nama jalan)
+        const searchLower = searchValue.toLowerCase();
+
+        return streets.filter((street) => {
+            // Filter kriteria
+            const eksistingMatch =
+                selectedEksisting.length === 0 ||
+                selectedEksisting.includes(street.eksisting_id.toString());
+            const jenisMatch =
+                selectedJenis.length === 0 ||
+                selectedJenis.includes(street.jenisjalan_id.toString());
+            const kondisiMatch =
+                selectedKondisi.length === 0 ||
+                selectedKondisi.includes(street.kondisi_id.toString());
+
+            // Filter pencarian nama
+            const nameMatch = street.nama_ruas
+                .toLowerCase()
+                .includes(searchLower);
+
+            return eksistingMatch && jenisMatch && kondisiMatch && nameMatch;
+        });
+    }, [streets, filters, searchValue]);
+
+    // Update filteredStreets ketika hasil filter berubah
     useEffect(() => {
-        if (streets) {
-            const filtered = streets.filter((street) =>
-                street.nama_ruas
-                    .toLowerCase()
-                    .includes(searchValue.toLowerCase())
-            );
-            setFilteredStreets(filtered);
-        } else {
-            setFilteredStreets([]);
-        }
-    }, [searchValue, streets]);
+        setFilteredStreets(combinedFilteredStreets);
+    }, [combinedFilteredStreets]);
+
+    // Handler untuk perubahan filter dari dialog
+    const handleFilterChange = useCallback((newFilters: typeof filters) => {
+        setFilters(newFilters);
+    }, []);
 
     return (
         <>
@@ -190,12 +230,15 @@ export default function MapOverviewStreetComponent({
                             Add New Street
                         </Button>
                         <hr />
-                        <DialogFilterStreetComponent />
+                        <DialogFilterStreetComponent
+                            onFilterChange={handleFilterChange}
+                            initialFilters={filters}
+                        />
                         <Input
                             placeholder="Search..."
                             className="my-4"
                             onChange={(e) => setSearchValue(e.target.value)}
-                        ></Input>
+                        />
                         <div className="justify-between w-full h-80 overflow-y-auto">
                             {loading ? (
                                 <div className="space-y-2">
@@ -272,8 +315,8 @@ export default function MapOverviewStreetComponent({
                                 />
                                 <TileLayer url={tileLayers[selectedLayer]} />
 
-                                {streets &&
-                                    streets.map((street) => (
+                                {filteredStreets &&
+                                    filteredStreets.map((street) => (
                                         <Polyline
                                             key={street.id}
                                             positions={street.coordinates}

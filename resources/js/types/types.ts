@@ -125,3 +125,9 @@ export interface KondisiJalanInterface {
     id: number;
     kondisi: string;
 }
+
+export interface FilterStateInterface {
+    eksisting: Record<string, boolean>;
+    jenis: Record<string, boolean>;
+    kondisi: Record<string, boolean>;
+}
