@@ -16,6 +16,16 @@ import {
     FormMessage,
 } from "@/Components/ui/form";
 import { toast } from "sonner";
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/Components/ui/sheet";
+import { buttonCss, buttonOutlineCss } from "@/consts/buttonCss";
+import { Search } from "lucide-react";
 
 const formSchema = z.object({
     query: z.string(),
@@ -73,56 +83,84 @@ export default function SearchAddress({
     console.log("SEARCH ADDRESS RENDER");
 
     return (
-        <div className="space-y-2">
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4"
-                >
-                    <FormField
-                        control={form.control}
-                        name="query"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Search Address</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Search..."
-                                        {...field}
-                                        disabled={loading}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button type="submit" className="w-full" disabled={loading}>
-                        {loading ? "Loading..." : "Search"}
-                    </Button>
-                </form>
-            </Form>
-            {geocodingResponses.length > 0 && (
-                <div className="space-y-2 max-h-[350px] overflow-y-auto">
-                    <h2 className="py-2 text-sm">Address found :</h2>
-                    {geocodingResponses.map((response) => (
-                        <div
-                            key={response.place_id}
-                            className={
-                                response.place_id === addressId
-                                    ? `bg-green-50 shadow-md p-2 border border-green-500 rounded-md text-sm hover:cursor-pointer`
-                                    : `hover:bg-green-50 shadow-md p-2 border hover:border-green-500 rounded-md text-sm hover:cursor-pointer`
-                            }
-                            onClick={() => {
-                                handleSelectAddress(response);
-                            }}
+        <Sheet>
+            <SheetTrigger
+                className={
+                    buttonOutlineCss +
+                    "my-4 bg-green-100 border-green-600 hover:bg-green-200 border"
+                }
+            >
+                <Search />
+                Search Address with API
+            </SheetTrigger>
+            <SheetContent>
+                <SheetHeader>
+                    <SheetTitle>Search Address</SheetTitle>
+                    <SheetDescription>
+                        Search the address with geocoding API
+                    </SheetDescription>
+                </SheetHeader>
+                <div className="space-y-2">
+                    <Form {...form}>
+                        <form
+                            onSubmit={form.handleSubmit(onSubmit)}
+                            className="space-y-4"
                         >
-                            <h3 className="text-justify">
-                                {response.display_name}
-                            </h3>
+                            <FormField
+                                control={form.control}
+                                name="query"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        {/* <FormLabel>Search Address</FormLabel> */}
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Search..."
+                                                className="mt-4"
+                                                {...field}
+                                                disabled={loading}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={loading}
+                            >
+                                {loading ? "Loading..." : "Search"}
+                            </Button>
+                        </form>
+                    </Form>
+                    {geocodingResponses.length > 0 && (
+                        <div className="space-y-2 max-h-[350px] overflow-y-auto">
+                            <h2 className="py-2 text-sm">Address found :</h2>
+                            {geocodingResponses.map((response) => (
+                                <div
+                                    key={response.place_id}
+                                    className={
+                                        response.place_id === addressId
+                                            ? `bg-green-50 shadow-md p-2 border border-green-500 rounded-md text-sm hover:cursor-pointer`
+                                            : `hover:bg-green-50 shadow-md p-2 border hover:border-green-500 rounded-md text-sm hover:cursor-pointer`
+                                    }
+                                    onClick={() => {
+                                        handleSelectAddress(response);
+                                        toast.success(
+                                            "Maps centered to: " +
+                                                response.display_name
+                                        );
+                                    }}
+                                >
+                                    <h3 className="text-justify">
+                                        {response.display_name}
+                                    </h3>
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    )}
                 </div>
-            )}
-        </div>
+            </SheetContent>
+        </Sheet>
     );
 }

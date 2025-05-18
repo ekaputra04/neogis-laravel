@@ -65,212 +65,182 @@ export const MapOverviewLayer = memo(
         }, [address]);
 
         return (
-            <div className="gap-4 grid grid-cols-1 lg:grid-cols-4">
-                <div className="col-span-1">
-                    <SearchAddress
-                        handleSelectAddress={handleSelectAddress}
-                        addressId={address?.place_id || 0}
-                    />
-                </div>
-                <div className="col-span-1 lg:col-span-3">
-                    <div className="z-0 relative mb-8">
-                        <MapContainer
+            <div className="space-y-4 mt-8">
+                <SearchAddress
+                    handleSelectAddress={handleSelectAddress}
+                    addressId={address?.place_id || 0}
+                />
+                <div className="z-0 relative mb-8">
+                    <MapContainer
+                        center={[mapCenter.latitude, mapCenter.longitude]}
+                        zoom={16}
+                        style={{ height: "500px", width: "100%" }}
+                    >
+                        <MapCenterUpdater
                             center={[mapCenter.latitude, mapCenter.longitude]}
-                            zoom={16}
-                            style={{ height: "500px", width: "100%" }}
-                        >
-                            <MapCenterUpdater
-                                center={[
-                                    mapCenter.latitude,
-                                    mapCenter.longitude,
-                                ]}
-                            />
-                            <TileLayer url={tileLayers[selectedLayer]} />
+                        />
+                        <TileLayer url={tileLayers[selectedLayer]} />
 
-                            {address && (
-                                <Polygon
-                                    key={address.place_id}
-                                    positions={[
+                        {address && (
+                            <Polygon
+                                key={address.place_id}
+                                positions={[
+                                    [
                                         [
-                                            [
-                                                parseFloat(
-                                                    address.boundingbox[0]
-                                                ),
-                                                parseFloat(
-                                                    address.boundingbox[2]
-                                                ),
-                                            ],
-                                            [
-                                                parseFloat(
-                                                    address.boundingbox[0]
-                                                ),
-                                                parseFloat(
-                                                    address.boundingbox[3]
-                                                ),
-                                            ],
-                                            [
-                                                parseFloat(
-                                                    address.boundingbox[1]
-                                                ),
-                                                parseFloat(
-                                                    address.boundingbox[3]
-                                                ),
-                                            ],
-                                            [
-                                                parseFloat(
-                                                    address.boundingbox[1]
-                                                ),
-                                                parseFloat(
-                                                    address.boundingbox[2]
-                                                ),
-                                            ],
-                                            [
-                                                parseFloat(
-                                                    address.boundingbox[0]
-                                                ),
-                                                parseFloat(
-                                                    address.boundingbox[2]
-                                                ),
-                                            ],
+                                            parseFloat(address.boundingbox[0]),
+                                            parseFloat(address.boundingbox[2]),
                                         ],
+                                        [
+                                            parseFloat(address.boundingbox[0]),
+                                            parseFloat(address.boundingbox[3]),
+                                        ],
+                                        [
+                                            parseFloat(address.boundingbox[1]),
+                                            parseFloat(address.boundingbox[3]),
+                                        ],
+                                        [
+                                            parseFloat(address.boundingbox[1]),
+                                            parseFloat(address.boundingbox[2]),
+                                        ],
+                                        [
+                                            parseFloat(address.boundingbox[0]),
+                                            parseFloat(address.boundingbox[2]),
+                                        ],
+                                    ],
+                                ]}
+                                color="green"
+                            >
+                                <Popup>
+                                    <strong>{address.type}</strong>
+                                    <br />
+                                    {address.display_name}
+                                </Popup>
+                            </Polygon>
+                        )}
+
+                        {markers &&
+                            markers.map((marker, index) => (
+                                <Marker
+                                    key={index}
+                                    position={[
+                                        marker.latitude,
+                                        marker.longitude,
                                     ]}
-                                    color="green"
+                                    icon={customIcon}
                                 >
                                     <Popup>
-                                        <strong>{address.type}</strong>
+                                        {marker.name ? (
+                                            <strong>{marker.name}</strong>
+                                        ) : (
+                                            "Lokasi tanpa nama"
+                                        )}
                                         <br />
-                                        {address.display_name}
+                                        {marker.description ||
+                                            "Tidak ada deskripsi"}
+                                        <br />
+                                        <br />
+                                        {marker.category_name && (
+                                            <>
+                                                <Badge variant={"default"}>
+                                                    {marker.category_name}
+                                                </Badge>
+                                            </>
+                                        )}
+                                    </Popup>
+                                </Marker>
+                            ))}
+
+                        {lines &&
+                            lines.map((line) => (
+                                <Polyline
+                                    key={line.id}
+                                    positions={line.coordinates}
+                                    color={line.color || "blue"}
+                                >
+                                    <Popup>
+                                        {line.name ? (
+                                            <strong>{line.name}</strong>
+                                        ) : (
+                                            "Lokasi tanpa nama"
+                                        )}
+                                        <br />
+                                        <br />
+                                        {line.description ||
+                                            "Tidak ada deskripsi"}
+                                        <br />
+                                        <br />
+                                        {line.category_name && (
+                                            <>
+                                                <Badge variant={"default"}>
+                                                    {line.category_name}
+                                                </Badge>
+                                            </>
+                                        )}
+                                    </Popup>
+                                </Polyline>
+                            ))}
+
+                        {polygons &&
+                            polygons.map((polygon) => (
+                                <Polygon
+                                    key={polygon.id}
+                                    positions={polygon.coordinates}
+                                    color={polygon.color || "blue"}
+                                >
+                                    <Popup>
+                                        {polygon.name ? (
+                                            <strong>{polygon.name}</strong>
+                                        ) : (
+                                            "Lokasi tanpa nama"
+                                        )}
+                                        <br />
+                                        <br />
+                                        {polygon.description ||
+                                            "Tidak ada deskripsi"}
+                                        <br />
+                                        <br />
+                                        {polygon.category_name && (
+                                            <>
+                                                <Badge variant={"default"}>
+                                                    {polygon.category_name}
+                                                </Badge>
+                                            </>
+                                        )}
                                     </Popup>
                                 </Polygon>
-                            )}
+                            ))}
 
-                            {markers &&
-                                markers.map((marker, index) => (
-                                    <Marker
-                                        key={index}
-                                        position={[
-                                            marker.latitude,
-                                            marker.longitude,
-                                        ]}
-                                        icon={customIcon}
-                                    >
-                                        <Popup>
-                                            {marker.name ? (
-                                                <strong>{marker.name}</strong>
-                                            ) : (
-                                                "Lokasi tanpa nama"
-                                            )}
-                                            <br />
-                                            {marker.description ||
-                                                "Tidak ada deskripsi"}
-                                            <br />
-                                            <br />
-                                            {marker.category_name && (
-                                                <>
-                                                    <Badge variant={"default"}>
-                                                        {marker.category_name}
-                                                    </Badge>
-                                                </>
-                                            )}
-                                        </Popup>
-                                    </Marker>
-                                ))}
-
-                            {lines &&
-                                lines.map((line) => (
-                                    <Polyline
-                                        key={line.id}
-                                        positions={line.coordinates}
-                                        color={line.color || "blue"}
-                                    >
-                                        <Popup>
-                                            {line.name ? (
-                                                <strong>{line.name}</strong>
-                                            ) : (
-                                                "Lokasi tanpa nama"
-                                            )}
-                                            <br />
-                                            <br />
-                                            {line.description ||
-                                                "Tidak ada deskripsi"}
-                                            <br />
-                                            <br />
-                                            {line.category_name && (
-                                                <>
-                                                    <Badge variant={"default"}>
-                                                        {line.category_name}
-                                                    </Badge>
-                                                </>
-                                            )}
-                                        </Popup>
-                                    </Polyline>
-                                ))}
-
-                            {polygons &&
-                                polygons.map((polygon) => (
-                                    <Polygon
-                                        key={polygon.id}
-                                        positions={polygon.coordinates}
-                                        color={polygon.color || "blue"}
-                                    >
-                                        <Popup>
-                                            {polygon.name ? (
-                                                <strong>{polygon.name}</strong>
-                                            ) : (
-                                                "Lokasi tanpa nama"
-                                            )}
-                                            <br />
-                                            <br />
-                                            {polygon.description ||
-                                                "Tidak ada deskripsi"}
-                                            <br />
-                                            <br />
-                                            {polygon.category_name && (
-                                                <>
-                                                    <Badge variant={"default"}>
-                                                        {polygon.category_name}
-                                                    </Badge>
-                                                </>
-                                            )}
-                                        </Popup>
-                                    </Polygon>
-                                ))}
-
-                            {circles &&
-                                circles.map((circle) => (
-                                    <Circle
-                                        key={circle.id}
-                                        center={[
-                                            circle.latitude,
-                                            circle.longitude,
-                                        ]}
-                                        radius={circle.radius}
-                                        color={circle.color || "blue"}
-                                    >
-                                        <Popup>
-                                            {circle.name ? (
-                                                <strong>{circle.name}</strong>
-                                            ) : (
-                                                "Lokasi tanpa nama"
-                                            )}
-                                            <br />
-                                            <br />
-                                            {circle.description ||
-                                                "Tidak ada deskripsi"}
-                                            <br />
-                                            <br />
-                                            {circle.category_name && (
-                                                <>
-                                                    <Badge variant={"default"}>
-                                                        {circle.category_name}
-                                                    </Badge>
-                                                </>
-                                            )}
-                                        </Popup>
-                                    </Circle>
-                                ))}
-                        </MapContainer>
-                    </div>
+                        {circles &&
+                            circles.map((circle) => (
+                                <Circle
+                                    key={circle.id}
+                                    center={[circle.latitude, circle.longitude]}
+                                    radius={circle.radius}
+                                    color={circle.color || "blue"}
+                                >
+                                    <Popup>
+                                        {circle.name ? (
+                                            <strong>{circle.name}</strong>
+                                        ) : (
+                                            "Lokasi tanpa nama"
+                                        )}
+                                        <br />
+                                        <br />
+                                        {circle.description ||
+                                            "Tidak ada deskripsi"}
+                                        <br />
+                                        <br />
+                                        {circle.category_name && (
+                                            <>
+                                                <Badge variant={"default"}>
+                                                    {circle.category_name}
+                                                </Badge>
+                                            </>
+                                        )}
+                                    </Popup>
+                                </Circle>
+                            ))}
+                    </MapContainer>
                 </div>
             </div>
         );

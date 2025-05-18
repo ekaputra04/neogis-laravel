@@ -17,7 +17,6 @@ import { FilterLine } from "./Overviews/FilterLine";
 import { MapOverviewLayer } from "./Overviews/MapOverviewLayer";
 import { FilterPolygon } from "./Overviews/FilterPolygon";
 import { FilterCircle } from "./Overviews/FilterCircle";
-import SearchAddress from "../SearchAddress";
 
 interface MapOverviewComponentProps {
     currentPath: string;
@@ -208,14 +207,6 @@ export default function MapOverviewComponent({
                         />
                     ))}
                 </div>
-                <MapOverviewLayer
-                    mapCenter={mapCenter}
-                    markers={markers}
-                    lines={lines}
-                    polygons={polygons}
-                    circles={circles}
-                    handleSetMapCenter={handleSetMapCenter}
-                />
 
                 <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                     <FilterMarker
@@ -243,6 +234,14 @@ export default function MapOverviewComponent({
                         handleCircleClick={handleCircleClick}
                     />
                 </div>
+                <MapOverviewLayer
+                    mapCenter={mapCenter}
+                    markers={markers}
+                    lines={lines}
+                    polygons={polygons}
+                    circles={circles}
+                    handleSetMapCenter={handleSetMapCenter}
+                />
             </DashboardMapLayout>
         </>
     );

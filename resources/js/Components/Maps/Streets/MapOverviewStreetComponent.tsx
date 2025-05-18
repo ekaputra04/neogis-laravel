@@ -15,6 +15,8 @@ import { StreetList } from "./components/StreetList";
 import { StreetMap } from "./components/StreetMap";
 import TableStreetFilterCounter from "./components/TableStreetFilterCounter";
 import { Skeleton } from "@/Components/ui/skeleton";
+import { Button } from "@/Components/ui/button";
+import { Download } from "lucide-react";
 
 interface MapOverviewStreetComponentProps {
     streets: StreetInterface[];
@@ -209,6 +211,7 @@ export default function MapOverviewStreetComponent({
                         onFilterChange={handleFilterChange}
                         onSearch={handleSearch}
                         initialFilters={filters}
+                        streets={streets}
                     />
                     <StreetList
                         streetLength={streets.length}
