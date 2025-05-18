@@ -1,6 +1,16 @@
-"use client";
-import React from "react";
 import { HeroParallax } from "./ui/hero-parallax";
+import cartoDBDark from "@/images/map-layer/carto-db-dark.png";
+import cartoDBLight from "@/images/map-layer/carto-db-light.png";
+import cartoDBVoyager from "@/images/map-layer/carto-db-voyager.png";
+import esriWorldImagery from "@/images/map-layer/esri-world-imagery.png";
+import googleHybrid from "@/images/map-layer/google-hybrid.png";
+import googleSatellite from "@/images/map-layer/google-satellite.png";
+import googleStreet from "@/images/map-layer/google-street.png";
+import googleTerrain from "@/images/map-layer/google-terrain.png";
+import openStreetMapGerman from "@/images/map-layer/open-street-map-german.png";
+import openStreetMapHumanitarian from "@/images/map-layer/open-street-map-humanitarian.png";
+import openStreetMap from "@/images/map-layer/open-street-map.png";
+import openTopoMap from "@/images/map-layer/open-topo-map.png";
 
 export function HeroParallaxDemo() {
     return (
@@ -11,96 +21,51 @@ export function HeroParallaxDemo() {
 }
 export const products = [
     {
-        title: "Moonbeam",
-        link: "https://gomoonbeam.com",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/moonbeam.png",
+        title: "Carto DB Dark",
+        thumbnail: cartoDBDark,
     },
     {
-        title: "Cursor",
-        link: "https://cursor.so",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/cursor.png",
+        title: "Carto DB Light",
+        thumbnail: cartoDBLight,
     },
     {
-        title: "Rogue",
-        link: "https://userogue.com",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/rogue.png",
-    },
-
-    {
-        title: "Editorially",
-        link: "https://editorially.org",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/editorially.png",
+        title: "Carto DB Voyager",
+        thumbnail: cartoDBVoyager,
     },
     {
-        title: "Editrix AI",
-        link: "https://editrix.ai",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/editrix.png",
+        title: "Esri World Imagery",
+        thumbnail: esriWorldImagery,
     },
     {
-        title: "Pixel Perfect",
-        link: "https://app.pixelperfect.quest",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/pixelperfect.png",
-    },
-
-    {
-        title: "Algochurn",
-        link: "https://algochurn.com",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/algochurn.png",
+        title: "Google Hybrid",
+        thumbnail: googleHybrid,
     },
     {
-        title: "Aceternity UI",
-        link: "https://ui.aceternity.com",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/aceternityui.png",
+        title: "Google Satelite",
+        thumbnail: googleSatellite,
     },
     {
-        title: "Tailwind Master Kit",
-        link: "https://tailwindmasterkit.com",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/tailwindmasterkit.png",
+        title: "Google Street",
+        thumbnail: googleStreet,
     },
     {
-        title: "SmartBridge",
-        link: "https://smartbridgetech.com",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/smartbridge.png",
+        title: "Google Terrain",
+        thumbnail: googleTerrain,
     },
     {
-        title: "Renderwork Studio",
-        link: "https://renderwork.studio",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/renderwork.png",
-    },
-
-    {
-        title: "Creme Digital",
-        link: "https://cremedigital.com",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/cremedigital.png",
+        title: "Open Street Map German",
+        thumbnail: openStreetMapGerman,
     },
     {
-        title: "Golden Bells Academy",
-        link: "https://goldenbellsacademy.com",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/goldenbellsacademy.png",
+        title: "Open Street Map Humanitarian",
+        thumbnail: openStreetMapHumanitarian,
     },
     {
-        title: "Invoker Labs",
-        link: "https://invoker.lol",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/invoker.png",
+        title: "Open Street Map",
+        thumbnail: openStreetMap,
     },
     {
-        title: "E Free Invoice",
-        link: "https://efreeinvoice.com",
-        thumbnail:
-            "https://aceternity.com/images/products/thumbnails/new/efreeinvoice.png",
+        title: "Open Topo Map",
+        thumbnail: openTopoMap,
     },
 ];

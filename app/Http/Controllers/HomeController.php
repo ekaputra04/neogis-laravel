@@ -18,4 +18,9 @@ class HomeController extends Controller
             ]
         ]);
     }
+
+    public function mapsPage()
+    {
+        return Inertia::render('MapLayer');
+    }
 }

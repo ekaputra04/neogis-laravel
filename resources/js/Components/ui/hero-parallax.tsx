@@ -13,13 +13,13 @@ export const HeroParallax = ({
 }: {
     products: {
         title: string;
-        link: string;
+        // link: string;
         thumbnail: string;
     }[];
 }) => {
-    const firstRow = products.slice(0, 5);
-    const secondRow = products.slice(5, 10);
-    const thirdRow = products.slice(10, 15);
+    const firstRow = products.slice(0, 4);
+    const secondRow = products.slice(4, 8);
+    const thirdRow = products.slice(8, 12);
     const ref = React.useRef(null);
     const { scrollYProgress } = useScroll({
         target: ref,
@@ -55,7 +55,7 @@ export const HeroParallax = ({
     return (
         <div
             ref={ref}
-            className="relative flex flex-col self-auto py-40 w-screen h-[300vh] overflow-hidden overflow-x-hidden antialiased [perspective:1000px] [transform-style:preserve-3d]"
+            className="relative flex flex-col self-auto py-40 w-screen h-[400vh] overflow-hidden overflow-x-hidden antialiased [perspective:1000px] [transform-style:preserve-3d]"
         >
             <Header />
             <motion.div
@@ -124,7 +124,7 @@ export const ProductCard = ({
 }: {
     product: {
         title: string;
-        link: string;
+        // link: string;
         thumbnail: string;
     };
     translate: MotionValue<number>;
@@ -140,10 +140,7 @@ export const ProductCard = ({
             key={product.title}
             className="group/product relative w-[30rem] h-96 shrink-0"
         >
-            <a
-                href={product.link}
-                className="block group-hover/product:shadow-2xl"
-            >
+            <div className="block group-hover/product:shadow-2xl">
                 <img
                     src={product.thumbnail}
                     height="600"
@@ -151,7 +148,7 @@ export const ProductCard = ({
                     className="absolute inset-0 w-full h-full object-cover object-left-top"
                     alt={product.title}
                 />
-            </a>
+            </div>
             <div className="absolute inset-0 bg-black opacity-0 group-hover/product:opacity-80 w-full h-full pointer-events-none"></div>
             <h2 className="bottom-4 left-4 absolute opacity-0 group-hover/product:opacity-100 text-white">
                 {product.title}

@@ -2,17 +2,19 @@ import AuthButton from "@/Components/AuthButton";
 import { FaQComponent } from "@/Components/FaQ";
 import Footer from "@/Components/Footer";
 import { HeroParallaxDemo } from "@/Components/HeroParallax";
+import { InfiniteMovingCardsDemo } from "@/Components/InfiniteMovingCards";
 import { InteractiveHoverButton } from "@/Components/magicui/interactive-hover-button";
 import { RainbowButton } from "@/Components/magicui/rainbow-button";
+import { MarqueeDemo } from "@/Components/Marquee";
 import { ParticlesBackground } from "@/Components/ParticlesBackground";
 import { ParticlesBackgroundDark } from "@/Components/ParticlesBackgroundDark";
 import { ToolsUsed } from "@/Components/ToolsUsed";
 import { FloatingNav } from "@/Components/ui/floating-navbar";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
+import { useThemeStore } from "@/Store/themeStore";
 import { UserInterface } from "@/types/types";
 import { Head, Link } from "@inertiajs/react";
 import { GithubIcon, Home, LayoutDashboard, User } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface HomePageProps {
     auth: {
@@ -41,9 +43,10 @@ const navItems = [
 ];
 
 export default function HomePage({ auth }: HomePageProps) {
+    const { theme } = useThemeStore();
     return (
         <ThemeProvider>
-            <div className="relative w-screen overflow-x-hidden">
+            <div className="relative">
                 <Head title="Home" />
                 <FloatingNav navItems={navItems} />
                 <AuthButton auth={auth} />
@@ -94,6 +97,8 @@ export default function HomePage({ auth }: HomePageProps) {
                     <HeroParallaxDemo />
 
                     <FaQComponent />
+
+                    <InfiniteMovingCardsDemo />
                     <Footer />
                 </main>
 
