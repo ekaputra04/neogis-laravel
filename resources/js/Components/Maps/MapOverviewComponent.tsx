@@ -85,34 +85,42 @@ export default function MapOverviewComponent({
         {
             title: "Markers",
             value: markers.length,
+            link: "/dashboard/marker",
         },
         {
             title: "Lines",
             value: lines.length,
+            link: "/dashboard/line",
         },
         {
             title: "Polygons",
             value: polygons.length,
+            link: "/dashboard/polygon",
         },
         {
             title: "Circles",
             value: circles.length,
+            link: "/dashboard/circle",
         },
         {
             title: "Marker Categories",
             value: markerCategories,
+            link: "/dashboard/marker/categories",
         },
         {
             title: "Line Categories",
             value: lineCategories,
+            link: "/dashboard/line/categories",
         },
         {
             title: "Polygon Categories",
             value: polygonCategories,
+            link: "/dashboard/polygon/categories",
         },
         {
             title: "Circle Categories",
             value: circleCategories,
+            link: "/dashboard/circle/categories",
         },
     ];
 
@@ -158,6 +166,7 @@ export default function MapOverviewComponent({
                             key={index}
                             title={counter.title}
                             value={counter.value}
+                            link={counter.link}
                         />
                     ))}
                 </div>

@@ -147,10 +147,13 @@ const DialogFilterStreetComponent = memo(
         return (
             <AlertDialog>
                 <AlertDialogTrigger
-                    className={buttonOutlineCss + "flex w-full mt-4"}
+                    className={
+                        buttonOutlineCss +
+                        "flex w-full mt-4 bg-green-200 border-green-500 hover:bg-green-300 "
+                    }
                 >
-                    <Filter className="w-4 h-4" />
-                    Filter
+                    <Filter className="w-4 h-4" color="black" />
+                    <p className="text-black">Filter</p>
                 </AlertDialogTrigger>
                 <AlertDialogContent className="max-h-[80vh] overflow-y-auto">
                     <AlertDialogHeader>

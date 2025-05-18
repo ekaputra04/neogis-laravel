@@ -1,6 +1,7 @@
 import AuthButton from "@/Components/AuthButton";
 import { FaQComponent } from "@/Components/FaQ";
 import Footer from "@/Components/Footer";
+import { HeroParallaxDemo } from "@/Components/HeroParallax";
 import { InteractiveHoverButton } from "@/Components/magicui/interactive-hover-button";
 import { RainbowButton } from "@/Components/magicui/rainbow-button";
 import { ParticlesBackground } from "@/Components/ParticlesBackground";
@@ -40,28 +41,9 @@ const navItems = [
 ];
 
 export default function HomePage({ auth }: HomePageProps) {
-    // cara mengambil token
-    // const [token, setToken] = useState<string | null>(null);
-
-    // useEffect(() => {
-    //     async function getToken() {
-    //         try {
-    //             const res = await fetch("/api/token");
-    //             const data = await res.json();
-    //             console.log("Token:", data.token);
-    //             setToken(data.token); // simpan langsung token string
-    //         } catch (error) {
-    //             console.error("Gagal ambil token:", error);
-    //             setToken(null);
-    //         }
-    //     }
-
-    //     getToken();
-    // }, []);
-
     return (
         <ThemeProvider>
-            <div className="relative w-full">
+            <div className="relative w-screen overflow-x-hidden">
                 <Head title="Home" />
                 <FloatingNav navItems={navItems} />
                 <AuthButton auth={auth} />
@@ -109,9 +91,12 @@ export default function HomePage({ auth }: HomePageProps) {
                         </div>
                     </div>
 
+                    <HeroParallaxDemo />
+
                     <FaQComponent />
                     <Footer />
                 </main>
+
                 <div className="top-0 left-0 -z-10 fixed w-full h-screen">
                     <ParticlesBackground />
                     <ParticlesBackgroundDark />
