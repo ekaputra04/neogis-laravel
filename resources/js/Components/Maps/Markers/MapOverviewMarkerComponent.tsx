@@ -2,25 +2,32 @@ import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
 import { Head } from "@inertiajs/react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import { CoordinatesInterface, MarkerInterface } from "@/types/types";
+import {
+    CoordinatesInterface,
+    GeocodingResponseInterface,
+    MarkerInterface,
+} from "@/types/types";
 import axios from "axios";
 import { toast } from "sonner";
 import { useCallback, useEffect, useState } from "react";
 import { centerPoints } from "@/consts/centerPoints";
-import { MarkerControls } from "./components/MarkerControls";
-import { MarkerList } from "./components/MarkerList";
 import { MarkerMap } from "./components/MarkerMap";
+import { ElementControls } from "@/Components/ElementControls";
+import { ElementList } from "@/Components/ElementList";
+import { SearchAddress } from "@/Components/SearchAddress";
 
-export default function MapOverviewMarkerComponent({
-    currentPath,
-    markers: initialMarkers,
-}: {
-    currentPath: string;
+interface MapOverviewMarkerComponentProps {
     markers: MarkerInterface[];
-}) {
+}
+export default function MapOverviewMarkerComponent({
+    markers: initialMarkers,
+}: MapOverviewMarkerComponentProps) {
+    console.log("MAP OVERVIEW MARKER RENDER");
+
     const [markers, setMarkers] = useState<MarkerInterface[]>(initialMarkers);
     const [filteredMarkers, setFilteredMarkers] =
         useState<MarkerInterface[]>(initialMarkers);
+    const [address, setAddress] = useState<GeocodingResponseInterface>();
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
         markers && markers.length > 0
             ? {
@@ -70,6 +77,28 @@ export default function MapOverviewMarkerComponent({
         }
     }, []);
 
+    const handleSearch = useCallback((value: string) => {
+        setSearchValue(value);
+    }, []);
+
+    const handleCenterMap = useCallback((coords: CoordinatesInterface) => {
+        setMapCenter({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+        });
+    }, []);
+
+    const handleSelectAddress = useCallback(
+        (address: GeocodingResponseInterface) => {
+            setAddress(address);
+        },
+        []
+    );
+
+    const handleSetMapCenter = (center: CoordinatesInterface) => {
+        setMapCenter(center);
+    };
+
     useEffect(() => {
         if (markers) {
             const filtered = markers.filter((marker) =>
@@ -79,41 +108,44 @@ export default function MapOverviewMarkerComponent({
         } else {
             setFilteredMarkers([]);
         }
-    }, [searchValue, markers]);
+    }, [searchValue]);
 
-    const handleSearch = useCallback((value: string) => {
-        setSearchValue(value);
-    }, []);
-
-    const handleCenterMap = useCallback((coords: [number, number]) => {
-        setMapCenter({
-            latitude: coords[0],
-            longitude: coords[1],
-        });
-    }, []);
-
-    console.log("MAP OVERVIEW MARKER RENDER");
+    useEffect(() => {
+        if (address) {
+            handleSetMapCenter({
+                latitude: Number((address as GeocodingResponseInterface).lat),
+                longitude: Number((address as GeocodingResponseInterface).lon),
+            });
+        }
+    }, [address]);
 
     return (
         <>
-            <DashboardMapLayout currentPath={currentPath as string}>
+            <DashboardMapLayout currentPath={"/dashboard/marker"}>
                 <Head title="Marker" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
-                        <MarkerControls
-                            onSearch={handleSearch}
-                            markers={markers}
+                        <SearchAddress
+                            handleSelectAddress={handleSelectAddress}
+                            addressId={address?.place_id || 0}
                         />
-                        <MarkerList
-                            filteredMarkers={filteredMarkers}
-                            markerlength={markers?.length || 0}
+                        <ElementControls
+                            elementType="marker"
+                            onSearch={handleSearch}
+                            elements={markers}
+                        />
+                        <ElementList
+                            elementLength={markers?.length || 0}
                             loading={loading}
+                            filteredElements={filteredMarkers}
                             onCenterMap={handleCenterMap}
+                            type="marker"
                         />
                     </div>
                     <div className="z-0 md:col-span-3">
                         <MarkerMap
-                            markers={markers || []}
+                            markers={markers}
+                            address={address!!}
                             mapCenter={mapCenter}
                             onDelete={handleDeleted}
                         />

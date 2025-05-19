@@ -12,6 +12,7 @@ import {
     AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
 import { Trash } from "lucide-react";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 interface DeleteCategoryDialogProps {
     type: "markers" | "lines" | "polygons" | "rectangles" | "circles";
@@ -45,7 +46,9 @@ export default function DeleteCategoryDialog({
                 throw new Error(`Failed to delete ${type} category`);
             }
 
-            toast.success(`${type} category deleted successfully!`);
+            toast.success(
+                `${capitalizeFirstLetter(type)} category deleted successfully!`
+            );
             setIsOpen(false);
             onCategoryDeleted();
         } catch (error) {

@@ -17,7 +17,7 @@ import { StreetList } from "./components/StreetList";
 import { StreetMap } from "./components/StreetMap";
 import TableStreetFilterCounter from "./components/TableStreetFilterCounter";
 import { Skeleton } from "@/Components/ui/skeleton";
-import SearchAddress from "@/Components/SearchAddress";
+import { SearchAddress } from "@/Components/SearchAddress";
 
 interface MapOverviewStreetComponentProps {
     streets: StreetInterface[];

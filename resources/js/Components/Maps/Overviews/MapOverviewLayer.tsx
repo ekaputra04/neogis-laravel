@@ -1,12 +1,7 @@
 import { customIcon } from "@/Components/CustomMarkerIcon";
-import {
-    MapCenterLayerUpdater,
-    MapCenterUpdater,
-} from "@/Components/MapCenterUpdater";
-import SearchAddress from "@/Components/SearchAddress";
+import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
+import { SearchAddress } from "@/Components/SearchAddress";
 import { Badge } from "@/Components/ui/badge";
-import { tileLayers } from "@/consts/tileLayers";
-import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import {
     CircleInterface,
     CoordinatesInterface,

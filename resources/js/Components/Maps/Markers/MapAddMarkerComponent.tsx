@@ -19,7 +19,7 @@ import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     CategoriesInterface,
     CoordinatesInterface,
@@ -40,9 +40,9 @@ import {
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerAdd } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import SearchAddress from "@/Components/SearchAddress";
 import { centerPoints } from "@/consts/centerPoints";
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
+import { SearchAddress } from "@/Components/SearchAddress";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -68,7 +68,6 @@ export default function MapAddMarkerComponent({
     currentPath,
     categories,
 }: MapAddMarkerComponentProps) {
-    const { selectedLayer } = useMapLayerStore();
     const [marker, setMarker] = useState<CoordinatesInterface | null>(null);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
@@ -165,9 +164,12 @@ export default function MapAddMarkerComponent({
         }
     }, [marker]);
 
-    function handleSelectAddress(address: GeocodingResponseInterface) {
-        setAddress(address);
-    }
+    const handleSelectAddress = useCallback(
+        (address: GeocodingResponseInterface) => {
+            setAddress(address);
+        },
+        []
+    );
 
     const handleSetMapCenter = (center: CoordinatesInterface) => {
         setMapCenter(center);
@@ -191,11 +193,11 @@ export default function MapAddMarkerComponent({
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
-                        <HowToUseComponent tutorials={HowToUseMarkerAdd} />
                         <SearchAddress
                             handleSelectAddress={handleSelectAddress}
                             addressId={address?.place_id || 0}
                         />
+                        <HowToUseComponent tutorials={HowToUseMarkerAdd} />
                         {loading ? (
                             <>
                                 <FormSkeleton count={2} />

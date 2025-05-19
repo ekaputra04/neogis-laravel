@@ -13,23 +13,24 @@ import {
     AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { MapCenterUpdater } from "@/Components/MapCenterUpdater";
-import { tileLayers } from "@/consts/tileLayers";
 import { Badge } from "@/Components/ui/badge";
 import { router } from "@inertiajs/react";
-import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { CoordinatesInterface, MarkerInterface } from "@/types/types";
+import {
+    CoordinatesInterface,
+    GeocodingResponseInterface,
+    MarkerInterface,
+} from "@/types/types";
+import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 
 interface MarkerMapProps {
     markers: MarkerInterface[];
+    address: GeocodingResponseInterface;
     mapCenter: CoordinatesInterface;
     onDelete: (id: number) => void;
 }
 
 export const MarkerMap = memo(
-    ({ markers, mapCenter, onDelete }: MarkerMapProps) => {
-        const { selectedLayer } = useMapLayerStore();
-
+    ({ markers, address, mapCenter, onDelete }: MarkerMapProps) => {
         console.log("MARKER MAP RENDER");
 
         return (
@@ -39,10 +40,10 @@ export const MarkerMap = memo(
                     zoom={16}
                     style={{ height: "500px", width: "100%" }}
                 >
-                    <MapCenterUpdater
-                        center={[mapCenter.latitude, mapCenter.longitude]}
+                    <MapCenterLayerUpdater
+                        mapCenter={mapCenter}
+                        address={address!!}
                     />
-                    <TileLayer url={tileLayers[selectedLayer]} />
 
                     {markers &&
                         markers.map((marker, index) => (

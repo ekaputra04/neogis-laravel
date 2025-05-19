@@ -29,29 +29,11 @@ import {
 import axios from "axios";
 import { toast } from "sonner";
 import { useCallback, useEffect, useState } from "react";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
-import { Input } from "@/Components/ui/input";
-import { Eye, PlusCircle } from "lucide-react";
 import { centerPoints } from "@/consts/centerPoints";
-import { Badge } from "@/Components/ui/badge";
-import HowToUseComponent from "@/Components/HowToUseComponent";
-import { HowToUseMarkerOverview } from "@/consts/howToUse";
-import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { tileLayers } from "@/consts/tileLayers";
-import {
-    MapCenterLayerUpdater,
-    MapCenterUpdater,
-} from "@/Components/MapCenterUpdater";
-import SearchAddress from "@/Components/SearchAddress";
-import { LineControls } from "./components/LineControls";
+import { ElementControls } from "@/Components/ElementControls";
+import { SearchAddress } from "@/Components/SearchAddress";
+import { ElementList } from "@/Components/ElementList";
+import { LineMap } from "./components/LineMap";
 
 interface MapOverviewLineComponentProps {
     currentPath: string;
@@ -62,8 +44,7 @@ export default function MapOverviewLineComponent({
     currentPath,
     lines: initialLines,
 }: MapOverviewLineComponentProps) {
-    const { selectedLayer } = useMapLayerStore();
-    const [lines, setLines] = useState<LineInterface[] | null>(initialLines);
+    const [lines, setLines] = useState<LineInterface[]>(initialLines);
     const [filteredLines, setFilteredLines] =
         useState<LineInterface[]>(initialLines);
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
@@ -73,23 +54,27 @@ export default function MapOverviewLineComponent({
                   longitude: lines[0].coordinates[0][1],
               }
             : {
-                  latitude: centerPoints[0], // fallback jika lines kosong
+                  latitude: centerPoints[0],
                   longitude: centerPoints[1],
               }
     );
     const [searchValue, setSearchValue] = useState<string>("");
+    const [loading, setLoading] = useState(false);
     const [address, setAddress] = useState<GeocodingResponseInterface>();
 
-    const fetchlines = async (): Promise<void> => {
+    const fetchlines = useCallback(async () => {
         try {
             const response = await axios.get(`/api/maps/lines`);
-            setLines(response.data);
+            if (response.status == 200) {
+                setLines(response.data);
+            }
         } catch (error: any) {
             console.error(error.response?.data?.message || error.message);
         }
-    };
+    }, [initialLines]);
 
-    const handleDeleted = async (lineId: number): Promise<void> => {
+    const handleDeleted = useCallback(async (lineId: number) => {
+        setLoading(true);
         try {
             const response = await axios.delete(`/api/maps/lines/${lineId}`);
             if (response.status == 200) {
@@ -106,8 +91,37 @@ export default function MapOverviewLineComponent({
             toast.error(
                 error.response?.data?.message || "Error deleting line."
             );
+        } finally {
+            setLoading(false);
         }
+    }, []);
+
+    const handleSelectAddress = useCallback(
+        (address: GeocodingResponseInterface) => {
+            setAddress(address);
+        },
+        []
+    );
+
+    const handleSetMapCenter = (center: CoordinatesInterface) => {
+        setMapCenter(center);
     };
+
+    const handleCenterMap = useCallback((coords: CoordinatesInterface) => {
+        setMapCenter({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+        });
+    }, []);
+
+    useEffect(() => {
+        if (address) {
+            handleSetMapCenter({
+                latitude: Number((address as GeocodingResponseInterface).lat),
+                longitude: Number((address as GeocodingResponseInterface)?.lon),
+            });
+        }
+    }, [address]);
 
     useEffect(() => {
         if (lines) {
@@ -118,24 +132,7 @@ export default function MapOverviewLineComponent({
         } else {
             setFilteredLines([]);
         }
-    }, [searchValue, lines]);
-
-    function handleSelectAddress(address: GeocodingResponseInterface) {
-        setAddress(address);
-    }
-
-    const handleSetMapCenter = (center: CoordinatesInterface) => {
-        setMapCenter(center);
-    };
-
-    useEffect(() => {
-        if (address) {
-            handleSetMapCenter({
-                latitude: Number((address as GeocodingResponseInterface).lat),
-                longitude: Number((address as GeocodingResponseInterface)?.lon),
-            });
-        }
-    }, [address]);
+    }, [searchValue]);
 
     return (
         <>
@@ -147,144 +144,26 @@ export default function MapOverviewLineComponent({
                             handleSelectAddress={handleSelectAddress}
                             addressId={address?.place_id || 0}
                         />
-                        <LineControls
-                            lines={lines || []}
+                        <ElementControls
+                            elementType="line"
+                            elements={lines || []}
                             onSearch={setSearchValue}
                         />
-                        <div className="justify-between w-full max-h-80 overflow-y-auto">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="flex justify-between items-center">
-                                            <p>Line</p>
-                                            <p>
-                                                ({filteredLines.length}/
-                                                {lines?.length})
-                                            </p>
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody className="block w-full">
-                                    {filteredLines.map((line, index) => (
-                                        <TableRow
-                                            key={index}
-                                            className="block w-full"
-                                        >
-                                            <TableCell className="flex justify-between items-center">
-                                                {line.name}
-                                                <Button
-                                                    variant={"outline"}
-                                                    onClick={() =>
-                                                        setMapCenter({
-                                                            latitude:
-                                                                line
-                                                                    .coordinates[0][0],
-                                                            longitude:
-                                                                line
-                                                                    .coordinates[0][1],
-                                                        })
-                                                    }
-                                                >
-                                                    <Eye />
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
+                        <ElementList
+                            elementLength={lines?.length || 0}
+                            loading={loading}
+                            filteredElements={filteredLines}
+                            onCenterMap={handleCenterMap}
+                            type="line"
+                        />
                     </div>
                     <div className="z-0 md:col-span-3">
-                        <MapContainer
-                            center={[mapCenter.latitude, mapCenter.longitude]}
-                            zoom={13}
-                            style={{ height: "500px", width: "100%" }}
-                        >
-                            <MapCenterLayerUpdater
-                                address={address!!}
-                                mapCenter={{
-                                    latitude: mapCenter.latitude,
-                                    longitude: mapCenter.longitude,
-                                }}
-                            />
-
-                            {lines &&
-                                lines.map((line) => (
-                                    <Polyline
-                                        key={line.id}
-                                        positions={line.coordinates}
-                                        color={line.color || "blue"}
-                                    >
-                                        <Popup>
-                                            {line.name ? (
-                                                <strong>{line.name}</strong>
-                                            ) : (
-                                                "Lokasi tanpa nama"
-                                            )}
-                                            <br />
-                                            <br />
-                                            {line.description ||
-                                                "Tidak ada deskripsi"}
-                                            <br />
-                                            <br />
-                                            {line.category_name && (
-                                                <>
-                                                    <Badge variant={"default"}>
-                                                        {line.category_name}
-                                                    </Badge>
-                                                </>
-                                            )}
-                                            <br />
-                                            <br />
-                                            <Button
-                                                className="mr-2"
-                                                onClick={() => {
-                                                    router.visit(
-                                                        `/dashboard/line/edit/${line.id}`
-                                                    );
-                                                }}
-                                                variant={"outline"}
-                                            >
-                                                Edit
-                                            </Button>
-                                            <AlertDialog>
-                                                <AlertDialogTrigger className="inline-flex justify-center items-center gap-2 bg-destructive hover:bg-destructive/90 disabled:opacity-50 shadow-sm px-3 py-1 rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&_svg]:size-4 font-medium text-destructive-foreground text-sm whitespace-nowrap transition-colors [&_svg]:pointer-events-none disabled:pointer-events-none [&_svg]:shrink-0">
-                                                    Delete
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>
-                                                            Are you absolutely
-                                                            sure?
-                                                        </AlertDialogTitle>
-                                                        <AlertDialogDescription>
-                                                            This action cannot
-                                                            be undone. This will
-                                                            permanently delete
-                                                            line from our
-                                                            servers.
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>
-                                                            Cancel
-                                                        </AlertDialogCancel>
-                                                        <AlertDialogAction
-                                                            onClick={() =>
-                                                                handleDeleted(
-                                                                    line.id
-                                                                )
-                                                            }
-                                                        >
-                                                            Continue
-                                                        </AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
-                                        </Popup>
-                                    </Polyline>
-                                ))}
-                        </MapContainer>
+                        <LineMap
+                            lines={lines}
+                            address={address!!}
+                            mapCenter={mapCenter}
+                            onDelete={handleDeleted}
+                        />
                     </div>
                 </div>
             </DashboardMapLayout>

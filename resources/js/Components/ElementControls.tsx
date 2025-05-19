@@ -2,36 +2,37 @@ import HowToUseComponent from "@/Components/HowToUseComponent";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
-import { handleDownload } from "@/lib/utils";
-import { MarkerInterface } from "@/types/types";
+import { capitalizeFirstLetter, handleDownload } from "@/lib/utils";
 import { Link } from "@inertiajs/react";
 import { Download, PlusCircle } from "lucide-react";
 import { memo } from "react";
 
-interface MarkerControlsProps {
+interface ElementControlsProps {
+    elementType: "marker" | "line" | "polygon" | "circle";
     onSearch: (value: string) => void;
-    markers: MarkerInterface[];
+    elements: Object[];
 }
 
-export const MarkerControls = memo(
-    ({ onSearch, markers }: MarkerControlsProps) => {
-        console.log("MARKER CONTROLS RENDER");
+export const ElementControls = memo(
+    ({ onSearch, elements, elementType }: ElementControlsProps) => {
+        console.log("ELEMENT CONTROLS RENDER");
 
         return (
             <div className="">
                 <HowToUseComponent tutorials={HowToUseMarkerOverview} />
-                <Link href={route("maps.marker.add")}>
+                <Link href={route(`maps.${elementType}.add`)}>
                     <Button className="mb-4 w-full">
                         <PlusCircle />
-                        Add New Marker
+                        Add New {capitalizeFirstLetter(elementType.toString())}
                     </Button>
                 </Link>
                 <Button
                     className="mb-2 w-full"
                     variant={"link"}
-                    onClick={() => handleDownload(markers)}
+                    onClick={() => handleDownload(elements)}
                 >
-                    <Download /> Download Marker Data
+                    <Download /> Download{" "}
+                    {capitalizeFirstLetter(elementType.toString())} Data
                 </Button>
                 <hr />
                 <Input
