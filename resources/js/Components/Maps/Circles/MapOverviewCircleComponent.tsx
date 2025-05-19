@@ -13,6 +13,7 @@ import "leaflet-draw/dist/leaflet.draw.css";
 import {
     CircleInterface,
     CoordinatesInterface,
+    GeocodingResponseInterface,
     PolygonInterface,
 } from "@/types/types";
 import { Button } from "@/Components/ui/button";
@@ -29,7 +30,7 @@ import {
 } from "@/Components/ui/alert-dialog";
 import axios from "axios";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     Table,
     TableBody,
@@ -48,6 +49,10 @@ import { HowToUseMarkerOverview } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
 import { MapCenterUpdater } from "@/Components/MapCenterUpdater";
+import { SearchAddress } from "@/Components/SearchAddress";
+import { ElementControls } from "@/Components/ElementControls";
+import { ElementList } from "@/Components/ElementList";
+import { CircleMap } from "./components/CircleMap";
 
 interface MapOverviewCircleComponentProps {
     currentPath: string;
@@ -62,6 +67,9 @@ export default function MapOverviewCircleComponent({
     const [circles, setCircles] = useState<CircleInterface[]>(initialCircles);
     const [filteredCircles, setFilteredCircles] =
         useState<CircleInterface[]>(initialCircles);
+    const [searchValue, setSearchValue] = useState<string>("");
+    const [loading, setLoading] = useState(false);
+    const [address, setAddress] = useState<GeocodingResponseInterface>();
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
         circles && circles.length > 0
             ? {
@@ -73,34 +81,69 @@ export default function MapOverviewCircleComponent({
                   longitude: centerPoints[1],
               }
     );
-    const [searchValue, setSearchValue] = useState<string>("");
 
-    const fetchCircles = async (): Promise<void> => {
+    const fetchCircles = useCallback(async (): Promise<void> => {
         try {
             const response = await axios.get(`/api/maps/circles`);
-            setCircles(response.data);
+            if (response.status == 200) {
+                setCircles(response.data);
+            }
         } catch (error: any) {
             console.error(error.response?.data?.message || error.message);
         }
+    }, [initialCircles]);
+
+    const handleDeleted = useCallback(
+        async (circleId: number): Promise<void> => {
+            try {
+                const response = await axios.delete(
+                    `/api/maps/circles/${circleId}`
+                );
+                if (response.status == 200) {
+                    await fetchCircles();
+                    toast.success("Circle deleted successfully!");
+                } else {
+                    toast.success("Failed to delete circle!");
+                }
+            } catch (error: any) {
+                console.error(
+                    "Error deleting circle:",
+                    error.response?.data?.message || error.message
+                );
+                toast.error(
+                    error.response?.data?.message || "Error deleting circle."
+                );
+            }
+        },
+        []
+    );
+
+    const handleSelectAddress = useCallback(
+        (address: GeocodingResponseInterface) => {
+            setAddress(address);
+        },
+        []
+    );
+
+    const handleSetMapCenter = (center: CoordinatesInterface) => {
+        setMapCenter(center);
     };
 
-    const handleDeleted = async (circleId: number): Promise<void> => {
-        try {
-            const response = await axios.delete(
-                `/api/maps/circles/${circleId}`
-            );
-            await fetchCircles();
-            toast.success("Circle deleted successfully!");
-        } catch (error: any) {
-            console.error(
-                "Error deleting circle:",
-                error.response?.data?.message || error.message
-            );
-            toast.error(
-                error.response?.data?.message || "Error deleting circle."
-            );
+    const handleCenterMap = useCallback((coords: CoordinatesInterface) => {
+        setMapCenter({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+        });
+    }, []);
+
+    useEffect(() => {
+        if (address) {
+            handleSetMapCenter({
+                latitude: Number((address as GeocodingResponseInterface).lat),
+                longitude: Number((address as GeocodingResponseInterface)?.lon),
+            });
         }
-    };
+    }, [address]);
 
     useEffect(() => {
         if (circles) {
@@ -111,7 +154,7 @@ export default function MapOverviewCircleComponent({
         } else {
             setFilteredCircles([]);
         }
-    }, [searchValue, circles]);
+    }, [searchValue]);
 
     return (
         <>
@@ -119,156 +162,30 @@ export default function MapOverviewCircleComponent({
                 <Head title="Circle" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
-                        <HowToUseComponent tutorials={HowToUseMarkerOverview} />
-
-                        <Link href={route("maps.circle.add")}>
-                            <Button className="mb-4 w-full">
-                                <PlusCircle />
-                                Add New Circle
-                            </Button>
-                        </Link>
-                        <hr />
-                        <Input
-                            placeholder="Search..."
-                            className="my-4"
-                            onChange={(e) => setSearchValue(e.target.value)}
-                        ></Input>
-                        <div className="justify-between w-full max-h-80 overflow-y-auto">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="flex justify-between items-center">
-                                            <p>Circle</p>
-                                            <p>
-                                                ({filteredCircles.length}/
-                                                {circles?.length})
-                                            </p>
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody className="block w-full">
-                                    {filteredCircles.map((circle, index) => (
-                                        <TableRow
-                                            key={index}
-                                            className="block w-full"
-                                        >
-                                            <TableCell className="flex justify-between items-center">
-                                                {circle.name}
-                                                <Button
-                                                    variant={"outline"}
-                                                    onClick={() =>
-                                                        setMapCenter({
-                                                            latitude:
-                                                                circle.latitude,
-                                                            longitude:
-                                                                circle.longitude,
-                                                        })
-                                                    }
-                                                >
-                                                    <Eye />
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
+                        <SearchAddress
+                            handleSelectAddress={handleSelectAddress}
+                            addressId={address?.place_id || 0}
+                        />
+                        <ElementControls
+                            elementType="circle"
+                            elements={circles}
+                            onSearch={setSearchValue}
+                        />
+                        <ElementList
+                            elementLength={circles?.length || 0}
+                            loading={loading}
+                            filteredElements={filteredCircles}
+                            onCenterMap={handleCenterMap}
+                            type="circle"
+                        />
                     </div>
                     <div className="z-0 md:col-span-3">
-                        <MapContainer
-                            center={[mapCenter.latitude, mapCenter.longitude]}
-                            zoom={13}
-                            style={{ height: "500px", width: "100%" }}
-                        >
-                            <MapCenterUpdater
-                                center={[
-                                    mapCenter.latitude,
-                                    mapCenter.longitude,
-                                ]}
-                            />
-                            <TileLayer url={tileLayers[selectedLayer]} />
-
-                            {circles &&
-                                circles.map((circle) => (
-                                    <Circle
-                                        key={circle.id}
-                                        center={[
-                                            circle.latitude,
-                                            circle.longitude,
-                                        ]}
-                                        radius={circle.radius}
-                                        color={circle.color || "blue"}
-                                    >
-                                        <Popup>
-                                            {circle.name ? (
-                                                <strong>{circle.name}</strong>
-                                            ) : (
-                                                "Lokasi tanpa nama"
-                                            )}
-                                            <br />
-                                            <br />
-                                            {circle.description ||
-                                                "Tidak ada deskripsi"}
-                                            <br />
-                                            <br />
-                                            {circle.category_name && (
-                                                <>
-                                                    <Badge variant={"default"}>
-                                                        {circle.category_name}
-                                                    </Badge>
-                                                </>
-                                            )}
-                                            <br />
-                                            <br />
-                                            <Button
-                                                className="mr-2"
-                                                onClick={() => {
-                                                    router.visit(
-                                                        `/dashboard/circle/edit/${circle.id}`
-                                                    );
-                                                }}
-                                                variant={"outline"}
-                                            >
-                                                Edit
-                                            </Button>
-                                            <AlertDialog>
-                                                <AlertDialogTrigger className="inline-flex justify-center items-center gap-2 bg-destructive hover:bg-destructive/90 disabled:opacity-50 shadow-sm px-3 py-1 rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&_svg]:size-4 font-medium text-destructive-foreground text-sm whitespace-nowrap transition-colors [&_svg]:pointer-events-none disabled:pointer-events-none [&_svg]:shrink-0">
-                                                    Delete
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>
-                                                            Are you absolutely
-                                                            sure?
-                                                        </AlertDialogTitle>
-                                                        <AlertDialogDescription>
-                                                            This action cannot
-                                                            be undone. This will
-                                                            permanently delete
-                                                            circle from our
-                                                            servers.
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>
-                                                            Cancel
-                                                        </AlertDialogCancel>
-                                                        <AlertDialogAction
-                                                            onClick={() =>
-                                                                handleDeleted(
-                                                                    circle.id
-                                                                )
-                                                            }
-                                                        >
-                                                            Continue
-                                                        </AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
-                                        </Popup>
-                                    </Circle>
-                                ))}
-                        </MapContainer>
+                        <CircleMap
+                            circles={circles}
+                            address={address!!}
+                            mapCenter={mapCenter}
+                            onDelete={handleDeleted}
+                        />
                     </div>
                 </div>
             </DashboardMapLayout>

@@ -314,7 +314,7 @@ export default function MapAddMarkerComponent({
                         ) : (
                             <MapContainer
                                 key={mapKey}
-                                center={[-8.65, 115.21]}
+                                center={[centerPoints[0], centerPoints[1]]}
                                 zoom={13}
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"

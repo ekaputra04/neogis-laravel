@@ -3,16 +3,7 @@ import { LineInterface, MarkerInterface } from "@/types/types";
 import { usePage } from "@inertiajs/react";
 
 export default function MapOverviewLine() {
-    const { currentPath, lines } = usePage().props;
+    const { lines } = usePage().props;
 
-    return (
-        <>
-            <div className="">
-                <MapOverviewLineComponent
-                    currentPath={currentPath as string}
-                    lines={lines as LineInterface[]}
-                />
-            </div>
-        </>
-    );
+    return <MapOverviewLineComponent lines={lines as LineInterface[]} />;
 }

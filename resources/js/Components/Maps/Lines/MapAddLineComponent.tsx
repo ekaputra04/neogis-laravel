@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,8 +19,12 @@ import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
-import { useEffect, useState } from "react";
-import { CategoriesInterface, CoordinatesInterface } from "@/types/types";
+import { useCallback, useEffect, useState } from "react";
+import {
+    CategoriesInterface,
+    CoordinatesInterface,
+    GeocodingResponseInterface,
+} from "@/types/types";
 import { toast } from "sonner";
 import FormSkeleton from "@/Components/FormSkeleton";
 import { Skeleton } from "@/Components/ui/skeleton";
@@ -35,8 +39,9 @@ import {
 } from "@/Components/ui/select";
 import HowToUse from "@/Components/HowToUseComponent";
 import { HowToUseMarkerAdd } from "@/consts/howToUse";
-import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { tileLayers } from "@/consts/tileLayers";
+import { SearchAddress } from "@/Components/SearchAddress";
+import { centerPoints } from "@/consts/centerPoints";
+import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -62,12 +67,16 @@ export default function MapAddLineComponent({
     currentPath,
     categories,
 }: MapAddLineComponentProps) {
-    const { selectedLayer } = useMapLayerStore();
     const [lineCoordinates, setLineCoordinates] = useState<
         CoordinatesInterface[]
     >([]);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
+    const [address, setAddress] = useState<GeocodingResponseInterface>();
+    const [mapCenter, setMapCenter] = useState<CoordinatesInterface>({
+        latitude: centerPoints[0],
+        longitude: centerPoints[1],
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -111,6 +120,7 @@ export default function MapAddLineComponent({
             toast.success("Line saved successfully!");
             form.reset();
             setLineCoordinates([]);
+            router.visit("/dashboard/line");
         } catch (error) {
             console.error("Error saving line:", error);
             toast.error("Error saving line.");
@@ -123,10 +133,8 @@ export default function MapAddLineComponent({
         const { layer } = e;
 
         if (layer instanceof L.Polyline) {
-            // Ambil seluruh koordinat polyline
             const latLngs = layer.getLatLngs() as L.LatLng[];
 
-            // Transformasikan koordinat ke format yang sesuai
             const coordinates: CoordinatesInterface[] = latLngs.map(
                 (latLng) => ({
                     latitude: latLng.lat,
@@ -134,7 +142,6 @@ export default function MapAddLineComponent({
                 })
             );
 
-            // Simpan koordinat tersebut ke dalam state (atau tempat lain yang sesuai)
             setLineCoordinates(coordinates);
         }
     };
@@ -142,15 +149,12 @@ export default function MapAddLineComponent({
     const handleEdited = (e: DrawEditedEvent) => {
         const event = e as DrawEditedEvent;
 
-        // Variabel untuk menyimpan seluruh koordinat polyline yang diedit
         let updatedCoordinates: CoordinatesInterface[] = [];
 
         event.layers.eachLayer((layer) => {
             if (layer instanceof L.Polyline) {
-                // Ambil seluruh koordinat polyline yang diedit
                 const latLngs = layer.getLatLngs() as L.LatLng[];
 
-                // Map koordinat ke format yang sesuai
                 updatedCoordinates = latLngs.map((latLng) => ({
                     latitude: latLng.lat,
                     longitude: latLng.lng,
@@ -158,7 +162,6 @@ export default function MapAddLineComponent({
             }
         });
 
-        // Update state dengan koordinat yang telah diedit
         setLineCoordinates(updatedCoordinates);
     };
 
@@ -169,6 +172,26 @@ export default function MapAddLineComponent({
             }
         });
     };
+
+    const handleSelectAddress = useCallback(
+        (address: GeocodingResponseInterface) => {
+            setAddress(address);
+        },
+        []
+    );
+
+    const handleSetMapCenter = (center: CoordinatesInterface) => {
+        setMapCenter(center);
+    };
+
+    useEffect(() => {
+        if (address) {
+            handleSetMapCenter({
+                latitude: Number((address as GeocodingResponseInterface).lat),
+                longitude: Number((address as GeocodingResponseInterface)?.lon),
+            });
+        }
+    }, [address]);
 
     useEffect(() => {
         if (lineCoordinates.length == 0) {
@@ -185,6 +208,10 @@ export default function MapAddLineComponent({
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
+                        <SearchAddress
+                            handleSelectAddress={handleSelectAddress}
+                            addressId={address?.place_id || 0}
+                        />
                         <HowToUse tutorials={HowToUseMarkerAdd} />
 
                         {loading ? (
@@ -303,12 +330,15 @@ export default function MapAddLineComponent({
                         ) : (
                             <MapContainer
                                 key={mapKey}
-                                center={[-8.65, 115.21]}
+                                center={[centerPoints[0], centerPoints[1]]}
                                 zoom={13}
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer url={tileLayers[selectedLayer]} />
+                                <MapCenterLayerUpdater
+                                    address={address!!}
+                                    mapCenter={mapCenter}
+                                />
 
                                 <FeatureGroup>
                                     <EditControl

@@ -6,13 +6,9 @@ export default function MapOverviewRectangle() {
     const { currentPath, rectangles } = usePage().props;
 
     return (
-        <>
-            <div className="">
-                <MapOverviewRectangleComponent
-                    currentPath={currentPath as string}
-                    rectangles={rectangles as RectangleInterface[]}
-                />
-            </div>
-        </>
+        <MapOverviewRectangleComponent
+            currentPath={currentPath as string}
+            rectangles={rectangles as RectangleInterface[]}
+        />
     );
 }

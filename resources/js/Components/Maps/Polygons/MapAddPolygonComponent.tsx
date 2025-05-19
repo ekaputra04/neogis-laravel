@@ -19,8 +19,12 @@ import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
-import { useEffect, useRef, useState } from "react";
-import { CategoriesInterface, CoordinatesInterface } from "@/types/types";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+    CategoriesInterface,
+    CoordinatesInterface,
+    GeocodingResponseInterface,
+} from "@/types/types";
 import { toast } from "sonner";
 import FormSkeleton from "@/Components/FormSkeleton";
 import { Skeleton } from "@/Components/ui/skeleton";
@@ -37,6 +41,9 @@ import HowToUse from "@/Components/HowToUseComponent";
 import { HowToUseMarkerAdd } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
+import { centerPoints } from "@/consts/centerPoints";
+import { SearchAddress } from "@/Components/SearchAddress";
+import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -68,6 +75,11 @@ export default function MapAddPolygonComponent({
     >([]);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
+    const [address, setAddress] = useState<GeocodingResponseInterface>();
+    const [mapCenter, setMapCenter] = useState<CoordinatesInterface>({
+        latitude: centerPoints[0],
+        longitude: centerPoints[1],
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -124,31 +136,20 @@ export default function MapAddPolygonComponent({
 
         if (layer instanceof L.Polygon) {
             try {
-                // Dapatkan latlngs dengan casting yang tepat
                 const latLngs = layer.getLatLngs();
 
-                // Polygon di Leaflet selalu memiliki struktur nested array
-                // latLngs[0] adalah array koordinat luar, latLngs[1] dst adalah hole (jika ada)
-                // Kita butuh memastikan kita mempunyai array dari objek LatLng
-
-                // Coba pendekatan yang lebih aman dengan type guards
                 let polygonPoints: L.LatLng[] = [];
 
-                // Cek apakah latLngs adalah array 2D (polygon biasa)
                 if (Array.isArray(latLngs) && latLngs.length > 0) {
-                    // Ambil array koordinat luar (outer ring)
                     const outerRing = latLngs[0];
 
                     if (Array.isArray(outerRing)) {
-                        // Iterasi melalui semua poin dalam outer ring
                         polygonPoints = outerRing as L.LatLng[];
                     }
                 }
 
-                // Transformasikan koordinat ke format yang sesuai
                 const coordinates: CoordinatesInterface[] = [];
 
-                // Sekarang kita bisa aman melakukan iterasi
                 for (const point of polygonPoints) {
                     coordinates.push({
                         latitude: point.lat,
@@ -156,7 +157,6 @@ export default function MapAddPolygonComponent({
                     });
                 }
 
-                // Simpan koordinat tersebut ke dalam state
                 setPolygonCoordinates(coordinates);
             } catch (error) {
                 console.error("Error processing polygon coordinates:", error);
@@ -165,27 +165,21 @@ export default function MapAddPolygonComponent({
     };
 
     const handleEdited = (e: DrawEditedEvent) => {
-        // Variabel untuk menyimpan seluruh koordinat polygon yang diedit
         let updatedCoordinates: CoordinatesInterface[] = [];
 
         try {
             e.layers.eachLayer((layer: L.Layer) => {
                 if (layer instanceof L.Polygon) {
-                    // Ambil seluruh koordinat polygon yang diedit
                     const latLngs = layer.getLatLngs();
 
-                    // Sama seperti handleCreated, kita butuh memproses struktur nested
                     if (Array.isArray(latLngs) && latLngs.length > 0) {
                         const outerRing = latLngs[0];
 
                         if (Array.isArray(outerRing)) {
-                            // Buat koordinat dari setiap point
                             const polygonPoints = outerRing as L.LatLng[];
 
-                            // Reset updatedCoordinates untuk menghindari koordinat duplikat dari layer sebelumnya
                             updatedCoordinates = [];
 
-                            // Proses tiap point
                             for (const point of polygonPoints) {
                                 updatedCoordinates.push({
                                     latitude: point.lat,
@@ -197,7 +191,6 @@ export default function MapAddPolygonComponent({
                 }
             });
 
-            // Update state hanya jika ada koordinat yang valid
             if (updatedCoordinates.length > 0) {
                 setPolygonCoordinates(updatedCoordinates);
             }
@@ -214,6 +207,26 @@ export default function MapAddPolygonComponent({
         });
     };
 
+    const handleSelectAddress = useCallback(
+        (address: GeocodingResponseInterface) => {
+            setAddress(address);
+        },
+        []
+    );
+
+    const handleSetMapCenter = (center: CoordinatesInterface) => {
+        setMapCenter(center);
+    };
+
+    useEffect(() => {
+        if (address) {
+            handleSetMapCenter({
+                latitude: Number((address as GeocodingResponseInterface).lat),
+                longitude: Number((address as GeocodingResponseInterface)?.lon),
+            });
+        }
+    }, [address]);
+
     useEffect(() => {
         if (polygonCoordinates.length == 0) {
             setMapKey((prevKey) => prevKey + 1);
@@ -229,6 +242,10 @@ export default function MapAddPolygonComponent({
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
+                        <SearchAddress
+                            handleSelectAddress={handleSelectAddress}
+                            addressId={address?.place_id || 0}
+                        />
                         <HowToUse tutorials={HowToUseMarkerAdd} />
 
                         {loading ? (
@@ -350,12 +367,15 @@ export default function MapAddPolygonComponent({
                         ) : (
                             <MapContainer
                                 key={mapKey}
-                                center={[-8.65, 115.21]}
+                                center={[centerPoints[0], centerPoints[1]]}
                                 zoom={13}
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer url={tileLayers[selectedLayer]} />
+                                <MapCenterLayerUpdater
+                                    address={address!!}
+                                    mapCenter={mapCenter}
+                                />
 
                                 <FeatureGroup>
                                     <EditControl

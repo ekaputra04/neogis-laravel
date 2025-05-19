@@ -21,18 +21,16 @@ export default function MapOverview() {
     } = usePage().props;
 
     return (
-        <>
-            <MapOverviewComponent
-                currentPath={currentPath as string}
-                markers={markers as MarkerInterface[]}
-                lines={lines as LineInterface[]}
-                polygons={polygons as PolygonInterface[]}
-                circles={circles as CircleInterface[]}
-                markerCategories={markerCategories as number}
-                lineCategories={lineCategories as number}
-                polygonCategories={polygonCategories as number}
-                circleCategories={circleCategories as number}
-            />
-        </>
+        <MapOverviewComponent
+            currentPath={currentPath as string}
+            markers={markers as MarkerInterface[]}
+            lines={lines as LineInterface[]}
+            polygons={polygons as PolygonInterface[]}
+            circles={circles as CircleInterface[]}
+            markerCategories={markerCategories as number}
+            lineCategories={lineCategories as number}
+            polygonCategories={polygonCategories as number}
+            circleCategories={circleCategories as number}
+        />
     );
 }
