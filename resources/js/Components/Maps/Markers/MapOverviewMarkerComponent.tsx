@@ -47,35 +47,40 @@ export default function MapOverviewMarkerComponent({
             const response = await axios.get(`/api/maps/markers`);
             if (response.status == 200) {
                 setMarkers(response.data);
+                setFilteredMarkers(response.data);
             }
         } catch (error: any) {
             console.error(error.response?.data?.message || error.message);
         }
-    }, [initialMarkers]);
-
-    const handleDeleted = useCallback(async (markerId: number) => {
-        setLoading(true);
-        try {
-            const response = await axios.delete(
-                `/api/maps/markers/${markerId}`
-            );
-            if (response.status == 200) {
-                await fetchMarkers();
-                toast.success("Marker deleted successfully!");
-            }
-            toast.success("Failed to delete marker!");
-        } catch (error: any) {
-            console.error(
-                "Error deleting marker:",
-                error.response?.data?.message || error.message
-            );
-            toast.error(
-                error.response?.data?.message || "Gagal menghapus marker."
-            );
-        } finally {
-            setLoading(false);
-        }
     }, []);
+
+    const handleDeleted = useCallback(
+        async (markerId: number) => {
+            setLoading(true);
+            try {
+                const response = await axios.delete(
+                    `/api/maps/markers/${markerId}`
+                );
+                if (response.status == 200) {
+                    await fetchMarkers();
+                    toast.success("Marker deleted successfully!");
+                } else {
+                    toast.success("Failed to delete marker!");
+                }
+            } catch (error: any) {
+                console.error(
+                    "Error deleting marker:",
+                    error.response?.data?.message || error.message
+                );
+                toast.error(
+                    error.response?.data?.message || "Gagal menghapus marker."
+                );
+            } finally {
+                setLoading(false);
+            }
+        },
+        [fetchMarkers]
+    );
 
     const handleSearch = useCallback((value: string) => {
         setSearchValue(value);

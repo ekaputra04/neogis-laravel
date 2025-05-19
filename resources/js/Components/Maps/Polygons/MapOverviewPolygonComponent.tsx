@@ -63,11 +63,14 @@ export default function MapOverviewPolygonComponent({
     const fetchPolygons = useCallback(async (): Promise<void> => {
         try {
             const response = await axios.get(`/api/maps/polygons`);
-            setPolygons(response.data);
+            if (response.status == 200) {
+                setPolygons(response.data);
+                setFilteredPolygons(response.data);
+            }
         } catch (error: any) {
             console.error(error.response?.data?.message || error.message);
         }
-    }, [initialPolygons]);
+    }, []);
 
     const handleDeleted = useCallback(
         async (polygonId: number): Promise<void> => {
@@ -94,7 +97,7 @@ export default function MapOverviewPolygonComponent({
                 setLoading(false);
             }
         },
-        []
+        [fetchPolygons]
     );
 
     const handleSelectAddress = useCallback(

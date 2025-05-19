@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,8 +19,12 @@ import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
-import { useEffect, useState } from "react";
-import { CategoriesInterface, CoordinatesInterface } from "@/types/types";
+import { useCallback, useEffect, useState } from "react";
+import {
+    CategoriesInterface,
+    CoordinatesInterface,
+    GeocodingResponseInterface,
+} from "@/types/types";
 import { toast } from "sonner";
 import FormSkeleton from "@/Components/FormSkeleton";
 import { Skeleton } from "@/Components/ui/skeleton";
@@ -37,6 +41,9 @@ import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerAdd } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
+import { SearchAddress } from "@/Components/SearchAddress";
+import { centerPoints } from "@/consts/centerPoints";
+import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -54,21 +61,22 @@ interface DrawEditedEvent {
 }
 
 interface MapAddCircleComponentProps {
-    currentPath: string;
     categories: CategoriesInterface[];
 }
 
 export default function MapAddCircleComponent({
-    currentPath,
     categories,
 }: MapAddCircleComponentProps) {
-    const { selectedLayer } = useMapLayerStore();
-    const [centerPoint, setCenterPoint] = useState<CoordinatesInterface | null>(
-        null
-    );
+    const [centerPoint, setCenterPoint] =
+        useState<CoordinatesInterface | null>();
     const [radius, setRadius] = useState<number | null>(null);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
+    const [address, setAddress] = useState<GeocodingResponseInterface>();
+    const [mapCenter, setMapCenter] = useState<CoordinatesInterface>({
+        latitude: centerPoints[0],
+        longitude: centerPoints[1],
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -109,6 +117,7 @@ export default function MapAddCircleComponent({
             toast.success("Circle saved successfully!");
             form.reset();
             setCenterPoint(null);
+            router.visit("/dashboard/circle");
         } catch (error) {
             console.error("Error saving circle:", error);
             toast.error("Error saving circle.");
@@ -157,6 +166,26 @@ export default function MapAddCircleComponent({
         });
     };
 
+    const handleSelectAddress = useCallback(
+        (address: GeocodingResponseInterface) => {
+            setAddress(address);
+        },
+        []
+    );
+
+    const handleSetMapCenter = (center: CoordinatesInterface) => {
+        setMapCenter(center);
+    };
+
+    useEffect(() => {
+        if (address) {
+            handleSetMapCenter({
+                latitude: Number((address as GeocodingResponseInterface).lat),
+                longitude: Number((address as GeocodingResponseInterface)?.lon),
+            });
+        }
+    }, [address]);
+
     useEffect(() => {
         if (centerPoint === null) {
             setMapKey((prevKey) => prevKey + 1);
@@ -165,13 +194,17 @@ export default function MapAddCircleComponent({
 
     return (
         <>
-            <DashboardMapLayout currentPath={currentPath as string}>
+            <DashboardMapLayout currentPath={"/dashboard/circle"}>
                 <Head title="Add Circle" />
                 <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
                     Add Circle
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
+                        <SearchAddress
+                            handleSelectAddress={handleSelectAddress}
+                            addressId={address?.place_id || 0}
+                        />
                         <HowToUseComponent tutorials={HowToUseMarkerAdd} />
                         {loading ? (
                             <>
@@ -268,6 +301,26 @@ export default function MapAddCircleComponent({
                                                 ))}
                                             </SelectContent>
                                         </Select>
+                                        <FormField
+                                            control={form.control}
+                                            name="name"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>
+                                                        Radius (m)
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            value={radius?.toString()}
+                                                            placeholder="Radius..."
+                                                            // {...field}
+                                                            disabled
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
                                         <Button
                                             type="submit"
                                             disabled={categories.length == 0}
@@ -294,7 +347,10 @@ export default function MapAddCircleComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer url={tileLayers[selectedLayer]} />
+                                <MapCenterLayerUpdater
+                                    address={address!!}
+                                    mapCenter={mapCenter}
+                                />
 
                                 <FeatureGroup>
                                     <EditControl

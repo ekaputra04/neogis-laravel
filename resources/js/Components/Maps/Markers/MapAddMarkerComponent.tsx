@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -115,6 +115,7 @@ export default function MapAddMarkerComponent({
             toast.success("Location saved successfully!");
             form.reset();
             setMarker(null);
+            router.visit("/dashboard/marker");
         } catch (error) {
             console.error("Error saving location:", error);
             toast.error("Error saving location.");

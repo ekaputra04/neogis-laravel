@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -123,6 +123,7 @@ export default function MapAddPolygonComponent({
             toast.success("Polygon saved successfully!");
             form.reset();
             setPolygonCoordinates([]);
+            router.visit("/dashboard/polygon");
         } catch (error) {
             console.error("Error saving polygon:", error);
             toast.error("Error saving polygon.");

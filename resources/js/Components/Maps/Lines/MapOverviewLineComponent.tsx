@@ -46,34 +46,40 @@ export default function MapOverviewLineComponent({
             const response = await axios.get(`/api/maps/lines`);
             if (response.status == 200) {
                 setLines(response.data);
+                setFilteredLines(response.data);
             }
         } catch (error: any) {
             console.error(error.response?.data?.message || error.message);
         }
-    }, [initialLines]);
-
-    const handleDeleted = useCallback(async (lineId: number) => {
-        setLoading(true);
-        try {
-            const response = await axios.delete(`/api/maps/lines/${lineId}`);
-            if (response.status == 200) {
-                await fetchlines();
-                toast.success("Line deleted successfully!");
-            } else {
-                toast.error("Error deleting line.");
-            }
-        } catch (error: any) {
-            console.error(
-                "Error deleting line:",
-                error.response?.data?.message || error.message
-            );
-            toast.error(
-                error.response?.data?.message || "Error deleting line."
-            );
-        } finally {
-            setLoading(false);
-        }
     }, []);
+
+    const handleDeleted = useCallback(
+        async (lineId: number) => {
+            setLoading(true);
+            try {
+                const response = await axios.delete(
+                    `/api/maps/lines/${lineId}`
+                );
+                if (response.status == 200) {
+                    await fetchlines();
+                    toast.success("Line deleted successfully!");
+                } else {
+                    toast.error("Error deleting line.");
+                }
+            } catch (error: any) {
+                console.error(
+                    "Error deleting line:",
+                    error.response?.data?.message || error.message
+                );
+                toast.error(
+                    error.response?.data?.message || "Error deleting line."
+                );
+            } finally {
+                setLoading(false);
+            }
+        },
+        [fetchlines]
+    );
 
     const handleSelectAddress = useCallback(
         (address: GeocodingResponseInterface) => {
@@ -115,7 +121,7 @@ export default function MapOverviewLineComponent({
 
     return (
         <>
-            <DashboardMapLayout currentPath={"dashboard/line"}>
+            <DashboardMapLayout currentPath={"/dashboard/line"}>
                 <Head title="Line" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">

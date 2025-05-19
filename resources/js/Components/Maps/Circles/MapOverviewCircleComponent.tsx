@@ -63,7 +63,6 @@ export default function MapOverviewCircleComponent({
     currentPath,
     circles: initialCircles,
 }: MapOverviewCircleComponentProps) {
-    const { selectedLayer } = useMapLayerStore();
     const [circles, setCircles] = useState<CircleInterface[]>(initialCircles);
     const [filteredCircles, setFilteredCircles] =
         useState<CircleInterface[]>(initialCircles);
@@ -77,24 +76,26 @@ export default function MapOverviewCircleComponent({
                   longitude: circles[0].longitude,
               }
             : {
-                  latitude: centerPoints[0], // fallback jika circles kosong
+                  latitude: centerPoints[0],
                   longitude: centerPoints[1],
               }
     );
 
-    const fetchCircles = useCallback(async (): Promise<void> => {
+    const fetchCircles = useCallback(async () => {
         try {
             const response = await axios.get(`/api/maps/circles`);
             if (response.status == 200) {
                 setCircles(response.data);
+                setFilteredCircles(response.data);
             }
         } catch (error: any) {
             console.error(error.response?.data?.message || error.message);
         }
-    }, [initialCircles]);
+    }, []);
 
     const handleDeleted = useCallback(
-        async (circleId: number): Promise<void> => {
+        async (circleId: number) => {
+            setLoading(true);
             try {
                 const response = await axios.delete(
                     `/api/maps/circles/${circleId}`
@@ -113,9 +114,11 @@ export default function MapOverviewCircleComponent({
                 toast.error(
                     error.response?.data?.message || "Error deleting circle."
                 );
+            } finally {
+                setLoading(false);
             }
         },
-        []
+        [fetchCircles]
     );
 
     const handleSelectAddress = useCallback(
