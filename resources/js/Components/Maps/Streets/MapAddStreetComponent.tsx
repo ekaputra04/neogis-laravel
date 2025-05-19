@@ -1,6 +1,12 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
+import {
+    FeatureGroup,
+    MapContainer,
+    Polygon,
+    Popup,
+    TileLayer,
+} from "react-leaflet";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -25,6 +31,7 @@ import {
     CoordinatesInterface,
     DesaInterface,
     EksistingJalanInterface,
+    GeocodingResponseInterface,
     JenisJalanInterface,
     KabupatenInterface,
     KecamatanInterface,
@@ -52,6 +59,12 @@ import { capitalizeWords, roundToTwo } from "@/lib/utils";
 import { decode, encode } from "@mapbox/polyline";
 import { lineString, length } from "@turf/turf";
 import UploadFileDialog from "@/Components/UploadFileDialog";
+import SearchAddress from "@/Components/SearchAddress";
+import { centerPoints } from "@/consts/centerPoints";
+import {
+    MapCenterLayerUpdater,
+    MapCenterUpdater,
+} from "@/Components/MapCenterUpdater";
 
 const formSchema = z.object({
     desa_id: z.number(),
@@ -88,7 +101,10 @@ export default function MapAddStreetComponent() {
         token,
     } = usePage().props;
 
-    const { selectedLayer } = useMapLayerStore();
+    const [mapCenter, setMapCenter] = useState<CoordinatesInterface>({
+        latitude: centerPoints[0],
+        longitude: centerPoints[1],
+    });
     const [streetCoordinates, setStreetCoordinates] = useState<
         CoordinatesInterface[]
     >([]);
@@ -102,6 +118,7 @@ export default function MapAddStreetComponent() {
         KecamatanInterface[]
     >([]);
     const [filteredDesa, setFilteredDesa] = useState<DesaInterface[]>([]);
+    const [address, setAddress] = useState<GeocodingResponseInterface>();
 
     const handleFilterKabupaten = (provinsiId: number) => {
         const kab = (kabupaten as KabupatenInterface[]).filter(
@@ -278,6 +295,23 @@ export default function MapAddStreetComponent() {
         }
     }, [streetCoordinates]);
 
+    function handleSelectAddress(address: GeocodingResponseInterface) {
+        setAddress(address);
+    }
+
+    const handleSetMapCenter = (center: CoordinatesInterface) => {
+        setMapCenter(center);
+    };
+
+    useEffect(() => {
+        if (address) {
+            handleSetMapCenter({
+                latitude: Number((address as GeocodingResponseInterface).lat),
+                longitude: Number((address as GeocodingResponseInterface)?.lon),
+            });
+        }
+    }, [address]);
+
     return (
         <>
             <DashboardMapLayout currentPath={"/dashboard/street/add"}>
@@ -291,6 +325,10 @@ export default function MapAddStreetComponent() {
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
                         <HowToUse tutorials={HowToUseMarkerAdd} />
+                        <SearchAddress
+                            handleSelectAddress={handleSelectAddress}
+                            addressId={address?.place_id || 0}
+                        />
 
                         {loading ? (
                             <>
@@ -657,37 +695,6 @@ export default function MapAddStreetComponent() {
                                             </Select>
                                         </div>
 
-                                        {/* <Select
-                                            required
-                                            onValueChange={(value) => {
-                                                const selectedCategory =
-                                                    categories.find(
-                                                        (cat) =>
-                                                            cat.name === value
-                                                    );
-                                                if (selectedCategory) {
-                                                    form.setValue(
-                                                        "category_id",
-                                                        selectedCategory.id
-                                                    );
-                                                }
-                                            }}
-                                            disabled={categories.length == 0}
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Select a category" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {categories.map((category) => (
-                                                    <SelectItem
-                                                        value={category.name}
-                                                        key={category.id}
-                                                    >
-                                                        {category.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select> */}
                                         <Button
                                             type="submit"
                                             disabled={loading}
@@ -709,12 +716,18 @@ export default function MapAddStreetComponent() {
                         ) : (
                             <MapContainer
                                 key={mapKey}
-                                center={[-8.65, 115.21]}
+                                center={[
+                                    mapCenter.latitude,
+                                    mapCenter.longitude,
+                                ]}
                                 zoom={13}
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer url={tileLayers[selectedLayer]} />
+                                <MapCenterLayerUpdater
+                                    address={address!!}
+                                    mapCenter={mapCenter}
+                                />
 
                                 <FeatureGroup>
                                     <EditControl

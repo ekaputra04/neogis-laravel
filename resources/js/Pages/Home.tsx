@@ -70,23 +70,31 @@ export default function HomePage({ auth }: HomePageProps) {
                     </div>
 
                     <div className="flex md:flex-row flex-col justify-center items-center gap-4 w-full">
-                        <Link href={"/dashboard"} className="md:my-16 mt-16">
-                            <RainbowButton className="gap-2 rounded-full">
-                                <LayoutDashboard className="w-6 h-6" />
-                                Explore Dashboard
-                            </RainbowButton>
-                        </Link>
-                        <a
-                            href="https://github.com/ekaputra04/neogis-laravel.git"
-                            className="flex justify-center mx-auto md:my-16 w-full"
-                            target="_blank"
-                        >
-                            <InteractiveHoverButton>
-                                <div className="flex gap-2">
-                                    <GithubIcon className="w-6 h-6" /> Github
-                                </div>
-                            </InteractiveHoverButton>
-                        </a>
+                        <div className="">
+                            <Link
+                                href={"/dashboard"}
+                                className="block md:my-16 mt-16"
+                            >
+                                <RainbowButton className="gap-2 rounded-full">
+                                    <LayoutDashboard className="w-6 h-6" />
+                                    Explore Dashboard
+                                </RainbowButton>
+                            </Link>
+                        </div>
+                        <div className="">
+                            <a
+                                href="https://github.com/ekaputra04/neogis-laravel.git"
+                                className="flex justify-center mx-auto md:my-16 w-full"
+                                target="_blank"
+                            >
+                                <InteractiveHoverButton>
+                                    <div className="flex gap-2">
+                                        <GithubIcon className="w-6 h-6" />{" "}
+                                        Github
+                                    </div>
+                                </InteractiveHoverButton>
+                            </a>
+                        </div>
                     </div>
 
                     <HeroParallaxDemo />
@@ -98,8 +106,11 @@ export default function HomePage({ auth }: HomePageProps) {
                 </main>
 
                 <div className="top-0 left-0 -z-10 fixed w-full h-screen">
-                    <ParticlesBackground />
-                    <ParticlesBackgroundDark />
+                    {theme == "light" ? (
+                        <ParticlesBackground />
+                    ) : (
+                        <ParticlesBackgroundDark />
+                    )}
                 </div>
             </div>
         </ThemeProvider>

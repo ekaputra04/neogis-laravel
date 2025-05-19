@@ -9,7 +9,11 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import { CoordinatesInterface, LineInterface } from "@/types/types";
+import {
+    CoordinatesInterface,
+    GeocodingResponseInterface,
+    LineInterface,
+} from "@/types/types";
 import { Button } from "@/Components/ui/button";
 import {
     AlertDialog,
@@ -24,7 +28,7 @@ import {
 } from "@/Components/ui/alert-dialog";
 import axios from "axios";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     Table,
     TableBody,
@@ -42,7 +46,12 @@ import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
-import { MapCenterUpdater } from "@/Components/MapCenterUpdater";
+import {
+    MapCenterLayerUpdater,
+    MapCenterUpdater,
+} from "@/Components/MapCenterUpdater";
+import SearchAddress from "@/Components/SearchAddress";
+import { LineControls } from "./components/LineControls";
 
 interface MapOverviewLineComponentProps {
     currentPath: string;
@@ -69,6 +78,7 @@ export default function MapOverviewLineComponent({
               }
     );
     const [searchValue, setSearchValue] = useState<string>("");
+    const [address, setAddress] = useState<GeocodingResponseInterface>();
 
     const fetchlines = async (): Promise<void> => {
         try {
@@ -82,8 +92,12 @@ export default function MapOverviewLineComponent({
     const handleDeleted = async (lineId: number): Promise<void> => {
         try {
             const response = await axios.delete(`/api/maps/lines/${lineId}`);
-            await fetchlines();
-            toast.success("Line deleted successfully!");
+            if (response.status == 200) {
+                await fetchlines();
+                toast.success("Line deleted successfully!");
+            } else {
+                toast.error("Error deleting line.");
+            }
         } catch (error: any) {
             console.error(
                 "Error deleting line:",
@@ -106,25 +120,36 @@ export default function MapOverviewLineComponent({
         }
     }, [searchValue, lines]);
 
+    function handleSelectAddress(address: GeocodingResponseInterface) {
+        setAddress(address);
+    }
+
+    const handleSetMapCenter = (center: CoordinatesInterface) => {
+        setMapCenter(center);
+    };
+
+    useEffect(() => {
+        if (address) {
+            handleSetMapCenter({
+                latitude: Number((address as GeocodingResponseInterface).lat),
+                longitude: Number((address as GeocodingResponseInterface)?.lon),
+            });
+        }
+    }, [address]);
+
     return (
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
                 <Head title="Line" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
-                        <HowToUseComponent tutorials={HowToUseMarkerOverview} />
-
-                        <Link href={route("maps.line.add")}>
-                            <Button className="mb-4 w-full">
-                                <PlusCircle />
-                                Add New Line
-                            </Button>
-                        </Link>
-                        <hr />
-                        <Input
-                            placeholder="Search..."
-                            className="my-4"
-                            onChange={(e) => setSearchValue(e.target.value)}
+                        <SearchAddress
+                            handleSelectAddress={handleSelectAddress}
+                            addressId={address?.place_id || 0}
+                        />
+                        <LineControls
+                            lines={lines || []}
+                            onSearch={setSearchValue}
                         />
                         <div className="justify-between w-full max-h-80 overflow-y-auto">
                             <Table>
@@ -175,13 +200,13 @@ export default function MapOverviewLineComponent({
                             zoom={13}
                             style={{ height: "500px", width: "100%" }}
                         >
-                            <MapCenterUpdater
-                                center={[
-                                    mapCenter.latitude,
-                                    mapCenter.longitude,
-                                ]}
+                            <MapCenterLayerUpdater
+                                address={address!!}
+                                mapCenter={{
+                                    latitude: mapCenter.latitude,
+                                    longitude: mapCenter.longitude,
+                                }}
                             />
-                            <TileLayer url={tileLayers[selectedLayer]} />
 
                             {lines &&
                                 lines.map((line) => (

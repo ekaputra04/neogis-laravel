@@ -20,7 +20,11 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
 import { useEffect, useState } from "react";
-import { CategoriesInterface, CoordinatesInterface } from "@/types/types";
+import {
+    CategoriesInterface,
+    CoordinatesInterface,
+    GeocodingResponseInterface,
+} from "@/types/types";
 import { toast } from "sonner";
 import FormSkeleton from "@/Components/FormSkeleton";
 import { Skeleton } from "@/Components/ui/skeleton";
@@ -36,7 +40,9 @@ import {
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerAdd } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { tileLayers } from "@/consts/tileLayers";
+import SearchAddress from "@/Components/SearchAddress";
+import { centerPoints } from "@/consts/centerPoints";
+import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -66,6 +72,11 @@ export default function MapAddMarkerComponent({
     const [marker, setMarker] = useState<CoordinatesInterface | null>(null);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
+    const [address, setAddress] = useState<GeocodingResponseInterface>();
+    const [mapCenter, setMapCenter] = useState<CoordinatesInterface>({
+        latitude: centerPoints[0],
+        longitude: centerPoints[1],
+    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -154,6 +165,23 @@ export default function MapAddMarkerComponent({
         }
     }, [marker]);
 
+    function handleSelectAddress(address: GeocodingResponseInterface) {
+        setAddress(address);
+    }
+
+    const handleSetMapCenter = (center: CoordinatesInterface) => {
+        setMapCenter(center);
+    };
+
+    useEffect(() => {
+        if (address) {
+            handleSetMapCenter({
+                latitude: Number((address as GeocodingResponseInterface).lat),
+                longitude: Number((address as GeocodingResponseInterface)?.lon),
+            });
+        }
+    }, [address]);
+
     return (
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
@@ -164,6 +192,10 @@ export default function MapAddMarkerComponent({
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
                         <HowToUseComponent tutorials={HowToUseMarkerAdd} />
+                        <SearchAddress
+                            handleSelectAddress={handleSelectAddress}
+                            addressId={address?.place_id || 0}
+                        />
                         {loading ? (
                             <>
                                 <FormSkeleton count={2} />
@@ -285,7 +317,10 @@ export default function MapAddMarkerComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer url={tileLayers[selectedLayer]} />
+                                <MapCenterLayerUpdater
+                                    address={address!!}
+                                    mapCenter={mapCenter}
+                                />
 
                                 <FeatureGroup>
                                     <EditControl

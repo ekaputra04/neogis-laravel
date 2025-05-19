@@ -1,12 +1,14 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
 import { Head, router } from "@inertiajs/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { decode } from "@mapbox/polyline";
 import { toast } from "sonner";
 import { centerPoints } from "@/consts/centerPoints";
 import DashboardCounterCard from "../DashboardCounterCard";
 import {
+    CoordinatesInterface,
     FilterStateInterface,
+    GeocodingResponseInterface,
     StreetInterface,
     StreetWithCoordinatesInterface,
 } from "@/types/types";
@@ -15,8 +17,7 @@ import { StreetList } from "./components/StreetList";
 import { StreetMap } from "./components/StreetMap";
 import TableStreetFilterCounter from "./components/TableStreetFilterCounter";
 import { Skeleton } from "@/Components/ui/skeleton";
-import { Button } from "@/Components/ui/button";
-import { Download } from "lucide-react";
+import SearchAddress from "@/Components/SearchAddress";
 
 interface MapOverviewStreetComponentProps {
     streets: StreetInterface[];
@@ -40,10 +41,22 @@ export default function MapOverviewStreetComponent({
             }))
     );
 
+    const [address, setAddress] = useState<GeocodingResponseInterface>();
+
     const [filters, setFilters] = useState<FilterStateInterface>({
-        eksisting: {},
-        jenis: {},
-        kondisi: {},
+        eksisting: {
+            "1": true,
+            "2": true,
+            "3": true,
+            "4": true,
+            "5": true,
+            "6": true,
+            "7": true,
+            "8": true,
+            "9": true,
+        },
+        jenis: { "1": true, "2": true, "3": true },
+        kondisi: { "1": true, "2": true, "3": true },
     });
 
     const [mapCenter, setMapCenter] = useState<[number, number]>(
@@ -110,6 +123,14 @@ export default function MapOverviewStreetComponent({
         const { eksisting, jenis, kondisi } = filters;
         const searchLower = searchValue.toLowerCase();
 
+        // Cek jika semua filter false
+        const allFiltersFalse =
+            !Object.values(eksisting).some(Boolean) &&
+            !Object.values(jenis).some(Boolean) &&
+            !Object.values(kondisi).some(Boolean);
+
+        if (allFiltersFalse) return []; // Return empty array jika semua filter false
+
         return streets.filter((street) => {
             const eksistingMatch =
                 !Object.values(eksisting).some(Boolean) ||
@@ -153,9 +174,27 @@ export default function MapOverviewStreetComponent({
         setSearchValue(value);
     }, []);
 
-    const memoizedCards = useMemo(
-        () => (
-            <>
+    function handleSelectAddress(address: GeocodingResponseInterface) {
+        setAddress(address);
+    }
+
+    const handleSetMapCenter = (center: CoordinatesInterface) => {
+        setMapCenter([center.latitude, center.longitude]);
+    };
+
+    useEffect(() => {
+        if (address) {
+            handleSetMapCenter({
+                latitude: Number((address as GeocodingResponseInterface).lat),
+                longitude: Number((address as GeocodingResponseInterface)?.lon),
+            });
+        }
+    }, [address]);
+
+    return (
+        <DashboardMapLayout currentPath="/dashboard/street">
+            <Head title="Street" />
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
                 <DashboardCounterCard
                     title="Total Streets"
                     value={initialStreets.length}
@@ -172,46 +211,20 @@ export default function MapOverviewStreetComponent({
                     title="Kondisi"
                     streets={initialStreets}
                 />
-            </>
-        ),
-        [initialStreets.length]
-    );
-
-    const memoizedMaps = useMemo(
-        () => (
-            <StreetMap
-                streets={streets.map((street) => ({
-                    ...street,
-                    coordinates: decode(street.paths).map(([lat, lng]) => [
-                        lat,
-                        lng,
-                    ]) as [number, number][],
-                }))}
-                center={mapCenter}
-                onEdit={handleEditStreet}
-                onDelete={handleDeleted}
-                loading={loading}
-            />
-        ),
-        [initialStreets.length, mapCenter]
-    );
-
-    return (
-        <DashboardMapLayout currentPath="/dashboard/street">
-            <Head title="Street" />
-
-            <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                {memoizedCards}
             </div>
             <hr />
             <div className="gap-8 grid grid-cols-1 lg:grid-cols-4 mt-8">
                 <div>
+                    <SearchAddress
+                        handleSelectAddress={handleSelectAddress}
+                        addressId={address?.place_id || 0}
+                    />
                     <StreetControls
                         onAddNew={handleAddNew}
                         onFilterChange={handleFilterChange}
                         onSearch={handleSearch}
                         initialFilters={filters}
-                        streets={streets}
+                        streets={filteredStreets}
                     />
                     <StreetList
                         streetLength={streets.length}
@@ -224,7 +237,19 @@ export default function MapOverviewStreetComponent({
                     {loading ? (
                         <Skeleton className="w-full h-[500px]" />
                     ) : (
-                        memoizedMaps
+                        <StreetMap
+                            streets={streets.map((street) => ({
+                                ...street,
+                                coordinates: decode(street.paths).map(
+                                    ([lat, lng]) => [lat, lng]
+                                ) as [number, number][],
+                            }))}
+                            onEdit={handleEditStreet}
+                            onDelete={handleDeleted}
+                            loading={loading}
+                            address={address!!}
+                            mapCenter={mapCenter}
+                        />
                     )}
                 </div>
             </div>

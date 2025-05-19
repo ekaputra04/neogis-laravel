@@ -91,7 +91,7 @@ class MapController extends Controller
             'lineCategories' => $lineCategories,
             'polygonCategories' => $polygonCategories,
             'circleCategories' => $circleCategories,
-            'API_KEY_GEOCODING' => $API_KEY_GEOCODING
+            // 'API_KEY_GEOCODING' => $API_KEY_GEOCODING
         ]);
     }
 }

@@ -24,7 +24,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/Components/ui/sheet";
-import { buttonCss, buttonOutlineCss } from "@/consts/buttonCss";
+import { buttonOutlineCss } from "@/consts/buttonCss";
 import { Search } from "lucide-react";
 
 const formSchema = z.object({
@@ -40,7 +40,6 @@ export default function SearchAddress({
     handleSelectAddress,
     addressId,
 }: SearchAddressProps) {
-    const { API_KEY_GEOCODING } = usePage().props;
     const [geocodingResponses, setGeocodingResponses] = useState<
         GeocodingResponseInterface[]
     >([]);
@@ -54,10 +53,14 @@ export default function SearchAddress({
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        if (values.query === "") {
+            return;
+        }
+
         setLoading(true);
         try {
             const response = await fetch(
-                `https://geocode.maps.co/search?q=${values.query}&api_key=${API_KEY_GEOCODING}`,
+                `https://nominatim.openstreetmap.org/search.php?q=${values.query}&format=jsonv2`,
                 {
                     method: "GET",
                 }
@@ -87,11 +90,11 @@ export default function SearchAddress({
             <SheetTrigger
                 className={
                     buttonOutlineCss +
-                    "my-4 bg-green-100 border-green-600 hover:bg-green-200 border"
+                    "my-4 bg-green-200 w-full mb-4 border-green-600 hover:bg-green-200  border"
                 }
             >
-                <Search />
-                Search Address with API
+                <Search color="black" />
+                <p className="text-black">Search Address with API</p>
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
@@ -141,8 +144,8 @@ export default function SearchAddress({
                                     key={response.place_id}
                                     className={
                                         response.place_id === addressId
-                                            ? `bg-green-50 shadow-md p-2 border border-green-500 rounded-md text-sm hover:cursor-pointer`
-                                            : `hover:bg-green-50 shadow-md p-2 border hover:border-green-500 rounded-md text-sm hover:cursor-pointer`
+                                            ? `bg-green-50 shadow-md p-2 border border-green-500 rounded-md text-sm hover:cursor-pointer dark:bg-green-800`
+                                            : `hover:bg-green-50 shadow-md p-2 border hover:border-green-500 rounded-md text-sm hover:cursor-pointer dark:hover:bg-green-800`
                                     }
                                     onClick={() => {
                                         handleSelectAddress(response);

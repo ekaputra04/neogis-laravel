@@ -102,9 +102,13 @@ export const HeroParallax = ({
 export const Header = () => {
     return (
         <div className="top-0 left-0 relative mx-auto px-4 py-20 md:py-40 w-screen max-w-6xl">
-            <h1 className="font-bold dark:text-white text-2xl md:text-7xl">
+            {/* <h1 className="font-bold dark:text-white text-2xl md:text-7xl">
                 The Ultimate <br /> Geographical Information System
-            </h1>
+            </h1> */}
+            <p className="bg-clip-text bg-gradient-to-b from-black dark:from-white to-gray-300/80 dark:to-slate-900/10 font-semibold text-transparent text-6xl leading-none whitespace-pre-wrap pointer-events-none">
+                The Ultimate <br />
+                Geographical Information System
+            </p>
             <p className="mt-8 max-w-2xl dark:text-neutral-200 text-base md:text-xl">
                 A Geographic Information System (GIS) web application for
                 mapping and managing road infrastructure data. Features include

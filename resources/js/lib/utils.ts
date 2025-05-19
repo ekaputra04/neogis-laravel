@@ -22,3 +22,16 @@ export function capitalizeWords(text: string): string {
 export function roundToTwo(num: number): number {
     return Math.round(num * 100) / 100;
 }
+
+export function handleDownload(streets: Object[]) {
+    const jsonStr = JSON.stringify(streets, null, 2); // Pretty-print JSON
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = new Date().toISOString() + ".json";
+    link.click();
+
+    URL.revokeObjectURL(url);
+}

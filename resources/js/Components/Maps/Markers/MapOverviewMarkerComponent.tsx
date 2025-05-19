@@ -18,9 +18,7 @@ export default function MapOverviewMarkerComponent({
     currentPath: string;
     markers: MarkerInterface[];
 }) {
-    const [markers, setMarkers] = useState<MarkerInterface[] | null>(
-        initialMarkers
-    );
+    const [markers, setMarkers] = useState<MarkerInterface[]>(initialMarkers);
     const [filteredMarkers, setFilteredMarkers] =
         useState<MarkerInterface[]>(initialMarkers);
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
@@ -102,7 +100,10 @@ export default function MapOverviewMarkerComponent({
                 <Head title="Marker" />
                 <div className="gap-8 grid md:grid-cols-4">
                     <div className="">
-                        <MarkerControls onSearch={handleSearch} />
+                        <MarkerControls
+                            onSearch={handleSearch}
+                            markers={markers}
+                        />
                         <MarkerList
                             filteredMarkers={filteredMarkers}
                             markerlength={markers?.length || 0}

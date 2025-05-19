@@ -1,5 +1,8 @@
 import { customIcon } from "@/Components/CustomMarkerIcon";
-import { MapCenterUpdater } from "@/Components/MapCenterUpdater";
+import {
+    MapCenterLayerUpdater,
+    MapCenterUpdater,
+} from "@/Components/MapCenterUpdater";
 import SearchAddress from "@/Components/SearchAddress";
 import { Badge } from "@/Components/ui/badge";
 import { tileLayers } from "@/consts/tileLayers";
@@ -42,7 +45,6 @@ export const MapOverviewLayer = memo(
         circles,
         handleSetMapCenter,
     }: MapOverviewLayerProps) => {
-        const { selectedLayer } = useMapLayerStore();
         const [address, setAddress] = useState<GeocodingResponseInterface>();
 
         console.log("MAP OVERVIEW LAYER RENDER");
@@ -76,47 +78,10 @@ export const MapOverviewLayer = memo(
                         zoom={16}
                         style={{ height: "500px", width: "100%" }}
                     >
-                        <MapCenterUpdater
-                            center={[mapCenter.latitude, mapCenter.longitude]}
+                        <MapCenterLayerUpdater
+                            address={address!!}
+                            mapCenter={mapCenter}
                         />
-                        <TileLayer url={tileLayers[selectedLayer]} />
-
-                        {address && (
-                            <Polygon
-                                key={address.place_id}
-                                positions={[
-                                    [
-                                        [
-                                            parseFloat(address.boundingbox[0]),
-                                            parseFloat(address.boundingbox[2]),
-                                        ],
-                                        [
-                                            parseFloat(address.boundingbox[0]),
-                                            parseFloat(address.boundingbox[3]),
-                                        ],
-                                        [
-                                            parseFloat(address.boundingbox[1]),
-                                            parseFloat(address.boundingbox[3]),
-                                        ],
-                                        [
-                                            parseFloat(address.boundingbox[1]),
-                                            parseFloat(address.boundingbox[2]),
-                                        ],
-                                        [
-                                            parseFloat(address.boundingbox[0]),
-                                            parseFloat(address.boundingbox[2]),
-                                        ],
-                                    ],
-                                ]}
-                                color="green"
-                            >
-                                <Popup>
-                                    <strong>{address.type}</strong>
-                                    <br />
-                                    {address.display_name}
-                                </Popup>
-                            </Polygon>
-                        )}
 
                         {markers &&
                             markers.map((marker, index) => (
