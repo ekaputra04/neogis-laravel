@@ -38,7 +38,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import HowToUseComponent from "@/Components/HowToUseComponent";
-import { HowToUseMarkerUpdate } from "@/consts/howToUse";
+import { HowToUseCircleUpdate, HowToUseMarkerUpdate } from "@/consts/howToUse";
 import { tileLayers } from "@/consts/tileLayers";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 
@@ -191,7 +191,7 @@ export default function MapEditCircleComponent({
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
-                        <HowToUseComponent tutorials={HowToUseMarkerUpdate} />
+                        <HowToUseComponent tutorials={HowToUseCircleUpdate} />
                         {loading ? (
                             <>
                                 <FormSkeleton count={2} />

@@ -38,7 +38,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import HowToUse from "@/Components/HowToUseComponent";
-import { HowToUseMarkerAdd } from "@/consts/howToUse";
+import { HowToUseMarkerAdd, HowToUsePolygonAdd } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
 import { centerPoints } from "@/consts/centerPoints";
@@ -247,7 +247,7 @@ export default function MapAddPolygonComponent({
                             handleSelectAddress={handleSelectAddress}
                             addressId={address?.place_id || 0}
                         />
-                        <HowToUse tutorials={HowToUseMarkerAdd} />
+                        <HowToUse tutorials={HowToUsePolygonAdd} />
 
                         {loading ? (
                             <>

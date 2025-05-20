@@ -38,7 +38,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import HowToUseComponent from "@/Components/HowToUseComponent";
-import { HowToUseMarkerAdd } from "@/consts/howToUse";
+import { HowToUseCircleAdd, HowToUseMarkerAdd } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
 import { SearchAddress } from "@/Components/SearchAddress";
@@ -194,7 +194,7 @@ export default function MapAddCircleComponent({
 
     return (
         <>
-            <DashboardMapLayout currentPath={"/dashboard/circle"}>
+            <DashboardMapLayout currentPath={"/dashboard/circle/add"}>
                 <Head title="Add Circle" />
                 <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
                     Add Circle
@@ -205,7 +205,7 @@ export default function MapAddCircleComponent({
                             handleSelectAddress={handleSelectAddress}
                             addressId={address?.place_id || 0}
                         />
-                        <HowToUseComponent tutorials={HowToUseMarkerAdd} />
+                        <HowToUseComponent tutorials={HowToUseCircleAdd} />
                         {loading ? (
                             <>
                                 <FormSkeleton count={2} />

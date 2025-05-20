@@ -55,6 +55,32 @@ import imageLinePopUp from "@/images/how-to-use/line-overview/popup.png";
 // Line Add
 import imageBtnSubmitLine from "@/images/how-to-use/line-add/btn-add.png";
 
+// Polygon Overview
+import imageBtnAddPolygon from "@/images/how-to-use/polygon-overview/btn-add.png";
+import imageBtnDownloadPolygon from "@/images/how-to-use/polygon-overview/btn-download.png";
+import imagePolygonCount from "@/images/how-to-use/polygon-overview/count.png";
+import imagePolygonPopUp from "@/images/how-to-use/polygon-overview/popup.png";
+
+// Polygon Add
+import imageAddPolygonMap from "@/images/how-to-use/polygon-add/add-polygon-map.png";
+import imageDrawPolygonMap from "@/images/how-to-use/polygon-add/draw.png";
+import imageOptionDrawPolygonMap from "@/images/how-to-use/polygon-add/option-draw.png";
+import imageSubmitPolygonAdd from "@/images/how-to-use/polygon-add/submit.png";
+
+// Circle Overview
+import imageBtnAddCircle from "@/images/how-to-use/circle-overview/btn-add.png";
+import imageBtnDownloadCircle from "@/images/how-to-use/circle-overview/btn-download.png";
+import imageCircleCount from "@/images/how-to-use/circle-overview/count.png";
+import imageCirclePopUp from "@/images/how-to-use/circle-overview/popup.png";
+
+// Circle Add
+import imageAddCircleMap from "@/images/how-to-use/circle-add/add.png";
+import imageDrawCircleMap from "@/images/how-to-use/circle-add/draw.png";
+import imageSubmitCircleAdd from "@/images/how-to-use/circle-add/submit.png";
+
+// Circle Edit
+import imageEditCircleMap from "@/images/how-to-use/circle-edit/edit.png";
+
 const HowToUseSearchAddress: tutorialProps[] = [
     {
         description:
@@ -347,6 +373,172 @@ export const HowToUseLineUpdate: tutorialProps[] = [
     {
         description:
             "Setelah semua data diupdate, klik tombol 'Submit' untuk menyimpan perbaruan marker.",
+        image: imageBtnSubmit,
+    },
+];
+
+export const HowToUsePolygonOverview: tutorialProps[] = [
+    ...HowToUseSearchAddress,
+    {
+        description:
+            "Tambahkan polygon dengan mengklik tombol 'Add New Polygon'",
+        image: imageBtnAddPolygon,
+    },
+    {
+        description:
+            "Download data polygon dengan mengklik tombol 'Download Polygon Data'",
+        image: imageBtnDownloadPolygon,
+    },
+    {
+        description: "Cari polygon dengan input pada tombol 'Search'",
+        image: imageSearch,
+    },
+    {
+        description: "Jumlah polygon terlihat dari indikator jumlah",
+        image: imagePolygonCount,
+    },
+    {
+        description: "Klik icon mata untuk memfokuskan peta ke lokasi tujuan",
+        image: imageEye,
+    },
+    {
+        description:
+            "Klik polygon pada map untuk melihat detail polygon. Jika ingin memperbarui data polygon, klik tombol 'Edit' pada pop up yang muncul. Jika ingin menghapus polygon, klik tombol 'Delete'",
+        image: imagePolygonPopUp,
+    },
+];
+
+export const HowToUsePolygonAdd: tutorialProps[] = [
+    ...HowToUseSearchAddress,
+    {
+        description:
+            "Tambahkan nama, deskripsi, dan kategori pada form yang disediakan.",
+        image: imageForm,
+    },
+    {
+        description:
+            "Tambahkan polygon dengan mengklik terlebih dahulu tombol garis di pojok kanan atas peta.",
+        image: imageAddPolygonMap,
+    },
+    {
+        description: "Gambar polygon dengan mengklik pada map",
+        image: imageDrawPolygonMap,
+    },
+    {
+        description:
+            "Setelah selesai menggambar, klik tombol 'Finish' untuk menyimpan data. Atau jika ingin menghapus titik terakkhir, klik tombol 'Delete last point'",
+        image: imageOptionDrawPolygonMap,
+    },
+    {
+        description:
+            "Jika ingin memperbarui polygon, klik tombol edit di pojok kanan atas peta.",
+        image: imageBtnEdit,
+    },
+    {
+        description:
+            "Setelah semua data diinput, klik tombol 'Add Polygon' untuk menyimpan garis.",
+        image: imageSubmitPolygonAdd,
+    },
+];
+
+export const HowToUsePolygonUpdate: tutorialProps[] = [
+    {
+        description:
+            "Perbarui nama, deskripsi, dan kategori pada form yang disediakan.",
+        image: imageForm,
+    },
+    {
+        description:
+            "Jika ingin memperbarui posisi polygon, klik tombol edit di pojok kanan atas peta.",
+        image: imageBtnEdit,
+    },
+    {
+        description: "Perbarui posisi polygon dengan mengubah posisi titik.",
+        image: imageDrawPolygonMap,
+    },
+    {
+        description:
+            "Setelah semua data diupdate, klik tombol 'Submit' untuk menyimpan perbaruan polygon.",
+        image: imageBtnSubmit,
+    },
+];
+
+export const HowToUseCircleOverview: tutorialProps[] = [
+    ...HowToUseSearchAddress,
+    {
+        description: "Tambahkan circle dengan mengklik tombol 'Add New Circle'",
+        image: imageBtnAddCircle,
+    },
+    {
+        description:
+            "Download data circle dengan mengklik tombol 'Download Circle Data'",
+        image: imageBtnDownloadCircle,
+    },
+    {
+        description: "Cari circle dengan input pada tombol 'Search'",
+        image: imageSearch,
+    },
+    {
+        description: "Jumlah circle terlihat dari indikator jumlah",
+        image: imageCircleCount,
+    },
+    {
+        description: "Klik icon mata untuk memfokuskan peta ke lokasi tujuan",
+        image: imageEye,
+    },
+    {
+        description:
+            "Klik circle pada map untuk melihat detail circle. Jika ingin memperbarui data circle, klik tombol 'Edit' pada pop up yang muncul. Jika ingin menghapus circle, klik tombol 'Delete'",
+        image: imageCirclePopUp,
+    },
+];
+
+export const HowToUseCircleAdd: tutorialProps[] = [
+    ...HowToUseSearchAddress,
+    {
+        description:
+            "Tambahkan nama, deskripsi, dan kategori pada form yang disediakan.",
+        image: imageForm,
+    },
+    {
+        description:
+            "Tambahkan circle dengan mengklik terlebih dahulu tombol garis di pojok kanan atas peta.",
+        image: imageAddCircleMap,
+    },
+    {
+        description: "Gambar circle dengan mengklik pada map",
+        image: imageDrawCircleMap,
+    },
+    {
+        description:
+            "Jika ingin memperbarui circle, klik tombol edit di pojok kanan atas peta.",
+        image: imageBtnEdit,
+    },
+    {
+        description:
+            "Setelah semua data diinput, klik tombol 'Add Circle' untuk menyimpan garis.",
+        image: imageSubmitCircleAdd,
+    },
+];
+
+export const HowToUseCircleUpdate: tutorialProps[] = [
+    {
+        description:
+            "Perbarui nama, deskripsi, dan kategori pada form yang disediakan.",
+        image: imageForm,
+    },
+    {
+        description:
+            "Jika ingin memperbarui posisi circle, klik tombol edit di pojok kanan atas peta.",
+        image: imageBtnEdit,
+    },
+    {
+        description: "Perbarui posisi circle dengan mengubah posisi titik.",
+        image: imageEditCircleMap,
+    },
+    {
+        description:
+            "Setelah semua data diupdate, klik tombol 'Submit' untuk menyimpan perbaruan circle.",
         image: imageBtnSubmit,
     },
 ];

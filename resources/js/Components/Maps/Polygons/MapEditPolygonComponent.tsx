@@ -46,6 +46,8 @@ import {
 } from "@/Components/ui/select";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
+import HowToUseComponent from "@/Components/HowToUseComponent";
+import { HowToUsePolygonUpdate } from "@/consts/howToUse";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -132,31 +134,19 @@ export default function MapEditPolygonComponent({
 
         if (layer instanceof L.Polygon) {
             try {
-                // Dapatkan latlngs dengan casting yang tepat
                 const latLngs = layer.getLatLngs();
-
-                // Polygon di Leaflet selalu memiliki struktur nested array
-                // latLngs[0] adalah array koordinat luar, latLngs[1] dst adalah hole (jika ada)
-                // Kita butuh memastikan kita mempunyai array dari objek LatLng
-
-                // Coba pendekatan yang lebih aman dengan type guards
                 let polygonPoints: L.LatLng[] = [];
 
-                // Cek apakah latLngs adalah array 2D (polygon biasa)
                 if (Array.isArray(latLngs) && latLngs.length > 0) {
-                    // Ambil array koordinat luar (outer ring)
                     const outerRing = latLngs[0];
 
                     if (Array.isArray(outerRing)) {
-                        // Iterasi melalui semua poin dalam outer ring
                         polygonPoints = outerRing as L.LatLng[];
                     }
                 }
 
-                // Transformasikan koordinat ke format yang sesuai
                 const coordinates: CoordinatesInterface[] = [];
 
-                // Sekarang kita bisa aman melakukan iterasi
                 for (const point of polygonPoints) {
                     coordinates.push({
                         latitude: point.lat,
@@ -170,7 +160,6 @@ export default function MapEditPolygonComponent({
                         coord.longitude,
                     ]);
 
-                // Simpan koordinat tersebut ke dalam state
                 setPolygonCoordinates(convertedCoordinates);
             } catch (error) {
                 console.error("Error processing polygon coordinates:", error);
@@ -179,27 +168,21 @@ export default function MapEditPolygonComponent({
     };
 
     const handleEdited = (e: DrawEditedEvent) => {
-        // Variabel untuk menyimpan seluruh koordinat polygon yang diedit
         let updatedCoordinates: CoordinatesInterface[] = [];
 
         try {
             e.layers.eachLayer((layer: L.Layer) => {
                 if (layer instanceof L.Polygon) {
-                    // Ambil seluruh koordinat polygon yang diedit
                     const latLngs = layer.getLatLngs();
 
-                    // Sama seperti handleCreated, kita butuh memproses struktur nested
                     if (Array.isArray(latLngs) && latLngs.length > 0) {
                         const outerRing = latLngs[0];
 
                         if (Array.isArray(outerRing)) {
-                            // Buat koordinat dari setiap point
                             const polygonPoints = outerRing as L.LatLng[];
 
-                            // Reset updatedCoordinates untuk menghindari koordinat duplikat dari layer sebelumnya
                             updatedCoordinates = [];
 
-                            // Proses tiap point
                             for (const point of polygonPoints) {
                                 updatedCoordinates.push({
                                     latitude: point.lat,
@@ -211,7 +194,6 @@ export default function MapEditPolygonComponent({
                 }
             });
 
-            // Update state hanya jika ada koordinat yang valid
             if (updatedCoordinates.length > 0) {
                 const convertedCoordinates: [number, number][] =
                     updatedCoordinates.map((coord) => [
@@ -256,6 +238,7 @@ export default function MapEditPolygonComponent({
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
+                        <HowToUseComponent tutorials={HowToUsePolygonUpdate} />
                         {loading ? (
                             <>
                                 <FormSkeleton count={2} />

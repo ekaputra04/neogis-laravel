@@ -2,8 +2,10 @@ import HowToUseComponent from "@/Components/HowToUseComponent";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import {
+    HowToUseCircleOverview,
     HowToUseLineOverview,
     HowToUseMarkerOverview,
+    HowToUsePolygonOverview,
 } from "@/consts/howToUse";
 import { capitalizeFirstLetter, handleDownload } from "@/lib/utils";
 import { Link } from "@inertiajs/react";
@@ -25,6 +27,10 @@ export const ElementControls = memo(
                 ? HowToUseMarkerOverview
                 : elementType === "line"
                 ? HowToUseLineOverview
+                : elementType === "polygon"
+                ? HowToUsePolygonOverview
+                : elementType === "circle"
+                ? HowToUseCircleOverview
                 : [];
 
         return (
