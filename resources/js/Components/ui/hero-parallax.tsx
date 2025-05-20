@@ -55,7 +55,7 @@ export const HeroParallax = ({
     return (
         <div
             ref={ref}
-            className="relative flex flex-col self-auto py-40 w-screen h-[400vh] overflow-hidden overflow-x-hidden antialiased [perspective:1000px] [transform-style:preserve-3d]"
+            className="relative flex flex-col self-auto py-4 w-screen h-[280vh] md:h-[200vh] lg:h-[400vh] overflow-hidden overflow-x-hidden antialiased [perspective:1000px] [transform-style:preserve-3d]"
         >
             <Header />
             <motion.div
@@ -65,7 +65,7 @@ export const HeroParallax = ({
                     translateY,
                     opacity,
                 }}
-                className=""
+                className="w-screen overflow-x-hidden"
             >
                 <motion.div className="flex flex-row-reverse space-x-20 space-x-reverse mb-20 w-screen">
                     {firstRow.map((product) => (
@@ -101,11 +101,8 @@ export const HeroParallax = ({
 
 export const Header = () => {
     return (
-        <div className="top-0 left-0 relative mx-auto px-4 py-20 md:py-40 w-screen max-w-6xl">
-            {/* <h1 className="font-bold dark:text-white text-2xl md:text-7xl">
-                The Ultimate <br /> Geographical Information System
-            </h1> */}
-            <p className="bg-clip-text bg-gradient-to-b from-black dark:from-white to-gray-300/80 dark:to-slate-900/10 font-semibold text-transparent text-6xl leading-none whitespace-pre-wrap pointer-events-none">
+        <div className="top-0 left-0 relative mx-auto px-8 md:px-16 py-20 md:py-40 w-screen max-w-6xl">
+            <p className="bg-clip-text bg-gradient-to-b from-black dark:from-white to-gray-300/80 dark:to-slate-900/10 font-semibold text-transparent text-3xl md:text-5xl lG:text-6xl leading-none whitespace-pre-wrap pointer-events-none">
                 The Ultimate <br />
                 Geographical Information System
             </p>

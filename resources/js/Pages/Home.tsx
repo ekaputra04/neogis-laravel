@@ -46,7 +46,7 @@ export default function HomePage({ auth }: HomePageProps) {
     const { theme } = useThemeStore();
     return (
         <ThemeProvider>
-            <div className="relative">
+            <div className="relative w-screen overflow-x-hidden">
                 <Head title="Home" />
                 <FloatingNav navItems={navItems} />
                 <AuthButton auth={auth} />

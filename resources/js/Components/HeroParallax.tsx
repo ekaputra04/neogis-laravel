@@ -13,11 +13,7 @@ import openStreetMap from "@/images/map-layer/open-street-map.png";
 import openTopoMap from "@/images/map-layer/open-topo-map.png";
 
 export function HeroParallaxDemo() {
-    return (
-        <div className="w-screen overflow-x-hidden">
-            <HeroParallax products={products} />
-        </div>
-    );
+    return <HeroParallax products={products} />;
 }
 export const products = [
     {

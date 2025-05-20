@@ -23,23 +23,18 @@ const faqs = [
     },
     {
         value: "item-4",
-        question: "Bagaimana cara mengetahui siapa pengguna yang login?",
-        answer: "Informasi pengguna yang login dapat diakses melalui sistem autentikasi. Di frontend, data user dapat diambil dari `usePage().props.auth.user`.",
+        question: "Bagaimana cara mengubah tampilan peta (basemap)?",
+        answer: "Anda dapat memilih layer peta yang berbeda melalui menu Settings. Sistem mendukung beberapa opsi seperti Satellite, StreetMap, Topografi, dll.",
     },
     {
         value: "item-5",
         question: "Apakah data bisa difilter berdasarkan nama?",
-        answer: "Ya, sistem mendukung fitur pencarian dan filter data marker berdasarkan nama atau kategori yang Anda ketikkan.",
+        answer: "Ya, sistem mendukung fitur pencarian dan filter data berdasarkan nama yang Anda ketikkan.",
     },
     {
         value: "item-6",
         question: "Apakah sistem ini bisa digunakan di perangkat mobile?",
         answer: "Tentu! Sistem ini responsif dan dapat diakses melalui berbagai perangkat termasuk smartphone dan tablet.",
-    },
-    {
-        value: "item-7",
-        question: "Apakah saya bisa mengelompokkan zona dalam kategori?",
-        answer: "Ya, Anda dapat menambahkan kategori untuk setiap marker atau zona seperti zona rawan, pemantauan, dan lainnya.",
     },
     {
         value: "item-8",
@@ -49,37 +44,57 @@ const faqs = [
     {
         value: "item-9",
         question: "Apakah tersedia fitur export data?",
-        answer: "Ya, data dapat diekspor dalam format seperti CSV atau GeoJSON untuk keperluan analisis lanjutan.",
+        answer: "Ya, data dapat diekspor dalam format JSON untuk keperluan analisis lanjutan.",
     },
     {
         value: "item-10",
-        question: "Apakah saya bisa mengatur notifikasi?",
-        answer: "Fitur notifikasi dapat ditambahkan agar pengguna mendapatkan informasi ketika zona atau data tertentu diperbarui.",
+        question:
+            "Bagaimana cara menghitung panjang ruas jalan secara otomatis?",
+        answer: "Panjang ruas jalan dihitung otomatis oleh sistem berdasarkan koordinat GPS yang Anda input. Hasilnya ditampilkan dalam satuan meter.",
     },
     {
         value: "item-11",
-        question: "Apakah tersedia histori perubahan data?",
-        answer: "Ya, sistem mencatat log perubahan data termasuk siapa yang mengubah dan kapan perubahan dilakukan.",
+        question:
+            "Apakah ada batasan jumlah marker/garis yang bisa ditambahkan?",
+        answer: "Tidak ada batasan jumlah, namun untuk performa optimal, disarankan tidak lebih dari 10.000 fitur per peta.",
     },
     {
         value: "item-12",
         question: "Apakah sistem ini mendukung integrasi pihak ketiga?",
-        answer: "Sistem dapat diintegrasikan dengan API eksternal seperti OpenStreetMap, Google Maps, atau IoT sensor untuk data real-time.",
+        answer: "Sistem dapat diintegrasikan dengan API eksternal seperti OpenStreetMap atau Google Maps untuk data real-time.",
     },
     {
         value: "item-13",
-        question: "Apakah bisa menampilkan data real-time di peta?",
-        answer: "Ya, sistem mendukung integrasi dengan data real-time seperti data sensor atau pelaporan langsung dari pengguna.",
+        question:
+            "Bagaimana cara kerja fitur filter berdasarkan jenis/kondisi jalan?",
+        answer: "Anda bisa menggunakan panel filter di sebelah kiri untuk memilih kombinasi kriteria (jenis jalan, kondisi, dll). Hasil akan langsung diperbarui di peta dan tabel.",
     },
     {
         value: "item-14",
-        question: "Apakah saya bisa berbagi peta dengan tim saya?",
-        answer: "Peta dapat dibagikan melalui tautan khusus atau diekspor dalam format umum yang dapat dibuka di software GIS lainnya.",
+        question: "Apakah data ruas jalan bisa diimpor dari file JSON?",
+        answer: "Ya, sistem mendukung impor data dalam format JSON dengan atribut terkait.",
+    },
+    {
+        value: "item-16",
+        question:
+            "Bagaimana cara mengklik jalan di peta untuk melihat detailnya?",
+        answer: "Klik sekali pada garis jalan di peta, lalu informasi detail seperti nama, panjang, lebar, dan kondisi akan muncul di popup.",
+    },
+    {
+        value: "item-19",
+        question: "Apakah perubahan data langsung tersimpan otomatis?",
+        answer: "Ya, semua perubahan (tambah/edit/hapus) langsung tersimpan di database. Pastikan koneksi internet stabil saat bekerja.",
+    },
+    {
+        value: "item-21",
+        question:
+            "Mengapa beberapa jalan tidak muncul setelah saya apply filter?",
+        answer: "Pastikan Anda tidak memilih filter yang saling bertentangan (misal: memilih jenis 'Tol' tapi kondisi 'Rusak' - jika tidak ada data yang memenuhi kedua kriteria tersebut, hasil akan kosong).",
     },
     {
         value: "item-15",
         question: "Bagaimana jika saya mengalami masalah teknis?",
-        answer: "Silakan hubungi tim support kami melalui email atau live chat yang tersedia di dashboard untuk bantuan lebih lanjut.",
+        answer: "Silakan hubungi tim pengembang melalui email (ekaputrajuniawan@gmail.com) untuk bantuan lebih lanjut.",
     },
 ];
 
