@@ -1,0 +1,96 @@
+[
+  {
+    "id": 3432,
+    "paths": "xoft@kn_~Tt\\vGt\\rJj[wCj[uCtSgNx^KjWvIfUbHvf@|Drl@vBrd@`@pZ~At\\lq@",
+    "desa_id": 256,
+    "kode_ruas": "bypass-ngurah-rai",
+    "nama_ruas": "Bypass Ngurah Rai",
+    "panjang": 4189.468331419781,
+    "lebar": 8,
+    "eksisting_id": 7,
+    "kondisi_id": 1,
+    "jenisjalan_id": 2,
+    "keterangan": "Jalan besar",
+    "coordinates": [
+      [
+        -8.72205,
+        115.18198
+      ],
+      [
+        -8.7268,
+        115.18058
+      ],
+      [
+        -8.73155,
+        115.17872
+      ],
+      [
+        -8.73609,
+        115.17948
+      ],
+      [
+        -8.74063,
+        115.18023
+      ],
+      [
+        -8.74394,
+        115.18267
+      ],
+      [
+        -8.74903,
+        115.18273
+      ],
+      [
+        -8.75293,
+        115.18101
+      ],
+      [
+        -8.75649,
+        115.17955
+      ],
+      [
+        -8.76285,
+        115.1786
+      ],
+      [
+        -8.77015,
+        115.178
+      ],
+      [
+        -8.77617,
+        115.17783
+      ],
+      [
+        -8.78058,
+        115.17735
+      ],
+      [
+        -8.78533,
+        115.16928
+      ]
+    ]
+  },
+  {
+    "id": 3439,
+    "paths": "|fcs@mm{~Tdn@gB",
+    "desa_id": 509,
+    "kode_ruas": "jalan-ksatrian",
+    "nama_ruas": "Jalan Ksatrian",
+    "panjang": 363.84917733322726,
+    "lebar": 7,
+    "eksisting_id": 7,
+    "kondisi_id": 1,
+    "jenisjalan_id": 2,
+    "keterangan": "Jalan",
+    "coordinates": [
+      [
+        -8.54143,
+        115.32519
+      ],
+      [
+        -8.54898,
+        115.32571
+      ]
+    ]
+  }
+]

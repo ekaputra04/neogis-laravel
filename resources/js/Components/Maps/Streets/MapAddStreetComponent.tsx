@@ -1,12 +1,6 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import {
-    FeatureGroup,
-    MapContainer,
-    Polygon,
-    Popup,
-    TileLayer,
-} from "react-leaflet";
+import { FeatureGroup, MapContainer } from "react-leaflet";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -51,20 +45,15 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import HowToUse from "@/Components/HowToUseComponent";
-import { HowToUseMarkerAdd } from "@/consts/howToUse";
-import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { tileLayers } from "@/consts/tileLayers";
+import { HowToUseStreetAdd } from "@/consts/howToUse";
 import { Label } from "@/Components/ui/label";
 import { capitalizeWords, roundToTwo } from "@/lib/utils";
-import { decode, encode } from "@mapbox/polyline";
+import { encode } from "@mapbox/polyline";
 import { lineString, length } from "@turf/turf";
 import UploadFileDialog from "@/Components/UploadFileDialog";
-import SearchAddress from "@/Components/SearchAddress";
 import { centerPoints } from "@/consts/centerPoints";
-import {
-    MapCenterLayerUpdater,
-    MapCenterUpdater,
-} from "@/Components/MapCenterUpdater";
+import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
+import { SearchAddress } from "@/Components/SearchAddress";
 
 const formSchema = z.object({
     desa_id: z.number(),
@@ -220,10 +209,8 @@ export default function MapAddStreetComponent() {
         const { layer } = e;
 
         if (layer instanceof L.Polyline) {
-            // Ambil seluruh koordinat polyline
             const latLngs = layer.getLatLngs() as L.LatLng[];
 
-            // Transformasikan koordinat ke format yang sesuai
             const coordinates: CoordinatesInterface[] = latLngs.map(
                 (latLng) => ({
                     latitude: latLng.lat,
@@ -231,7 +218,6 @@ export default function MapAddStreetComponent() {
                 })
             );
 
-            // Simpan koordinat tersebut ke dalam state (atau tempat lain yang sesuai)
             setStreetCoordinates(coordinates);
 
             const formattedCoordinates: [number, number][] =
@@ -249,16 +235,13 @@ export default function MapAddStreetComponent() {
     const handleEdited = (e: DrawEditedEvent) => {
         const event = e as DrawEditedEvent;
 
-        // Variabel untuk menyimpan seluruh koordinat polyline yang diedit
         let updatedCoordinates: CoordinatesInterface[] = [];
         let formattedCoordinates: [number, number][] = [];
 
         event.layers.eachLayer((layer) => {
             if (layer instanceof L.Polyline) {
-                // Ambil seluruh koordinat polyline yang diedit
                 const latLngs = layer.getLatLngs() as L.LatLng[];
 
-                // Map koordinat ke format yang sesuai
                 updatedCoordinates = latLngs.map((latLng) => ({
                     latitude: latLng.lat,
                     longitude: latLng.lng,
@@ -324,7 +307,7 @@ export default function MapAddStreetComponent() {
                 </div>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
-                        <HowToUse tutorials={HowToUseMarkerAdd} />
+                        <HowToUse tutorials={HowToUseStreetAdd} />
                         <SearchAddress
                             handleSelectAddress={handleSelectAddress}
                             addressId={address?.place_id || 0}

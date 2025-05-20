@@ -15,9 +15,9 @@ import {
 import { StreetControls } from "./components/StreetControls";
 import { StreetList } from "./components/StreetList";
 import { StreetMap } from "./components/StreetMap";
-import TableStreetFilterCounter from "./components/TableStreetFilterCounter";
 import { Skeleton } from "@/Components/ui/skeleton";
 import { SearchAddress } from "@/Components/SearchAddress";
+import { TableStreetFilterCounter } from "./components/TableStreetFilterCounter";
 
 interface MapOverviewStreetComponentProps {
     streets: StreetInterface[];
@@ -70,6 +70,18 @@ export default function MapOverviewStreetComponent({
     const [searchValue, setSearchValue] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const memoizedStreets: StreetWithCoordinatesInterface[] = useMemo(
+        () =>
+            streets.map((street) => ({
+                ...street,
+                coordinates: decode(street.paths).map(([lat, lng]) => [
+                    lat,
+                    lng,
+                ]),
+            })),
+        [streets]
+    );
+
     const fetchStreets = useCallback(async () => {
         try {
             const response = await fetch(
@@ -91,7 +103,7 @@ export default function MapOverviewStreetComponent({
         } catch (error) {
             console.error("Fetch error:", error);
         }
-    }, [token]);
+    }, []);
 
     const handleDeleted = useCallback(
         async (streetId: number) => {
@@ -115,7 +127,7 @@ export default function MapOverviewStreetComponent({
                 setLoading(false);
             }
         },
-        [token, fetchStreets]
+        [fetchStreets]
     );
 
     const filteredStreets = useMemo(() => {
@@ -123,13 +135,12 @@ export default function MapOverviewStreetComponent({
         const { eksisting, jenis, kondisi } = filters;
         const searchLower = searchValue.toLowerCase();
 
-        // Cek jika semua filter false
         const allFiltersFalse =
             !Object.values(eksisting).some(Boolean) &&
             !Object.values(jenis).some(Boolean) &&
             !Object.values(kondisi).some(Boolean);
 
-        if (allFiltersFalse) return []; // Return empty array jika semua filter false
+        if (allFiltersFalse) return [];
 
         return streets.filter((street) => {
             const eksistingMatch =
@@ -153,16 +164,6 @@ export default function MapOverviewStreetComponent({
         setMapCenter(coords);
     }, []);
 
-    const handleEditStreet = useCallback((id: number) => {
-        toast.info("Processing request...");
-        router.visit(`/dashboard/street/edit/${id}`);
-    }, []);
-
-    const handleAddNew = useCallback(() => {
-        toast.info("Processing request...");
-        router.visit("/dashboard/street/add");
-    }, []);
-
     const handleFilterChange = useCallback(
         (newFilters: FilterStateInterface) => {
             setFilters(newFilters);
@@ -174,9 +175,12 @@ export default function MapOverviewStreetComponent({
         setSearchValue(value);
     }, []);
 
-    function handleSelectAddress(address: GeocodingResponseInterface) {
-        setAddress(address);
-    }
+    const handleSelectAddress = useCallback(
+        (address: GeocodingResponseInterface) => {
+            setAddress(address);
+        },
+        []
+    );
 
     const handleSetMapCenter = (center: CoordinatesInterface) => {
         setMapCenter([center.latitude, center.longitude]);
@@ -220,7 +224,6 @@ export default function MapOverviewStreetComponent({
                         addressId={address?.place_id || 0}
                     />
                     <StreetControls
-                        onAddNew={handleAddNew}
                         onFilterChange={handleFilterChange}
                         onSearch={handleSearch}
                         initialFilters={filters}
@@ -238,13 +241,7 @@ export default function MapOverviewStreetComponent({
                         <Skeleton className="w-full h-[500px]" />
                     ) : (
                         <StreetMap
-                            streets={streets.map((street) => ({
-                                ...street,
-                                coordinates: decode(street.paths).map(
-                                    ([lat, lng]) => [lat, lng]
-                                ) as [number, number][],
-                            }))}
-                            onEdit={handleEditStreet}
+                            streets={memoizedStreets}
                             onDelete={handleDeleted}
                             loading={loading}
                             address={address!!}

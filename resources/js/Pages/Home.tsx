@@ -1,11 +1,11 @@
 import AuthButton from "@/Components/AuthButton";
 import { FaQComponent } from "@/Components/FaQ";
 import Footer from "@/Components/Footer";
+import { GradientButton } from "@/Components/GradientButton";
 import { HeroParallaxDemo } from "@/Components/HeroParallax";
 import { InfiniteMovingCardsDemo } from "@/Components/InfiniteMovingCards";
 import { InteractiveHoverButton } from "@/Components/magicui/interactive-hover-button";
 import { RainbowButton } from "@/Components/magicui/rainbow-button";
-import { MarqueeDemo } from "@/Components/Marquee";
 import { ParticlesBackground } from "@/Components/ParticlesBackground";
 import { ParticlesBackgroundDark } from "@/Components/ParticlesBackgroundDark";
 import { ToolsUsed } from "@/Components/ToolsUsed";
@@ -52,8 +52,9 @@ export default function HomePage({ auth }: HomePageProps) {
                 <AuthButton auth={auth} />
                 <div className="bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-4 p-[1px] w-full" />
 
-                <main className="flex flex-col justify-start items-center p-8 md:px-16 lg:px-32 lg:py-16 w-full">
-                    <div className="space-y-8">
+                <main className="flex flex-col justify-start items-center p-8 md:px-16 lg:px-32 pt-8 lg:pb-16 w-full">
+                    <GradientButton text="Introducing" />
+                    <div className="space-y-8 mt-4">
                         <p className="bg-clip-text bg-gradient-to-b from-black dark:from-white to-gray-300/80 dark:to-slate-900/10 font-semibold text-transparent text-6xl text-center leading-none whitespace-pre-wrap pointer-events-none">
                             NeoGIS
                         </p>

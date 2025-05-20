@@ -1,7 +1,10 @@
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import { HowToUseMarkerOverview } from "@/consts/howToUse";
+import {
+    HowToUseLineOverview,
+    HowToUseMarkerOverview,
+} from "@/consts/howToUse";
 import { capitalizeFirstLetter, handleDownload } from "@/lib/utils";
 import { Link } from "@inertiajs/react";
 import { Download, PlusCircle } from "lucide-react";
@@ -17,9 +20,16 @@ export const ElementControls = memo(
     ({ onSearch, elements, elementType }: ElementControlsProps) => {
         console.log("ELEMENT CONTROLS RENDER");
 
+        const howToUse =
+            elementType === "marker"
+                ? HowToUseMarkerOverview
+                : elementType === "line"
+                ? HowToUseLineOverview
+                : [];
+
         return (
             <div className="">
-                <HowToUseComponent tutorials={HowToUseMarkerOverview} />
+                <HowToUseComponent tutorials={howToUse} />
                 <Link href={route(`maps.${elementType}.add`)}>
                     <Button className="mb-4 w-full">
                         <PlusCircle />

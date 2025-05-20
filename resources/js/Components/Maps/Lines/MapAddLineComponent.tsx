@@ -38,7 +38,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import HowToUse from "@/Components/HowToUseComponent";
-import { HowToUseMarkerAdd } from "@/consts/howToUse";
+import { HowToUseLineAdd, HowToUseMarkerAdd } from "@/consts/howToUse";
 import { SearchAddress } from "@/Components/SearchAddress";
 import { centerPoints } from "@/consts/centerPoints";
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
@@ -212,7 +212,7 @@ export default function MapAddLineComponent({
                             handleSelectAddress={handleSelectAddress}
                             addressId={address?.place_id || 0}
                         />
-                        <HowToUse tutorials={HowToUseMarkerAdd} />
+                        <HowToUse tutorials={HowToUseLineAdd} />
 
                         {loading ? (
                             <>

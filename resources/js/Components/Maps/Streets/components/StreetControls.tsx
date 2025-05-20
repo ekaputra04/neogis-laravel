@@ -2,14 +2,15 @@ import { Input } from "@/Components/ui/input";
 import { Download, PlusCircle } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import HowToUseComponent from "@/Components/HowToUseComponent";
-import { HowToUseMarkerOverview } from "@/consts/howToUse";
+import { HowToUseStreetOverview } from "@/consts/howToUse";
 import { FilterStateInterface, StreetInterface } from "@/types/types";
 import { memo } from "react";
 import DialogFilterStreetComponent from "./DialogFilterStreetComponent";
 import { handleDownload } from "@/lib/utils";
+import { toast } from "sonner";
+import { router } from "@inertiajs/react";
 
 interface StreetControlsProps {
-    onAddNew: () => void;
     onFilterChange: (filters: FilterStateInterface) => void;
     onSearch: (value: string) => void;
     initialFilters: FilterStateInterface;
@@ -18,7 +19,6 @@ interface StreetControlsProps {
 
 export const StreetControls = memo(
     ({
-        onAddNew,
         onFilterChange,
         onSearch,
         initialFilters,
@@ -28,8 +28,14 @@ export const StreetControls = memo(
 
         return (
             <>
-                <HowToUseComponent tutorials={HowToUseMarkerOverview} />
-                <Button className="mb-2 w-full" onClick={onAddNew}>
+                <HowToUseComponent tutorials={HowToUseStreetOverview} />
+                <Button
+                    className="mb-2 w-full"
+                    onClick={() => {
+                        toast.info("Processing request...");
+                        router.visit("/dashboard/street/add");
+                    }}
+                >
                     <PlusCircle />
                     Add New Street
                 </Button>

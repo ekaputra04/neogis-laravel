@@ -64,6 +64,8 @@ import { Label } from "@/Components/ui/label";
 import { length, lineString } from "@turf/turf";
 import { RefreshCcw } from "lucide-react";
 import { buttonDestructiveCss } from "@/consts/buttonCss";
+import HowToUseComponent from "@/Components/HowToUseComponent";
+import { HowToUseStreetUpdate } from "@/consts/howToUse";
 
 const formSchema = z.object({
     desa_id: z.number(),
@@ -324,10 +326,8 @@ export default function MapEditStreetComponent() {
         const { layer } = e;
 
         if (layer instanceof L.Polyline) {
-            // Ambil seluruh koordinat polyline
             const latLngs = layer.getLatLngs() as L.LatLng[];
 
-            // Transformasikan koordinat ke format yang sesuai
             const coordinates: CoordinatesInterface[] = latLngs.map(
                 (latLng) => ({
                     latitude: latLng.lat,
@@ -335,7 +335,6 @@ export default function MapEditStreetComponent() {
                 })
             );
 
-            // Simpan koordinat tersebut ke dalam state (atau tempat lain yang sesuai)
             setStreetCoordinates(coordinates);
 
             const formattedCoordinates: [number, number][] =
@@ -353,16 +352,13 @@ export default function MapEditStreetComponent() {
     const handleEdited = (e: DrawEditedEvent) => {
         const event = e as DrawEditedEvent;
 
-        // Variabel untuk menyimpan seluruh koordinat polyline yang diedit
         let updatedCoordinates: CoordinatesInterface[] = [];
         let formattedCoordinates: [number, number][] = [];
 
         event.layers.eachLayer((layer) => {
             if (layer instanceof L.Polyline) {
-                // Ambil seluruh koordinat polyline yang diedit
                 const latLngs = layer.getLatLngs() as L.LatLng[];
 
-                // Map koordinat ke format yang sesuai
                 updatedCoordinates = latLngs.map((latLng) => ({
                     latitude: latLng.lat,
                     longitude: latLng.lng,
@@ -376,7 +372,6 @@ export default function MapEditStreetComponent() {
             }
         });
 
-        // Update state dengan koordinat yang telah diedit
         setStreetCoordinates(updatedCoordinates);
 
         const line = lineString(formattedCoordinates);
@@ -408,6 +403,7 @@ export default function MapEditStreetComponent() {
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
+                        <HowToUseComponent tutorials={HowToUseStreetUpdate} />
                         {loading ? (
                             <>
                                 <FormSkeleton count={11} />

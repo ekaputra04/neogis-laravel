@@ -20,7 +20,7 @@ export default function HowToUseComponent({ tutorials }: HowToUseProps) {
                 <FileQuestion />
                 <p>How to Use</p>
             </DialogTrigger>
-            <DialogContent className="max-h-96 overflow-y-auto">
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="mb-4">
                         Petunjuk Penggunaan
@@ -29,8 +29,9 @@ export default function HowToUseComponent({ tutorials }: HowToUseProps) {
                 </DialogHeader>
                 {tutorials.map((tutorial, index) => (
                     <div key={index} className="space-y-2">
-                        <h1>{tutorial.description}</h1>
+                        <p className="text-sm">{tutorial.description}</p>
                         <img
+                            className="lg:max-w-[60%]"
                             src={tutorial.image}
                             alt={`Tutorial ${index + 1}`}
                         />

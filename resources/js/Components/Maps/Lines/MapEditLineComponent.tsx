@@ -41,6 +41,8 @@ import {
 } from "@/Components/ui/select";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { tileLayers } from "@/consts/tileLayers";
+import HowToUseComponent from "@/Components/HowToUseComponent";
+import { HowToUseLineUpdate } from "@/consts/howToUse";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -186,6 +188,7 @@ export default function MapEditLineComponent({
                 </h2>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
+                        <HowToUseComponent tutorials={HowToUseLineUpdate} />
                         {loading ? (
                             <>
                                 <FormSkeleton count={2} />

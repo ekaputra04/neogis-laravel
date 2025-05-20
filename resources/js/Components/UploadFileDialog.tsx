@@ -10,11 +10,13 @@ import {
     AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
 import { buttonOutlineCss } from "@/consts/buttonCss";
-import { Upload } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import { useState } from "react";
 import { FileUpload } from "./ui/file-upload";
 import { router, usePage } from "@inertiajs/react";
 import { toast } from "sonner";
+import { Button } from "./ui/button";
+import { handleDownloadSampleStreetData } from "@/lib/utils";
 
 export default function UploadFileDialog() {
     const { token } = usePage().props;
@@ -116,8 +118,13 @@ export default function UploadFileDialog() {
     return (
         <div className="">
             <AlertDialog>
-                <AlertDialogTrigger className={buttonOutlineCss}>
-                    <Upload />
+                <AlertDialogTrigger
+                    className={
+                        buttonOutlineCss +
+                        " bg-green-200 text-black dark:text-black"
+                    }
+                >
+                    <Upload color="black" />
                     Add via file
                 </AlertDialogTrigger>
                 <AlertDialogContent>
@@ -125,6 +132,14 @@ export default function UploadFileDialog() {
                         <AlertDialogTitle>Upload file</AlertDialogTitle>
                         <AlertDialogDescription></AlertDialogDescription>
                     </AlertDialogHeader>
+                    <div className="">
+                        <Button
+                            variant={"link"}
+                            onClick={() => handleDownloadSampleStreetData()}
+                        >
+                            <Download /> Download Sample Street Data
+                        </Button>
+                    </div>
                     <div className="bg-white dark:bg-black mx-auto border border-neutral-200 dark:border-neutral-800 border-dashed rounded-lg w-full max-w-4xl min-h-96">
                         <FileUpload
                             onChange={handleFileUpload}

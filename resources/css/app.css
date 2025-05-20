@@ -84,7 +84,8 @@
     --rainbow: rainbow var(--speed, 2s) infinite linear
   ;
     --animate-marquee: marquee var(--duration) infinite linear;
-    --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite}
+    --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+    --animate-gradient: gradient 8s linear infinite}
 }
 
 @layer base {
@@ -119,6 +120,11 @@
     }
   to {
     transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes gradient {
+  to {
+    background-position: var(--bg-size, 300%) 0;
     }
   }
 }

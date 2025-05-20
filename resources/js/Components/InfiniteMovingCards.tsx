@@ -2,28 +2,33 @@ import { InfiniteMovingCards } from "./ui/infinite-moving-cards";
 
 export function InfiniteMovingCardsDemo() {
     return (
-        <div className="relative flex flex-col justify-center items-center dark:bg-grid-white/[0.05] rounded-md overflow-hidden antialiased">
-            <InfiniteMovingCards
-                items={testimonials.splice(0, 6)}
-                direction="right"
-                speed="slow"
-            />
-            <InfiniteMovingCards
-                items={testimonials.splice(6, 11)}
-                direction="left"
-                speed="slow"
-            />
-            {/* <InfiniteMovingCards
+        <>
+            <h2 className="bg-clip-text bg-gradient-to-b from-black dark:from-white to-gray-300/80 dark:to-slate-900/10 mt-32 mb-8 font-semibold text-transparent text-4xl text-center leading-none whitespace-pre-wrap pointer-events-none">
+                Testimonials
+            </h2>
+            <div className="relative flex flex-col justify-center items-center dark:bg-grid-white/[0.05] rounded-md overflow-hidden antialiased">
+                <InfiniteMovingCards
+                    items={testimonials.splice(0, 6)}
+                    direction="right"
+                    speed="slow"
+                />
+                <InfiniteMovingCards
+                    items={testimonials.splice(6, 11)}
+                    direction="left"
+                    speed="slow"
+                />
+                {/* <InfiniteMovingCards
                 items={testimonials.splice(11, 16)}
                 direction="right"
                 speed="slow"
-            />
-            <InfiniteMovingCards
+                />
+                <InfiniteMovingCards
                 items={testimonials.splice(16, 20)}
                 direction="left"
                 speed="slow"
-            /> */}
-        </div>
+                /> */}
+            </div>
+        </>
     );
 }
 
