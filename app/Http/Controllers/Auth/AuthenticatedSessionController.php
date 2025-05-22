@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +65,18 @@ class AuthenticatedSessionController extends Controller
             'external_api_token' => $token,
             'external_token_expired_at' => $expiredAt,
         ]);
+
+        // Cari user lokal berdasarkan email
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // Buat user lokal jika belum ada
+            $user = User::create([
+                'name' => 'User',
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+        }
 
         // Login lokal
         $request->authenticate();
