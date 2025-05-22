@@ -100,7 +100,7 @@ const faqs = [
 
 export function FaQComponent() {
     return (
-        <div className="mx-auto my-16 w-full lg:w-1/2">
+        <div className="mx-auto mt-32 mb-16 w-full lg:w-1/2">
             <h2 className="bg-clip-text bg-gradient-to-b from-black dark:from-white to-gray-300/80 dark:to-slate-900/10 mb-16 font-semibold text-transparent text-4xl text-center leading-none whitespace-pre-wrap pointer-events-none">
                 Frequently Asked Questions
             </h2>

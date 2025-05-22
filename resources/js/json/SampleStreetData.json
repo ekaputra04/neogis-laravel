@@ -1,96 +1,432 @@
 [
-  {
-    "id": 3432,
-    "paths": "xoft@kn_~Tt\\vGt\\rJj[wCj[uCtSgNx^KjWvIfUbHvf@|Drl@vBrd@`@pZ~At\\lq@",
-    "desa_id": 256,
-    "kode_ruas": "bypass-ngurah-rai",
-    "nama_ruas": "Bypass Ngurah Rai",
-    "panjang": 4189.468331419781,
-    "lebar": 8,
-    "eksisting_id": 7,
-    "kondisi_id": 1,
-    "jenisjalan_id": 2,
-    "keterangan": "Jalan besar",
-    "coordinates": [
-      [
-        -8.72205,
-        115.18198
-      ],
-      [
-        -8.7268,
-        115.18058
-      ],
-      [
-        -8.73155,
-        115.17872
-      ],
-      [
-        -8.73609,
-        115.17948
-      ],
-      [
-        -8.74063,
-        115.18023
-      ],
-      [
-        -8.74394,
-        115.18267
-      ],
-      [
-        -8.74903,
-        115.18273
-      ],
-      [
-        -8.75293,
-        115.18101
-      ],
-      [
-        -8.75649,
-        115.17955
-      ],
-      [
-        -8.76285,
-        115.1786
-      ],
-      [
-        -8.77015,
-        115.178
-      ],
-      [
-        -8.77617,
-        115.17783
-      ],
-      [
-        -8.78058,
-        115.17735
-      ],
-      [
-        -8.78533,
-        115.16928
-      ]
-    ]
-  },
-  {
-    "id": 3439,
-    "paths": "|fcs@mm{~Tdn@gB",
-    "desa_id": 509,
-    "kode_ruas": "jalan-ksatrian",
-    "nama_ruas": "Jalan Ksatrian",
-    "panjang": 363.84917733322726,
-    "lebar": 7,
-    "eksisting_id": 7,
-    "kondisi_id": 1,
-    "jenisjalan_id": 2,
-    "keterangan": "Jalan",
-    "coordinates": [
-      [
-        -8.54143,
-        115.32519
-      ],
-      [
-        -8.54898,
-        115.32571
-      ]
-    ]
-  }
+    {
+        "id": 3439,
+        "paths": "|fcs@mm{~TzTw@~Ka@|IU",
+        "desa_id": 509,
+        "kode_ruas": "jalan-ksatrian",
+        "nama_ruas": "Jalan Ksatrian",
+        "panjang": 354.1742882399152,
+        "lebar": 11,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 2,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.54143, 115.32519],
+            [-8.54493, 115.32547],
+            [-8.54701, 115.32564],
+            [-8.54876, 115.32575]
+        ]
+    },
+    {
+        "id": 3452,
+        "paths": "rgbs@u_{~Tt\\jB",
+        "desa_id": 509,
+        "kode_ruas": "jalan-ciung-wanara",
+        "nama_ruas": "Jalan Ciung Wanara",
+        "panjang": 889.9785587963142,
+        "lebar": 8,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 3,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.53642, 115.32299],
+            [-8.54117, 115.32245]
+        ]
+    },
+    {
+        "id": 3453,
+        "paths": "f}bs@y}z~TpAwNnE?",
+        "desa_id": 509,
+        "kode_ruas": "jalan-manik",
+        "nama_ruas": "Jalan Manik",
+        "panjang": 330.6356494057665,
+        "lebar": 7,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 1,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.53988, 115.32269],
+            [-8.54029, 115.32521],
+            [-8.54133, 115.32521]
+        ]
+    },
+    {
+        "id": 3454,
+        "paths": "xdcs@s{z~TUfi@v@dCpBnAf]b@jAjAdIza@Gr_@",
+        "desa_id": 516,
+        "kode_ruas": "jalan-dharma-giri",
+        "nama_ruas": "Jalan Dharma Giri",
+        "panjang": 2363.081337107236,
+        "lebar": 10,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 2,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.54109, 115.32234],
+            [-8.54098, 115.31558],
+            [-8.54126, 115.31491],
+            [-8.54183, 115.31451],
+            [-8.54667, 115.31433],
+            [-8.54705, 115.31395],
+            [-8.54868, 115.30837],
+            [-8.54864, 115.30315]
+        ]
+    },
+    {
+        "id": 3455,
+        "paths": "lsas@aaw~T~@XxPMxO~@x`@}CpYTrWF~c@dGnn@zG",
+        "desa_id": 486,
+        "kode_ruas": "jalan-udayana",
+        "nama_ruas": "Jalan Udayana",
+        "panjang": 1661.39153064143,
+        "lebar": 13,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 3,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.53319, 115.30273],
+            [-8.53351, 115.3026],
+            [-8.53636, 115.30267],
+            [-8.53905, 115.30235],
+            [-8.54446, 115.30314],
+            [-8.54871, 115.30303],
+            [-8.55265, 115.30299],
+            [-8.55857, 115.30168],
+            [-8.56617, 115.30026]
+        ]
+    },
+    {
+        "id": 3456,
+        "paths": "|dcs@g|z~TzCy|@uDqJCgDm@kCMgB_B}GW{Fs@_Bo@_GsEuW",
+        "desa_id": 509,
+        "kode_ruas": "jalan-i-gusti-ngurah-rai",
+        "nama_ruas": "Jalan I Gusti Ngurah Rai",
+        "panjang": 2481.6926745887617,
+        "lebar": 10,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 3,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.54111, 115.32244],
+            [-8.54189, 115.33233],
+            [-8.54098, 115.33418],
+            [-8.54096, 115.33502],
+            [-8.54073, 115.33572],
+            [-8.54066, 115.33624],
+            [-8.54018, 115.33767],
+            [-8.54006, 115.33893],
+            [-8.5398, 115.33941],
+            [-8.53956, 115.34069],
+            [-8.5385, 115.34464]
+        ]
+    },
+    {
+        "id": 3457,
+        "paths": "`rcs@w|z~TTwPO{Hq@cC@kHPeI",
+        "desa_id": 509,
+        "kode_ruas": "jalan-majapahit",
+        "nama_ruas": "Jalan Majapahit",
+        "panjang": 914.2195088426372,
+        "lebar": 8,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 1,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.54321, 115.32252],
+            [-8.54332, 115.32536],
+            [-8.54324, 115.32694],
+            [-8.54299, 115.3276],
+            [-8.543, 115.3291],
+            [-8.54309, 115.33073]
+        ]
+    },
+    {
+        "id": 3458,
+        "paths": "hgcs@}z{~T|FQfDgAt@I\\?ZVd@KxDOpEMnJH",
+        "desa_id": 509,
+        "kode_ruas": "jalan-berata",
+        "nama_ruas": "Jalan Berata",
+        "panjang": 348.90967284468036,
+        "lebar": 7,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 1,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.54149, 115.32735],
+            [-8.54276, 115.32744],
+            [-8.5436, 115.3278],
+            [-8.54387, 115.32785],
+            [-8.54402, 115.32785],
+            [-8.54416, 115.32773],
+            [-8.54435, 115.32779],
+            [-8.54528, 115.32787],
+            [-8.54633, 115.32794],
+            [-8.54817, 115.32789]
+        ]
+    },
+    {
+        "id": 3459,
+        "paths": "hebs@kj|~T|BHfCTlI^|FV|C\\fBL",
+        "desa_id": 509,
+        "kode_ruas": "jalan-kalantaka",
+        "nama_ruas": "Jalan Kalantaka",
+        "panjang": 275.6453400280608,
+        "lebar": 9,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 1,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.53605, 115.32982],
+            [-8.53668, 115.32977],
+            [-8.53736, 115.32966],
+            [-8.53903, 115.3295],
+            [-8.5403, 115.32938],
+            [-8.54109, 115.32923],
+            [-8.54161, 115.32916]
+        ]
+    },
+    {
+        "id": 3460,
+        "paths": "fuds@sq{~TQ{DiBaFq@oJ",
+        "desa_id": 518,
+        "kode_ruas": "jalan-gambir",
+        "nama_ruas": "Jalan Gambir",
+        "panjang": 438.5963972410216,
+        "lebar": 10,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 2,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.54884, 115.32586],
+            [-8.54875, 115.3268],
+            [-8.54822, 115.32793],
+            [-8.54797, 115.32977]
+        ]
+    },
+    {
+        "id": 3461,
+        "paths": "fuds@wp{~TdAlOWjL@vAj@tBj@?`GuDfAOz@XTj@AbD",
+        "desa_id": 518,
+        "kode_ruas": "jalan-astina-selatan",
+        "nama_ruas": "Jalan Astina Selatan",
+        "panjang": 929.7059248529781,
+        "lebar": 10,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 2,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.54884, 115.32572],
+            [-8.54919, 115.32309],
+            [-8.54907, 115.32095],
+            [-8.54908, 115.32051],
+            [-8.5493, 115.31992],
+            [-8.54952, 115.31992],
+            [-8.55081, 115.32083],
+            [-8.55117, 115.32091],
+            [-8.55147, 115.32078],
+            [-8.55158, 115.32056],
+            [-8.55157, 115.31974]
+        ]
+    },
+    {
+        "id": 3462,
+        "paths": "rqfs@qjx~TOkQE}Me@i@m^\\[[m@aCyCiGU{@y@uDa@sDAa@PqB",
+        "desa_id": 493,
+        "kode_ruas": "jalan-raya-bona",
+        "nama_ruas": "Jalan Raya Bona",
+        "panjang": 1419.2555748027426,
+        "lebar": 10,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 2,
+        "keterangan": "jalan umum",
+        "coordinates": [
+            [-8.5585, 115.30937],
+            [-8.55842, 115.31231],
+            [-8.55839, 115.3147],
+            [-8.5582, 115.31491],
+            [-8.55317, 115.31476],
+            [-8.55303, 115.3149],
+            [-8.5528, 115.31555],
+            [-8.55203, 115.31688],
+            [-8.55192, 115.31718],
+            [-8.55163, 115.31809],
+            [-8.55146, 115.31899],
+            [-8.55145, 115.31916],
+            [-8.55154, 115.31973]
+        ]
+    },
+    {
+        "id": 3463,
+        "paths": "|qfs@uix~TzJj@lNZ~HLhFMb@@PX",
+        "desa_id": 491,
+        "kode_ruas": "jalan-raya-belega",
+        "nama_ruas": "Jalan Raya Belega",
+        "panjang": 367.8493520865357,
+        "lebar": 10,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 2,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.55855, 115.30923],
+            [-8.56045, 115.30901],
+            [-8.56292, 115.30887],
+            [-8.56452, 115.3088],
+            [-8.56569, 115.30887],
+            [-8.56587, 115.30886],
+            [-8.56596, 115.30873]
+        ]
+    },
+    {
+        "id": 3464,
+        "paths": "rahs@mrv~TAwT@uCm@iDHwMGsDKM",
+        "desa_id": 486,
+        "kode_ruas": "jalan-kebo-iwa",
+        "nama_ruas": "Jalan Kebo Iwa",
+        "panjang": 936.3926175203904,
+        "lebar": 10,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 2,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.56618, 115.30039],
+            [-8.56617, 115.30387],
+            [-8.56618, 115.30462],
+            [-8.56595, 115.30547],
+            [-8.566, 115.30783],
+            [-8.56596, 115.30873],
+            [-8.5659, 115.3088]
+        ]
+    },
+    {
+        "id": 3465,
+        "paths": "pbds@e_{~T@aGAcG",
+        "desa_id": 518,
+        "kode_ruas": "jalan-yudhistira",
+        "nama_ruas": "Jalan Yudhistira",
+        "panjang": 288.847087737003,
+        "lebar": 6,
+        "eksisting_id": 5,
+        "kondisi_id": 2,
+        "jenisjalan_id": 1,
+        "keterangan": "Jalan Perumahan",
+        "coordinates": [
+            [-8.54585, 115.32291],
+            [-8.54586, 115.3242],
+            [-8.54585, 115.3255]
+        ]
+    },
+    {
+        "id": 3466,
+        "paths": "fids@q`{~TGcEGgH",
+        "desa_id": 518,
+        "kode_ruas": "jalan-werkudara",
+        "nama_ruas": "Jalan Werkudara",
+        "panjang": 273.3570628103967,
+        "lebar": 7,
+        "eksisting_id": 9,
+        "kondisi_id": 1,
+        "jenisjalan_id": 1,
+        "keterangan": "Jalan Perumahan",
+        "coordinates": [
+            [-8.54692, 115.32313],
+            [-8.54688, 115.32411],
+            [-8.54684, 115.32559]
+        ]
+    },
+    {
+        "id": 3467,
+        "paths": "rqcs@}rz~TfEB~CYzFe@rHs@jGs@",
+        "desa_id": 518,
+        "kode_ruas": "jalan-raden-wijaya",
+        "nama_ruas": "Jalan Raden Wijaya",
+        "panjang": 301.2750612076426,
+        "lebar": 9,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 1,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.54314, 115.32095],
+            [-8.54414, 115.32093],
+            [-8.54494, 115.32106],
+            [-8.5462, 115.32125],
+            [-8.54774, 115.32151],
+            [-8.54908, 115.32177]
+        ]
+    },
+    {
+        "id": 3468,
+        "paths": "pnds@svz~T_@_EU}B",
+        "desa_id": 518,
+        "kode_ruas": "jalan-wibisana",
+        "nama_ruas": "Jalan Wibisana",
+        "panjang": 177.71242032812722,
+        "lebar": 6,
+        "eksisting_id": 5,
+        "kondisi_id": 2,
+        "jenisjalan_id": 1,
+        "keterangan": "Jalan perumahan",
+        "coordinates": [
+            [-8.54777, 115.32154],
+            [-8.54761, 115.3225],
+            [-8.5475, 115.32313]
+        ]
+    },
+    {
+        "id": 3469,
+        "paths": "vecs@k|z~TfKIxJc@jH_A~JkAlBY",
+        "desa_id": 509,
+        "kode_ruas": "jalan-kebo-iwa",
+        "nama_ruas": "Jalan Kebo Iwa",
+        "panjang": 396.10890936796204,
+        "lebar": 10,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 1,
+        "keterangan": "jalan umum",
+        "coordinates": [
+            [-8.54124, 115.32246],
+            [-8.5432, 115.32251],
+            [-8.54509, 115.32269],
+            [-8.54659, 115.32301],
+            [-8.54851, 115.32339],
+            [-8.54906, 115.32352]
+        ]
+    },
+    {
+        "id": 3470,
+        "paths": "nics@ep|~TzFFhH?dFB`A@^lDNfC",
+        "desa_id": 509,
+        "kode_ruas": "jalan-dalem-rai",
+        "nama_ruas": "Jalan Dalem Rai",
+        "panjang": 374.50305023107836,
+        "lebar": 10,
+        "eksisting_id": 7,
+        "kondisi_id": 1,
+        "jenisjalan_id": 1,
+        "keterangan": "Jalan umum",
+        "coordinates": [
+            [-8.54184, 115.33075],
+            [-8.5431, 115.33071],
+            [-8.54459, 115.33071],
+            [-8.54574, 115.33069],
+            [-8.54607, 115.33068],
+            [-8.54623, 115.32981],
+            [-8.54631, 115.32913]
+        ]
+    }
 ]
