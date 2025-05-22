@@ -24,11 +24,13 @@ export const TableStreetFilterCounter = memo(
 
         const data = useMemo(() => {
             const sourceData =
-                title === "Eksisting"
+                title == "Eksisting"
                     ? eksisting
-                    : title === "Jenis"
+                    : title == "Jenis"
                     ? jenis
-                    : kondisi;
+                    : title == "Kondisi"
+                    ? kondisi
+                    : null;
 
             return (sourceData as any[]).map((item) => {
                 const filterKey =
@@ -36,17 +38,35 @@ export const TableStreetFilterCounter = memo(
                         ? "eksisting_id"
                         : title === "Jenis"
                         ? "jenisjalan_id"
+                        : title === "Kondisi"
+                        ? "kondisi_id"
                         : "kondisi_id";
 
                 const count = streets.filter(
                     (s) => s[filterKey] === item.id
                 ).length;
 
-                return {
-                    id: item.id,
-                    name: item[title.toLowerCase()],
-                    count,
-                };
+                if (title === "Eksisting") {
+                    return {
+                        id: item.id,
+                        name: item.eksisting,
+                        count,
+                    };
+                }
+                if (title === "Jenis") {
+                    return {
+                        id: item.id,
+                        name: item.jenisjalan,
+                        count,
+                    };
+                }
+                if (title === "Kondisi") {
+                    return {
+                        id: item.id,
+                        name: item.kondisi,
+                        count,
+                    };
+                }
             });
         }, [title, streets, eksisting, jenis, kondisi]);
 
@@ -61,11 +81,11 @@ export const TableStreetFilterCounter = memo(
                     </TableHeader>
                     <TableBody>
                         {data.map((item) => (
-                            <TableRow key={item.id}>
+                            <TableRow key={item?.id}>
                                 <TableCell className="font-medium">
-                                    {item.name}
+                                    {item?.name}
                                 </TableCell>
-                                <TableCell>{item.count}</TableCell>
+                                <TableCell>{item?.count}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
