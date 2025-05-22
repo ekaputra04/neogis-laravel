@@ -17,6 +17,8 @@ import { FilterLine } from "./Overviews/FilterLine";
 import { MapOverviewLayer } from "./Overviews/MapOverviewLayer";
 import { FilterPolygon } from "./Overviews/FilterPolygon";
 import { FilterCircle } from "./Overviews/FilterCircle";
+import { PieChartSpatialComponent } from "../charts/PieChartSpatialComponent";
+import { PieChartCategoriesComponent } from "../charts/PieChartCategoriesComponent";
 
 interface MapOverviewComponentProps {
     currentPath: string;
@@ -197,7 +199,8 @@ export default function MapOverviewComponent({
         <>
             <DashboardMapLayout currentPath={currentPath as string}>
                 <Head title="Maps" />
-                <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
+
+                <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 col-span-1 md:col-span-2 lg:col-span-4 mb-8">
                     {dashboardCounter.map((counter, index) => (
                         <DashboardCounterCard
                             key={index}
@@ -206,6 +209,21 @@ export default function MapOverviewComponent({
                             link={counter.link}
                         />
                     ))}
+                </div>
+
+                <div className="gap-4 grid grid-cols-1 md:grid-cols-2 mb-4">
+                    <PieChartSpatialComponent
+                        markersCount={markers.length}
+                        linesCount={lines.length}
+                        polygonsCount={polygons.length}
+                        circlesCount={circles.length}
+                    />
+                    <PieChartCategoriesComponent
+                        markerCategoriesCount={markerCategories}
+                        lineCategoriesCount={lineCategories}
+                        polygonCategoriesCount={polygonCategories}
+                        circleCategoriesCount={circleCategories}
+                    />
                 </div>
 
                 <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
