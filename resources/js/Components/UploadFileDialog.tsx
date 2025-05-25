@@ -121,11 +121,11 @@ export default function UploadFileDialog() {
                 <AlertDialogTrigger
                     className={
                         buttonOutlineCss +
-                        " bg-green-200 text-black dark:text-black"
+                        " bg-green-200 hover:bg-green-200 text-black dark:text-black"
                     }
                 >
                     <Upload color="black" />
-                    Add via file
+                    <p className="text-black">Add via file</p>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>

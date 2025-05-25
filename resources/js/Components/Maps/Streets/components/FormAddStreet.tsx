@@ -199,7 +199,7 @@ export default function FormAddStreet({
             toast.success("Street saved successfully to external API!");
             form.reset();
             setStreetCoordinates([]);
-            // router.visit("/dashboard/street");
+            router.visit("/dashboard/street");
         } catch (error) {
             console.error("Error saving street:", error);
             toast.error("Error saving street.");
