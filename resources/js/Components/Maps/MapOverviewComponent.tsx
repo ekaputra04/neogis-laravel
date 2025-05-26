@@ -9,7 +9,7 @@ import {
     MarkerInterface,
     PolygonInterface,
 } from "@/types/types";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { centerPoints } from "@/consts/centerPoints";
 import DashboardCounterCard from "./DashboardCounterCard";
 import { FilterMarker } from "./Overviews/FilterMarker";

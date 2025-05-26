@@ -1,6 +1,4 @@
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 import image from "@/images/background/sign-up-bg.jpg";
@@ -37,12 +35,39 @@ export default function Register({ errors: backendErrors }: Props) {
         password_confirmation: "",
     });
 
-    const submit: FormEventHandler = (e) => {
+    const submit: FormEventHandler = async (e) => {
         e.preventDefault();
 
-        post(route("register"), {
-            onFinish: () => reset("password", "password_confirmation"),
-        });
+        try {
+            const formBody = new URLSearchParams();
+            formBody.append("name", data.name);
+            formBody.append("email", data.email);
+            formBody.append("password", data.password);
+
+            const response = await fetch(
+                "https://gisapis.manpits.xyz/api/register",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: formBody.toString(),
+                }
+            );
+
+            const externalResponse = await response.json();
+
+            if (externalResponse.meta.code != 200) {
+                throw new Error(
+                    externalResponse.meta.message ||
+                        "Gagal register ke API eksternal."
+                );
+            } else {
+                post(route("register"), {
+                    onFinish: () => reset("password", "password_confirmation"),
+                });
+            }
+        } catch (error) {}
     };
 
     return (

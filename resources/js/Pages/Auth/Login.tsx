@@ -70,8 +70,6 @@ export default function Login({
 
             const externalResponse = await response.json();
 
-            console.log("External Response:", externalResponse);
-
             if (externalResponse.meta.code != 200) {
                 throw new Error(
                     externalResponse.meta.message ||
