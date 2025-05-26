@@ -145,42 +145,61 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $API_URL = env('API_URL');
-        $token = Session::get('external_api_token');
+        $token = $request->cookie('external_api_token');
 
         try {
+            // Kirim permintaan logout ke API eksternal
             $response = Http::withHeaders([
                 'Authorization' => "Bearer $token"
             ])->post("$API_URL/logout");
 
             Log::info('API Logout Response', [
                 'status' => $response->status(),
-                'body' => $response->json()
+                'body' => $response->json(),
             ]);
+
+            // Hapus cookie dan logout lokal meskipun API logout gagal
+            $cookie1 = cookie()->forget('external_api_token');
+            $cookie2 = cookie()->forget('external_token_expired_at');
 
             if ($response->successful()) {
                 // Logout dari Laravel
                 Auth::guard('web')->logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
-                Session::forget('external_api_token');
 
-
-                return redirect('/')->with('message', 'Logout berhasil');
+                return redirect('/')->with('message', 'Logout berhasil')->withCookie($cookie1)->withCookie($cookie2);
             } else {
                 Log::error('External API logout failed', [
                     'status' => $response->status(),
-                    'body' => $response->body()
+                    'body' => $response->body(),
                 ]);
 
-                return redirect()->back()->withErrors('Gagal logout dari server eksternal.');
+                // Tetap logout lokal meskipun API eksternal gagal
+                Auth::guard('web')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect('/')->withErrors(['message' => 'Gagal logout dari server eksternal, tetapi logout lokal berhasil.'])
+                    ->withCookie($cookie1)
+                    ->withCookie($cookie2);
             }
         } catch (\Exception $e) {
             Log::error('Exception during API logout', [
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->back()->withErrors('Terjadi kesalahan saat logout.');
+            // Hapus cookie dan logout lokal meskipun terjadi error
+            $cookie1 = cookie()->forget('external_api_token');
+            $cookie2 = cookie()->forget('external_token_expired_at');
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect('/')->withErrors(['message' => 'Terjadi kesalahan saat logout, tetapi logout lokal berhasil.'])
+                ->withCookie($cookie1)
+                ->withCookie($cookie2);
         }
     }
 }
