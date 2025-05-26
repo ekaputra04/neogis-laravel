@@ -52,6 +52,9 @@ const formSchema = z.object({
     keterangan: z.string().min(2).max(255),
 });
 
+const TOKEN = localStorage.getItem("external_api_token") as string;
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface FormAddStreetProps {
     streetCoordinates: CoordinatesInterface[];
     setStreetCoordinates: (coordinates: CoordinatesInterface[]) => void;
@@ -65,16 +68,24 @@ export default function FormAddStreet({
     loading,
     setLoading,
 }: FormAddStreetProps) {
-    const {
-        provinsi,
-        kabupaten,
-        kecamatan,
-        desa,
-        eksisting,
-        jenis,
-        kondisi,
-        token,
-    } = usePage().props;
+    // const {
+    //     provinsi,
+    //     kabupaten,
+    //     kecamatan,
+    //     desa,
+    //     eksisting,
+    //     jenis,
+    //     kondisi,
+    //     token,
+    // } = usePage().props;
+    const [provinsi, setProvinsi] = useState<ProvinsiInterface[]>([]);
+    const [kabupaten, setKabupaten] = useState<KabupatenInterface[]>([]);
+    const [kecamatan, setKecamatan] = useState<KecamatanInterface[]>([]);
+    const [desa, setDesa] = useState<DesaInterface[]>([]);
+    const [eksisting, setEksisting] = useState<EksistingJalanInterface[]>([]);
+    const [jenis, setJenis] = useState<JenisJalanInterface[]>([]);
+    const [kondisi, setKondisi] = useState<KondisiJalanInterface[]>([]);
+
     const [filteredKabupaten, setFilteredKabupaten] = useState<
         KabupatenInterface[]
     >([]);
@@ -98,6 +109,89 @@ export default function FormAddStreet({
             panjang: undefined,
         },
     });
+
+    useEffect(() => {
+        const fetchDataLocations = async () => {
+            try {
+                const response = await fetch(`${API_URL}/mregion`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch locations data");
+                }
+
+                const data = await response.json();
+                setProvinsi(data.provinsi);
+                setKabupaten(data.kabupaten);
+                setKecamatan(data.kecamatan);
+                setDesa(data.desa);
+            } catch (error) {
+                console.error("Error fetching locations data:", error);
+            }
+        };
+
+        const fetchDataEksisting = async () => {
+            try {
+                const response = await fetch(`${API_URL}/meksisting`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch eksisting data");
+                }
+
+                const data = await response.json();
+                setEksisting(data.eksisting);
+            } catch (error) {
+                console.error("Error fetching eksisting data:", error);
+            }
+        };
+
+        const fetchDataJenis = async () => {
+            try {
+                const response = await fetch(`${API_URL}/mjenisjalan`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch jenis data");
+                }
+
+                const data = await response.json();
+                setJenis(data.eksisting);
+            } catch (error) {
+                console.error("Error fetching jenis data:", error);
+            }
+        };
+
+        const fetchDataKondisi = async () => {
+            try {
+                const response = await fetch(`${API_URL}/mkondisi`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch jenis data");
+                }
+
+                const data = await response.json();
+                setKondisi(data.eksisting);
+            } catch (error) {
+                console.error("Error fetching jenis data:", error);
+            }
+        };
+
+        // Jalankan semua fetch secara paralel
+        Promise.all([
+            fetchDataLocations(),
+            fetchDataEksisting(),
+            fetchDataJenis(),
+            fetchDataKondisi(),
+        ]).catch((error) => {
+            console.error("Error fetching initial data:", error);
+        });
+    }, []);
 
     const namaRuas = useWatch({ control: form.control, name: "nama_ruas" });
 
@@ -175,17 +269,14 @@ export default function FormAddStreet({
         setLoading(true);
 
         try {
-            const response = await fetch(
-                "https://gisapis.manpits.xyz/api/ruasjalan",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: formBody.toString(),
-                }
-            );
+            const response = await fetch(`${API_URL}/ruasjalan`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    Authorization: `Bearer ${TOKEN}`,
+                },
+                body: formBody.toString(),
+            });
 
             if (!response.ok) {
                 const errorText = await response.text();
