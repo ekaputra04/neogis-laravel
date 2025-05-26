@@ -7,18 +7,94 @@ import {
     TableHeader,
     TableRow,
 } from "@/Components/ui/table";
-import { StreetInterface } from "@/types/types";
+import {
+    EksistingJalanInterface,
+    JenisJalanInterface,
+    KondisiJalanInterface,
+    StreetInterface,
+} from "@/types/types";
 import { usePage } from "@inertiajs/react";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 interface TableStreetFilterCounterProps {
     title: "Eksisting" | "Jenis" | "Kondisi";
     streets: StreetInterface[];
 }
 
+const TOKEN = localStorage.getItem("external_api_token") as string;
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const TableStreetFilterCounter = memo(
     ({ title, streets }: TableStreetFilterCounterProps) => {
-        const { eksisting, jenis, kondisi } = usePage().props;
+        // const { eksisting, jenis, kondisi } = usePage().props;
+
+        const [eksisting, setEksisting] = useState<EksistingJalanInterface[]>(
+            []
+        );
+        const [jenis, setJenis] = useState<JenisJalanInterface[]>([]);
+        const [kondisi, setKondisi] = useState<KondisiJalanInterface[]>([]);
+
+        useEffect(() => {
+            const fetchDataEksisting = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/meksisting`, {
+                        headers: { Authorization: `Bearer ${TOKEN}` },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch eksisting data");
+                    }
+
+                    const data = await response.json();
+                    setEksisting(data.eksisting);
+                } catch (error) {
+                    console.error("Error fetching eksisting data:", error);
+                }
+            };
+
+            const fetchDataJenis = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/mjenisjalan`, {
+                        headers: { Authorization: `Bearer ${TOKEN}` },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch jenis data");
+                    }
+
+                    const data = await response.json();
+                    setJenis(data.eksisting);
+                } catch (error) {
+                    console.error("Error fetching jenis data:", error);
+                }
+            };
+
+            const fetchDataKondisi = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/mkondisi`, {
+                        headers: { Authorization: `Bearer ${TOKEN}` },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch jenis data");
+                    }
+
+                    const data = await response.json();
+                    setKondisi(data.eksisting);
+                } catch (error) {
+                    console.error("Error fetching jenis data:", error);
+                }
+            };
+
+            // Jalankan semua fetch secara paralel
+            Promise.all([
+                fetchDataEksisting(),
+                fetchDataJenis(),
+                fetchDataKondisi(),
+            ]).catch((error) => {
+                console.error("Error fetching initial data:", error);
+            });
+        }, []);
 
         console.log("TABLE STREET RENDER");
 

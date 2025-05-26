@@ -18,6 +18,8 @@ import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { handleDownloadSampleStreetData } from "@/lib/utils";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function UploadFileDialog() {
     const { token } = usePage().props;
     const [files, setFiles] = useState<File[]>([]);
@@ -80,18 +82,14 @@ export default function UploadFileDialog() {
                     );
                     formBody.append("keterangan", item.keterangan);
 
-                    const response = await fetch(
-                        "https://gisapis.manpits.xyz/api/ruasjalan",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type":
-                                    "application/x-www-form-urlencoded",
-                                Authorization: `Bearer ${token}`,
-                            },
-                            body: formBody.toString(),
-                        }
-                    );
+                    const response = await fetch(`${API_URL}/ruasjalan`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            Authorization: `Bearer ${token}`,
+                        },
+                        body: formBody.toString(),
+                    });
 
                     if (!response.ok) {
                         const errorText = await response.text();

@@ -16,6 +16,8 @@ type RegisterErrors = {
     external?: string;
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 type Props = {
     errors: RegisterErrors;
 };
@@ -44,16 +46,13 @@ export default function Register({ errors: backendErrors }: Props) {
             formBody.append("email", data.email);
             formBody.append("password", data.password);
 
-            const response = await fetch(
-                "https://gisapis.manpits.xyz/api/register",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    body: formBody.toString(),
-                }
-            );
+            const response = await fetch(`${API_URL}/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: formBody.toString(),
+            });
 
             const externalResponse = await response.json();
 

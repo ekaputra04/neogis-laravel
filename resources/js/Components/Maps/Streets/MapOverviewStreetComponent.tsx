@@ -19,27 +19,40 @@ import { Skeleton } from "@/Components/ui/skeleton";
 import { SearchAddress } from "@/Components/SearchAddress";
 import { TableStreetFilterCounter } from "./components/TableStreetFilterCounter";
 
-interface MapOverviewStreetComponentProps {
-    streets: StreetInterface[];
-    token: string;
-}
+const TOKEN = localStorage.getItem("external_api_token") as string;
+const API_URL = import.meta.env.VITE_API_URL;
 
-export default function MapOverviewStreetComponent({
-    streets: initialStreets,
-    token,
-}: MapOverviewStreetComponentProps) {
+export default function MapOverviewStreetComponent() {
     console.log("PARENT STREET OVERVIEW RENDER");
 
     const [streets, setStreets] = useState<StreetWithCoordinatesInterface[]>(
-        () =>
-            initialStreets.map((street) => ({
-                ...street,
-                coordinates: decode(street.paths).map(([lat, lng]) => [
-                    lat,
-                    lng,
-                ]) as [number, number][],
-            }))
+        []
     );
+
+    useEffect(() => {
+        const fetchDataStreets = async () => {
+            try {
+                const response = await fetch(`${API_URL}/ruasjalan`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch locations data");
+                }
+
+                const data = await response.json();
+
+                setStreets(data.ruasjalan);
+            } catch (error) {
+                console.error("Error fetching streets data:", error);
+            }
+        };
+
+        // Jalankan semua fetch secara paralel
+        Promise.all([fetchDataStreets()]).catch((error) => {
+            console.error("Error fetching initial data:", error);
+        });
+    }, []);
 
     const [address, setAddress] = useState<GeocodingResponseInterface>();
 
@@ -60,11 +73,8 @@ export default function MapOverviewStreetComponent({
     });
 
     const [mapCenter, setMapCenter] = useState<[number, number]>(
-        initialStreets.length > 0
-            ? [
-                  decode(initialStreets[0].paths)[0][0],
-                  decode(initialStreets[0].paths)[0][1],
-              ]
+        streets.length > 0
+            ? [decode(streets[0].paths)[0][0], decode(streets[0].paths)[0][1]]
             : [centerPoints[0], centerPoints[1]]
     );
     const [searchValue, setSearchValue] = useState("");
@@ -84,12 +94,9 @@ export default function MapOverviewStreetComponent({
 
     const fetchStreets = useCallback(async () => {
         try {
-            const response = await fetch(
-                `https://gisapis.manpits.xyz/api/ruasjalan`,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+            const response = await fetch(`${API_URL}/ruasjalan`, {
+                headers: { Authorization: `Bearer ${TOKEN}` },
+            });
             const { ruasjalan } = await response.json();
             setStreets(
                 ruasjalan.map((street: StreetInterface) => ({
@@ -109,16 +116,13 @@ export default function MapOverviewStreetComponent({
         async (streetId: number) => {
             setLoading(true);
             try {
-                await fetch(
-                    `https://gisapis.manpits.xyz/api/ruasjalan/${streetId}`,
-                    {
-                        method: "DELETE",
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
+                await fetch(`${API_URL}/ruasjalan/${streetId}`, {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${TOKEN}`,
+                        "Content-Type": "application/json",
+                    },
+                });
                 await fetchStreets();
                 toast.success("Street deleted successfully!");
             } catch (error) {
@@ -198,23 +202,15 @@ export default function MapOverviewStreetComponent({
     return (
         <DashboardMapLayout currentPath="/dashboard/street">
             <Head title="Street" />
+
             <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
                 <DashboardCounterCard
                     title="Total Streets"
-                    value={initialStreets.length}
+                    value={streets.length}
                 />
-                <TableStreetFilterCounter
-                    title="Eksisting"
-                    streets={initialStreets}
-                />
-                <TableStreetFilterCounter
-                    title="Jenis"
-                    streets={initialStreets}
-                />
-                <TableStreetFilterCounter
-                    title="Kondisi"
-                    streets={initialStreets}
-                />
+                <TableStreetFilterCounter title="Eksisting" streets={streets} />
+                <TableStreetFilterCounter title="Jenis" streets={streets} />
+                <TableStreetFilterCounter title="Kondisi" streets={streets} />
             </div>
             <hr />
             <div className="gap-8 grid grid-cols-1 lg:grid-cols-4 mt-8">

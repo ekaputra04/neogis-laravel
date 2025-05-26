@@ -27,7 +27,6 @@ import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
 import { useEffect, useState } from "react";
 import {
-    CategoriesInterface,
     CoordinatesInterface,
     DesaInterface,
     EksistingJalanInterface,
@@ -35,7 +34,6 @@ import {
     KabupatenInterface,
     KecamatanInterface,
     KondisiJalanInterface,
-    LineInterface,
     ProvinsiInterface,
     SelectedDesaInterface,
     SelectedKabupatenInterface,
@@ -89,61 +87,29 @@ interface DrawEditedEvent {
     layers: L.LayerGroup;
 }
 
+const API_URL = import.meta.env.VITE_API_URL;
+const TOKEN = localStorage.getItem("external_api_token") as string;
+
 export default function MapEditStreetComponent() {
-    const {
-        street: initialStreet,
-        provinsi,
-        kabupaten,
-        kecamatan,
-        desa,
-        eksisting,
-        jenis,
-        kondisi,
-        token,
-        selectedProvinsi: initialSelectedProvinsi,
-        selectedKabupaten: initialSelectedKabupaten,
-        selectedKecamatan: initialSelectedKecamatan,
-        selectedDesa: initialSelectedDesa,
-    } = usePage().props;
+    const { id } = usePage().props;
 
     const { selectedLayer } = useMapLayerStore();
-    const [street, setStreet] = useState<StreetWithCoordinatesInterface>({
-        ...(initialStreet as StreetInterface),
-        coordinates: decode((initialStreet as StreetInterface).paths).map(
-            ([lat, lng]) => [lat, lng]
-        ) as [number, number][],
-    });
-
-    const [streetCoordinates, setStreetCoordinates] = useState<
-        CoordinatesInterface[]
-    >(() => {
-        try {
-            const decoded = decode((initialStreet as StreetInterface).paths);
-            return decoded.map(([latitude, longitude]) => ({
-                latitude,
-                longitude,
-            }));
-        } catch (error) {
-            console.error("Error decoding paths:", error);
-            return [];
-        }
-    });
+    const [provinsi, setProvinsi] = useState<ProvinsiInterface[]>([]);
+    const [kabupaten, setKabupaten] = useState<KabupatenInterface[]>([]);
+    const [kecamatan, setKecamatan] = useState<KecamatanInterface[]>([]);
+    const [desa, setDesa] = useState<DesaInterface[]>([]);
+    const [eksisting, setEksisting] = useState<EksistingJalanInterface[]>([]);
+    const [jenis, setJenis] = useState<JenisJalanInterface[]>([]);
+    const [kondisi, setKondisi] = useState<KondisiJalanInterface[]>([]);
+    const [street, setStreet] = useState<StreetWithCoordinatesInterface>();
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
-
-    const [selectedProvinsiId, setSelectedProvinsiId] = useState<number>(
-        (initialSelectedProvinsi as SelectedProvinsiInterface).id
-    );
-    const [selectedKabupatenId, setSelectedKabupatenId] = useState<number>(
-        (initialSelectedKabupaten as SelectedKabupatenInterface).id
-    );
-    const [selectedKecamatanId, setSelectedKecamatanId] = useState<number>(
-        (initialSelectedKecamatan as SelectedKecamatanInterface).id
-    );
-    const [selectedDesaId, setSelectedDesaId] = useState<number>(
-        (initialSelectedDesa as SelectedDesaInterface).id
-    );
-
+    const [selectedProvinsiId, setSelectedProvinsiId] = useState<number>();
+    const [selectedKabupatenId, setSelectedKabupatenId] = useState<number>();
+    const [selectedKecamatanId, setSelectedKecamatanId] = useState<number>();
+    const [selectedDesaId, setSelectedDesaId] = useState<number>();
+    const [streetCoordinates, setStreetCoordinates] =
+        useState<CoordinatesInterface[]>();
     const [filteredKabupaten, setFilteredKabupaten] = useState<
         KabupatenInterface[]
     >(
@@ -164,19 +130,144 @@ export default function MapEditStreetComponent() {
         })
     );
 
+    useEffect(() => {
+        const fetchDataStreets = async () => {
+            try {
+                const response = await fetch(`${API_URL}/ruasjalan`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch locations data");
+                }
+
+                const data = await response.json();
+
+                const streetData = data.ruasjalan.find(
+                    (s: StreetInterface) => s.id == id
+                );
+                const decodedPaths = decode(streetData.paths);
+                const streetWithCoordinates: StreetWithCoordinatesInterface = {
+                    ...streetData,
+                    paths: streetData.paths,
+                    coordinates: decodedPaths.map(([latitude, longitude]) => ({
+                        latitude,
+                        longitude,
+                    })),
+                };
+                setStreet(streetWithCoordinates);
+
+                const decoded = decode(streetData.paths);
+                const coordinates = decoded.map(([latitude, longitude]) => ({
+                    latitude,
+                    longitude,
+                }));
+                setStreetCoordinates(coordinates);
+
+                fetchDataStreetLocation(streetData.desa_id);
+            } catch (error) {
+                console.error("Error fetching streets data:", error);
+            }
+        };
+
+        const fetchDataStreetLocation = async (desaId: number) => {
+            try {
+                const response = await fetch(
+                    `${API_URL}/kecamatanbydesaid/${desaId}`,
+                    {
+                        headers: { Authorization: `Bearer ${TOKEN}` },
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch street location data");
+                }
+
+                const data = await response.json();
+
+                setSelectedProvinsiId(data.provinsi.id);
+                setSelectedKabupatenId(data.kabupaten.id);
+                setSelectedKecamatanId(data.kecamatan.id);
+                setSelectedDesaId(data.desa.id);
+            } catch (error) {
+                console.error("Error fetching eksisting data:", error);
+            }
+        };
+
+        const fetchDataEksisting = async () => {
+            try {
+                const response = await fetch(`${API_URL}/meksisting`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch eksisting data");
+                }
+
+                const data = await response.json();
+                setEksisting(data.eksisting);
+            } catch (error) {
+                console.error("Error fetching eksisting data:", error);
+            }
+        };
+
+        const fetchDataJenis = async () => {
+            try {
+                const response = await fetch(`${API_URL}/mjenisjalan`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch jenis data");
+                }
+
+                const data = await response.json();
+                setJenis(data.eksisting);
+            } catch (error) {
+                console.error("Error fetching jenis data:", error);
+            }
+        };
+
+        const fetchDataKondisi = async () => {
+            try {
+                const response = await fetch(`${API_URL}/mkondisi`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch jenis data");
+                }
+
+                const data = await response.json();
+                setKondisi(data.eksisting);
+            } catch (error) {
+                console.error("Error fetching jenis data:", error);
+            }
+        };
+
+        Promise.all([
+            fetchDataStreets(),
+            fetchDataEksisting(),
+            fetchDataJenis(),
+            fetchDataKondisi(),
+        ]).catch((error) => {
+            console.error("Error fetching initial data:", error);
+        });
+    }, []);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            nama_ruas: street.nama_ruas,
-            keterangan: street.keterangan,
-            lebar: street.lebar,
-            desa_id: street.desa_id,
-            eksisting_id: street.eksisting_id,
-            jenisjalan_id: street.jenisjalan_id,
-            kode_ruas: street.kode_ruas,
-            kondisi_id: street.kondisi_id,
-            panjang: street.panjang,
-            paths: street.paths,
+            nama_ruas: street?.nama_ruas,
+            keterangan: street?.keterangan,
+            lebar: street?.lebar,
+            desa_id: street?.desa_id,
+            eksisting_id: street?.eksisting_id,
+            jenisjalan_id: street?.jenisjalan_id,
+            kode_ruas: street?.kode_ruas,
+            kondisi_id: street?.kondisi_id,
+            panjang: street?.panjang,
+            paths: street?.paths,
         },
     });
 
@@ -228,17 +319,14 @@ export default function MapEditStreetComponent() {
         setLoading(true);
 
         try {
-            const response = await fetch(
-                `https://gisapis.manpits.xyz/api/ruasjalan/${street.id}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: formBody.toString(),
-                }
-            );
+            const response = await fetch(`${API_URL}/ruasjalan/${street?.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    Authorization: `Bearer ${TOKEN}`,
+                },
+                body: formBody.toString(),
+            });
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -265,15 +353,12 @@ export default function MapEditStreetComponent() {
         setLoading(true);
 
         try {
-            const response = await fetch(
-                "https://gisapis.manpits.xyz/api/mregion",
-                {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            const response = await fetch(`${API_URL}/mregion`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${TOKEN}`,
+                },
+            });
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -285,18 +370,7 @@ export default function MapEditStreetComponent() {
             const kabupatenData = result.kabupaten;
             const kecamatanData = result.kecamatan;
             const desaData = result.desa;
-            setSelectedProvinsiId(
-                (initialSelectedProvinsi as SelectedProvinsiInterface).id
-            );
-            setSelectedKabupatenId(
-                (initialSelectedKabupaten as SelectedKabupatenInterface).id
-            );
-            setSelectedKecamatanId(
-                (initialSelectedKecamatan as SelectedKecamatanInterface).id
-            );
-            setSelectedDesaId(
-                (initialSelectedDesa as SelectedDesaInterface).id
-            );
+
             setFilteredKabupaten(
                 (kabupatenData as KabupatenInterface[]).filter((kabupaten) => {
                     return kabupaten.prov_id == selectedProvinsiId;
@@ -394,6 +468,89 @@ export default function MapEditStreetComponent() {
         }
     }, [streetCoordinates]);
 
+    useEffect(() => {
+        const fetchDataLocations = async () => {
+            try {
+                const response = await fetch(`${API_URL}/mregion`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch locations data");
+                }
+
+                const data = await response.json();
+                setProvinsi(data.provinsi);
+                setKabupaten(data.kabupaten);
+                setKecamatan(data.kecamatan);
+                setDesa(data.desa);
+            } catch (error) {
+                console.error("Error fetching locations data:", error);
+            }
+        };
+
+        const fetchDataEksisting = async () => {
+            try {
+                const response = await fetch(`${API_URL}/meksisting`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch eksisting data");
+                }
+
+                const data = await response.json();
+                setEksisting(data.eksisting);
+            } catch (error) {
+                console.error("Error fetching eksisting data:", error);
+            }
+        };
+
+        const fetchDataJenis = async () => {
+            try {
+                const response = await fetch(`${API_URL}/mjenisjalan`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch jenis data");
+                }
+
+                const data = await response.json();
+                setJenis(data.eksisting);
+            } catch (error) {
+                console.error("Error fetching jenis data:", error);
+            }
+        };
+
+        const fetchDataKondisi = async () => {
+            try {
+                const response = await fetch(`${API_URL}/mkondisi`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch jenis data");
+                }
+
+                const data = await response.json();
+                setKondisi(data.eksisting);
+            } catch (error) {
+                console.error("Error fetching jenis data:", error);
+            }
+        };
+
+        // Jalankan semua fetch secara paralel
+        Promise.all([
+            fetchDataLocations(),
+            fetchDataEksisting(),
+            fetchDataJenis(),
+            fetchDataKondisi(),
+        ]).catch((error) => {
+            console.error("Error fetching initial data:", error);
+        });
+    }, []);
+
     return (
         <>
             <DashboardMapLayout currentPath={"/dashboard/street/edit"}>
@@ -401,7 +558,8 @@ export default function MapEditStreetComponent() {
                 <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
                     Edit Street
                 </h2>
-                <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
+                {JSON.stringify(street)}
+                {/* <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
                         <HowToUseComponent tutorials={HowToUseStreetUpdate} />
                         {loading ? (
@@ -726,7 +884,7 @@ export default function MapEditStreetComponent() {
                                         <Select
                                             onValueChange={(value) => {
                                                 setStreet({
-                                                    ...street,
+                                                    ...street!!,
                                                     eksisting_id: Number(value),
                                                 });
                                                 form.setValue(
@@ -734,7 +892,7 @@ export default function MapEditStreetComponent() {
                                                     Number(value)
                                                 );
                                             }}
-                                            value={street.eksisting_id.toString()}
+                                            value={street!!.eksisting_id.toString()}
                                         >
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Eksisting" />
@@ -759,7 +917,7 @@ export default function MapEditStreetComponent() {
                                         <Select
                                             onValueChange={(value) => {
                                                 setStreet({
-                                                    ...street,
+                                                    ...street!!,
                                                     kondisi_id: Number(value),
                                                 });
                                                 form.setValue(
@@ -767,7 +925,7 @@ export default function MapEditStreetComponent() {
                                                     Number(value)
                                                 );
                                             }}
-                                            value={street.kondisi_id.toString()}
+                                            value={street!!.kondisi_id.toString()}
                                         >
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Kondisi" />
@@ -792,7 +950,7 @@ export default function MapEditStreetComponent() {
                                         <Select
                                             onValueChange={(value) => {
                                                 setStreet({
-                                                    ...street,
+                                                    ...street!!,
                                                     jenisjalan_id:
                                                         Number(value),
                                                 });
@@ -801,7 +959,7 @@ export default function MapEditStreetComponent() {
                                                     Number(value)
                                                 );
                                             }}
-                                            value={street.jenisjalan_id.toString()}
+                                            value={street!!.jenisjalan_id.toString()}
                                         >
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Jenis" />
@@ -851,8 +1009,8 @@ export default function MapEditStreetComponent() {
                             <MapContainer
                                 key={mapKey}
                                 center={[
-                                    street.coordinates[0][0],
-                                    street.coordinates[0][1],
+                                    street!!.coordinates[0][0],
+                                    street!!.coordinates[0][1],
                                 ]}
                                 zoom={13}
                                 style={{ height: "500px", width: "100%" }}
@@ -878,35 +1036,35 @@ export default function MapEditStreetComponent() {
                                     />
 
                                     <Polyline
-                                        key={street.id}
-                                        positions={street.coordinates}
+                                        key={street!!.id}
+                                        positions={street!!.coordinates}
                                         color={"blue"}
                                     >
                                         <Popup>
                                             <strong>
-                                                {street.nama_ruas ||
+                                                {street!!.nama_ruas ||
                                                     "Jalan Tanpa Nama"}
                                             </strong>
                                             <br />
                                             <br />
-                                            {street.keterangan ||
+                                            {street!!.keterangan ||
                                                 "Tidak ada deskripsi"}
                                             <br />
                                             <br />
                                             Panjang:{" "}
-                                            {roundToTwo(street.panjang) ||
+                                            {roundToTwo(street!!.panjang) ||
                                                 "-"}{" "}
                                             meter
                                             <br />
                                             <br />
-                                            Lebar: {street.lebar || "-"} meter
+                                            Lebar: {street!!.lebar || "-"} meter
                                         </Popup>
                                     </Polyline>
                                 </FeatureGroup>
                             </MapContainer>
                         )}
                     </div>
-                </div>
+                </div> */}
             </DashboardMapLayout>
         </>
     );

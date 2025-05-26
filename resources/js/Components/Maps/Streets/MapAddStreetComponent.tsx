@@ -1,55 +1,18 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, Link, router, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { FeatureGroup, MapContainer } from "react-leaflet";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/Components/ui/form";
-import { Input } from "@/Components/ui/input";
-import { Button } from "@/Components/ui/button";
-import { Textarea } from "@/Components/ui/textarea";
 import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet";
 import { useCallback, useEffect, useState } from "react";
 import {
-    CategoriesInterface,
     CoordinatesInterface,
-    DesaInterface,
-    EksistingJalanInterface,
     GeocodingResponseInterface,
-    JenisJalanInterface,
-    KabupatenInterface,
-    KecamatanInterface,
-    KondisiJalanInterface,
-    ProvinsiInterface,
 } from "@/types/types";
-import { toast } from "sonner";
-import FormSkeleton from "@/Components/FormSkeleton";
 import { Skeleton } from "@/Components/ui/skeleton";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select";
 import HowToUse from "@/Components/HowToUseComponent";
 import { HowToUseStreetAdd } from "@/consts/howToUse";
-import { Label } from "@/Components/ui/label";
-import { capitalizeWords, roundToTwo } from "@/lib/utils";
-import { encode } from "@mapbox/polyline";
-import { lineString, length } from "@turf/turf";
 import UploadFileDialog from "@/Components/UploadFileDialog";
 import { centerPoints } from "@/consts/centerPoints";
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
@@ -77,7 +40,6 @@ export default function MapAddStreetComponent() {
     >([]);
     const [loading, setLoading] = useState(false);
     const [mapKey, setMapKey] = useState(0);
-
     const [address, setAddress] = useState<GeocodingResponseInterface>();
 
     const handleCreated = (e: DrawCreatedEvent) => {
