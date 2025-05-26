@@ -1,13 +1,33 @@
-import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
-import { Head, Link, useForm } from "@inertiajs/react";
-import { FormEventHandler } from "react";
+import { Head, Link, router } from "@inertiajs/react";
+import { FormEventHandler, useEffect, useState } from "react";
 import image from "@/images/background/sign-in-bg.jpg";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/Components/ui/form";
+import { Checkbox } from "@/Components/ui/checkbox";
+
+const formSchema = z.object({
+    email: z.string().min(2).max(50),
+    password: z.string().min(2).max(50),
+    remember: z.boolean(),
+});
 
 export default function Login({
     status,
@@ -16,19 +36,96 @@ export default function Login({
     status?: string;
     canResetPassword: boolean;
 }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        email: "",
-        password: "",
-        remember: false as boolean,
+    const [apiError, setApiError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+            remember: false,
+        },
     });
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setApiError("");
+        setLoading(true);
 
-        post(route("login"), {
-            onFinish: () => reset("password"),
-        });
-    };
+        try {
+            const formBody = new URLSearchParams();
+            formBody.append("email", values.email);
+            formBody.append("password", values.password);
+
+            const response = await fetch(
+                "https://gisapis.manpits.xyz/api/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: formBody.toString(),
+                }
+            );
+
+            const externalResponse = await response.json();
+
+            console.log("External Response:", externalResponse);
+
+            if (externalResponse.meta.code != 200) {
+                throw new Error(
+                    externalResponse.meta.message ||
+                        "Gagal login ke API eksternal."
+                );
+            }
+
+            const token = externalResponse.meta.token;
+            const expiredInSeconds = externalResponse.meta["token-expired"];
+            const expiredAt = new Date(
+                Date.now() + expiredInSeconds * 1000
+            ).toISOString();
+
+            localStorage.setItem("external_api_token", token);
+            localStorage.setItem("external_token_expired_at", expiredAt);
+
+            const checkResponse = await axios.post("/api/users/check", {
+                email: values.email,
+            });
+
+            if (!checkResponse.data.exists) {
+                await axios.post("/api/users", {
+                    name: "User",
+                    email: values.email,
+                    password: values.password,
+                });
+            }
+
+            const loginFormData = new FormData();
+            loginFormData.append("email", values.email);
+            loginFormData.append("password", values.password);
+            loginFormData.append("remember", values.remember ? "on" : "");
+
+            await axios.post("/login", loginFormData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            });
+
+            router.visit("/dashboard");
+            form.resetField("password");
+        } catch (error: any) {
+            setApiError(
+                error.response?.data?.errors?.email?.[0] ||
+                    error.response?.data?.error ||
+                    error.response?.data?.meta?.message ||
+                    error.message ||
+                    "Terjadi kesalahan saat login."
+            );
+        } finally {
+            setLoading(false);
+        }
+    }
 
     return (
         <>
@@ -52,95 +149,83 @@ export default function Login({
                                     {status}
                                 </div>
                             )}
+                            {apiError && (
+                                <div className="mb-4 font-medium text-red-600 text-sm">
+                                    {apiError}
+                                </div>
+                            )}
 
-                            <form onSubmit={submit}>
-                                <div>
-                                    <InputLabel htmlFor="email" value="Email" />
-
-                                    <Input
-                                        id="email"
-                                        type="email"
+                            <Form {...form}>
+                                <form
+                                    onSubmit={form.handleSubmit(onSubmit)}
+                                    className="space-y-4"
+                                >
+                                    <FormField
+                                        control={form.control}
                                         name="email"
-                                        value={data.email}
-                                        className="block mt-1 w-full"
-                                        autoComplete="username"
-                                        // isFocused={true}
-                                        onChange={(e) =>
-                                            setData("email", e.target.value)
-                                        }
-                                        disabled={processing}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="m@mail.com"
+                                                        {...field}
+                                                        disabled={loading}
+                                                        type="email"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
-
-                                    <InputError
-                                        message={errors.email}
-                                        className="mt-2"
-                                    />
-                                </div>
-
-                                <div className="mt-4">
-                                    <InputLabel
-                                        htmlFor="password"
-                                        value="Password"
-                                    />
-
-                                    <Input
-                                        id="password"
-                                        type="password"
+                                    <FormField
+                                        control={form.control}
                                         name="password"
-                                        value={data.password}
-                                        className="block mt-1 w-full"
-                                        autoComplete="current-password"
-                                        onChange={(e) =>
-                                            setData("password", e.target.value)
-                                        }
-                                        disabled={processing}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Password</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="********"
+                                                        type="password"
+                                                        {...field}
+                                                        disabled={loading}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
-
-                                    <InputError
-                                        message={errors.password}
-                                        className="mt-2"
+                                    <FormField
+                                        control={form.control}
+                                        name="remember"
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 bg-transparent">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={
+                                                            field.onChange
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <div className="space-y-1 leading-none">
+                                                    <FormLabel>
+                                                        Remember me
+                                                    </FormLabel>
+                                                </div>
+                                            </FormItem>
+                                        )}
                                     />
-                                </div>
-
-                                <div className="block mt-4">
-                                    <label className="flex items-center">
-                                        <Checkbox
-                                            name="remember"
-                                            checked={data.remember}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "remember",
-                                                    (e.target.checked ||
-                                                        false) as false
-                                                )
-                                            }
-                                        />
-                                        <span className="ms-2 text-gray-600 text-sm">
-                                            Remember me
-                                        </span>
-                                    </label>
-                                </div>
-
-                                <div className="flex justify-end items-center mt-4">
-                                    {canResetPassword && (
-                                        <Link
-                                            href={route("password.request")}
-                                            className="rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-primary/50 text-sm underline"
-                                        >
-                                            Forgot your password?
-                                        </Link>
-                                    )}
-
                                     <Button
-                                        className="ms-4 px-8 py-2"
-                                        disabled={processing}
+                                        type="submit"
+                                        className="w-full"
+                                        disabled={loading}
                                     >
-                                        {processing
-                                            ? "Logging in..."
-                                            : "Log in"}
+                                        {loading ? "Loading..." : "Login"}
                                     </Button>
-                                </div>
-                            </form>
+                                </form>
+                            </Form>
 
                             <p className="text-foreground text-sm">
                                 Don't have an account?{" "}
