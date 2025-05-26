@@ -44,7 +44,8 @@ Route::get('/api/token', function () {
 Route::get('/', [HomeController::class, 'homePage'])->name('home');
 Route::get('/maps', [HomeController::class, 'mapsPage']);
 
-Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->group(function () {
+// Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->group(function () {
+Route::middleware(['auth'])->prefix('dashboard')->name('maps.')->group(function () {
     Route::get('/', [MapController::class, 'mapOverview'])->name('index');
 
     Route::get('/marker', [MarkerController::class, 'overviewMarker'])->name('marker');
