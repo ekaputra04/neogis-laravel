@@ -112,178 +112,14 @@ export default function MapEditStreetComponent() {
         useState<CoordinatesInterface[]>();
     const [filteredKabupaten, setFilteredKabupaten] = useState<
         KabupatenInterface[]
-    >(
-        (kabupaten as KabupatenInterface[]).filter((kabupaten) => {
-            return kabupaten.prov_id == selectedProvinsiId;
-        })
-    );
+    >([]);
     const [filteredKecamatan, setFilteredKecamatan] = useState<
         KecamatanInterface[]
-    >(
-        (kecamatan as KecamatanInterface[]).filter((kecamatan) => {
-            return kecamatan.kab_id == selectedKabupatenId;
-        })
-    );
-    const [filteredDesa, setFilteredDesa] = useState<DesaInterface[]>(
-        (desa as DesaInterface[]).filter((desa) => {
-            return desa.kec_id == selectedKecamatanId;
-        })
-    );
+    >([]);
+    const [filteredDesa, setFilteredDesa] = useState<DesaInterface[]>([]);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            nama_ruas: street?.nama_ruas,
-            keterangan: street?.keterangan,
-            lebar: street?.lebar,
-            desa_id: street?.desa_id,
-            eksisting_id: street?.eksisting_id,
-            jenisjalan_id: street?.jenisjalan_id,
-            kode_ruas: street?.kode_ruas,
-            kondisi_id: street?.kondisi_id,
-            panjang: street?.panjang,
-            paths: street?.paths,
-        },
     });
-
-    useEffect(() => {
-        const fetchDataStreets = async () => {
-            try {
-                const response = await fetch(`${API_URL}/ruasjalan`, {
-                    headers: { Authorization: `Bearer ${TOKEN}` },
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch locations data");
-                }
-
-                const data = await response.json();
-
-                const streetData = data.ruasjalan.find(
-                    (s: StreetInterface) => s.id == id
-                );
-                const decodedPaths = decode(streetData.paths);
-                const streetWithCoordinates: StreetWithCoordinatesInterface = {
-                    ...streetData,
-                    paths: streetData.paths,
-                    coordinates: decodedPaths.map(([latitude, longitude]) => [
-                        latitude,
-                        longitude,
-                    ]),
-                };
-                setStreet(streetWithCoordinates);
-                form.setValue("nama_ruas", streetWithCoordinates.nama_ruas);
-                form.setValue("keterangan", streetWithCoordinates.keterangan);
-                form.setValue("lebar", streetWithCoordinates.lebar);
-                form.setValue("desa_id", streetWithCoordinates.desa_id);
-                form.setValue(
-                    "eksisting_id",
-                    streetWithCoordinates.eksisting_id
-                );
-                form.setValue(
-                    "jenisjalan_id",
-                    streetWithCoordinates.jenisjalan_id
-                );
-                form.setValue("kode_ruas", streetWithCoordinates.kode_ruas);
-                form.setValue("kondisi_id", streetWithCoordinates.kondisi_id);
-                form.setValue("panjang", streetWithCoordinates.panjang);
-
-                const decoded = decode(streetData.paths);
-                const coordinates = decoded.map(([latitude, longitude]) => ({
-                    latitude,
-                    longitude,
-                }));
-                setStreetCoordinates(coordinates);
-
-                fetchDataStreetLocation(streetData.desa_id);
-            } catch (error) {
-                console.error("Error fetching streets data:", error);
-            }
-        };
-
-        const fetchDataStreetLocation = async (desaId: number) => {
-            try {
-                const response = await fetch(
-                    `${API_URL}/kecamatanbydesaid/${desaId}`,
-                    {
-                        headers: { Authorization: `Bearer ${TOKEN}` },
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch street location data");
-                }
-
-                const data = await response.json();
-
-                setSelectedProvinsiId(data.provinsi.id);
-                setSelectedKabupatenId(data.kabupaten.id);
-                setSelectedKecamatanId(data.kecamatan.id);
-                setSelectedDesaId(data.desa.id);
-            } catch (error) {
-                console.error("Error fetching eksisting data:", error);
-            }
-        };
-
-        const fetchDataEksisting = async () => {
-            try {
-                const response = await fetch(`${API_URL}/meksisting`, {
-                    headers: { Authorization: `Bearer ${TOKEN}` },
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch eksisting data");
-                }
-
-                const data = await response.json();
-                setEksisting(data.eksisting);
-            } catch (error) {
-                console.error("Error fetching eksisting data:", error);
-            }
-        };
-
-        const fetchDataJenis = async () => {
-            try {
-                const response = await fetch(`${API_URL}/mjenisjalan`, {
-                    headers: { Authorization: `Bearer ${TOKEN}` },
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch jenis data");
-                }
-
-                const data = await response.json();
-                setJenis(data.eksisting);
-            } catch (error) {
-                console.error("Error fetching jenis data:", error);
-            }
-        };
-
-        const fetchDataKondisi = async () => {
-            try {
-                const response = await fetch(`${API_URL}/mkondisi`, {
-                    headers: { Authorization: `Bearer ${TOKEN}` },
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch jenis data");
-                }
-
-                const data = await response.json();
-                setKondisi(data.eksisting);
-            } catch (error) {
-                console.error("Error fetching jenis data:", error);
-            }
-        };
-
-        Promise.all([
-            fetchDataStreets(),
-            fetchDataEksisting(),
-            fetchDataJenis(),
-            fetchDataKondisi(),
-        ]).catch((error) => {
-            console.error("Error fetching initial data:", error);
-        });
-    }, []);
 
     const handleFilterKabupaten = (provinsiId: number) => {
         const kab = (kabupaten as KabupatenInterface[]).filter(
@@ -483,6 +319,68 @@ export default function MapEditStreetComponent() {
     }, [streetCoordinates]);
 
     useEffect(() => {
+        const fetchDataStreets = async () => {
+            try {
+                const response = await fetch(`${API_URL}/ruasjalan`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch locations data");
+                }
+
+                const data = await response.json();
+
+                const streetData = data.ruasjalan.find(
+                    (s: StreetInterface) => s.id == id
+                );
+
+                if (!streetData) {
+                    router.visit("/");
+                }
+
+                const decodedPaths = decode(streetData.paths);
+                const streetWithCoordinates: StreetWithCoordinatesInterface = {
+                    ...streetData,
+                    paths: streetData.paths,
+                    coordinates: decodedPaths.map(([latitude, longitude]) => [
+                        latitude,
+                        longitude,
+                    ]),
+                };
+
+                console.log("Fetched street data:", streetWithCoordinates);
+
+                form.setValue("nama_ruas", streetWithCoordinates.nama_ruas);
+                form.setValue("keterangan", streetWithCoordinates.keterangan);
+                form.setValue("lebar", streetWithCoordinates.lebar);
+                form.setValue("desa_id", streetWithCoordinates.desa_id);
+                form.setValue(
+                    "eksisting_id",
+                    streetWithCoordinates.eksisting_id
+                );
+                form.setValue(
+                    "jenisjalan_id",
+                    streetWithCoordinates.jenisjalan_id
+                );
+                form.setValue("kode_ruas", streetWithCoordinates.kode_ruas);
+                form.setValue("kondisi_id", streetWithCoordinates.kondisi_id);
+                form.setValue("panjang", streetWithCoordinates.panjang);
+                form.setValue("paths", streetWithCoordinates.paths);
+
+                const decoded = decode(streetData.paths);
+                const coordinates = decoded.map(([latitude, longitude]) => ({
+                    latitude,
+                    longitude,
+                }));
+
+                setStreet(streetWithCoordinates);
+                setStreetCoordinates(coordinates);
+            } catch (error) {
+                console.error("Error fetching streets data:", error);
+            }
+        };
+
         const fetchDataLocations = async () => {
             try {
                 const response = await fetch(`${API_URL}/mregion`, {
@@ -554,8 +452,8 @@ export default function MapEditStreetComponent() {
             }
         };
 
-        // Jalankan semua fetch secara paralel
         Promise.all([
+            fetchDataStreets(),
             fetchDataLocations(),
             fetchDataEksisting(),
             fetchDataJenis(),
@@ -563,32 +461,76 @@ export default function MapEditStreetComponent() {
         ]).catch((error) => {
             console.error("Error fetching initial data:", error);
         });
-    }, []);
+    }, [id]);
+
+    useEffect(() => {
+        if (
+            street &&
+            provinsi.length > 0 &&
+            kabupaten.length > 0 &&
+            kecamatan.length > 0 &&
+            desa.length > 0
+        ) {
+            const fetchDataStreetLocation = async (desaId: number) => {
+                try {
+                    const response = await fetch(
+                        `${API_URL}/kecamatanbydesaid/${desaId}`,
+                        {
+                            headers: { Authorization: `Bearer ${TOKEN}` },
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch street location data");
+                    }
+
+                    const data = await response.json();
+                    console.log("Fetched street location data:", data);
+
+                    setSelectedProvinsiId(data.provinsi.id);
+                    setSelectedKabupatenId(data.kabupaten.id);
+                    setSelectedKecamatanId(data.kecamatan.id);
+                    setSelectedDesaId(data.desa.id);
+
+                    const filteredKabupaten = (
+                        kabupaten as KabupatenInterface[]
+                    ).filter((kabupaten) => {
+                        return kabupaten.prov_id == data.provinsi.id;
+                    });
+
+                    setFilteredKabupaten(filteredKabupaten);
+                    const filteredKecamatan = (
+                        kecamatan as KecamatanInterface[]
+                    ).filter((kecamatan) => {
+                        return kecamatan.kab_id == data.kabupaten.id;
+                    });
+                    setFilteredKecamatan(filteredKecamatan);
+                    const filteredDesa = (desa as DesaInterface[]).filter(
+                        (desa) => {
+                            return desa.kec_id == data.kecamatan.id;
+                        }
+                    );
+                    setFilteredDesa(filteredDesa);
+                } catch (error) {
+                    console.error(
+                        "Error fetching street location data:",
+                        error
+                    );
+                }
+            };
+
+            fetchDataStreetLocation(street.desa_id);
+        }
+    }, [street, provinsi, kabupaten, kecamatan, desa]);
 
     return (
         <>
             <DashboardMapLayout currentPath={"/dashboard/street/edit"}>
                 <Head title="Edit Line" />
+
                 <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
                     Edit Street
                 </h2>
-                {JSON.stringify(street)}
-                <br />
-                {JSON.stringify(provinsi)}
-                <br />
-                {JSON.stringify(eksisting)}
-                <br />
-                {JSON.stringify(jenis)}
-                <br />
-                {JSON.stringify(kondisi)}
-                <br />
-                {JSON.stringify(selectedProvinsiId)}
-                <br />
-                {JSON.stringify(selectedKabupatenId)}
-                <br />
-                {JSON.stringify(selectedKecamatanId)}
-                <br />
-                {JSON.stringify(selectedDesaId)}
 
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
