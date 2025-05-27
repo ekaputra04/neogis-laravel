@@ -1,33 +1,12 @@
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import TextInput from "@/Components/TextInput";
-import { Head, Link, router } from "@inertiajs/react";
-import { FormEventHandler, useEffect, useState } from "react";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { FormEventHandler, useState } from "react";
 import image from "@/images/background/sign-in-bg.jpg";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/Components/ui/form";
-import { Checkbox } from "@/Components/ui/checkbox";
-
-const formSchema = z.object({
-    email: z.string().min(2).max(50),
-    password: z.string().min(2).max(50),
-    remember: z.boolean(),
-});
+import Checkbox from "@/Components/Checkbox";
+import { Label } from "@/Components/ui/label";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -39,25 +18,21 @@ export default function Login({
     canResetPassword: boolean;
 }) {
     const [apiError, setApiError] = useState("");
-    const [loading, setLoading] = useState(false);
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-            remember: false,
-        },
+    const { data, setData, post, processing, errors, reset } = useForm({
+        email: "",
+        password: "",
+        remember: false as boolean,
     });
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    const submit: FormEventHandler = async (e) => {
+        e.preventDefault();
         setApiError("");
-        setLoading(true);
 
         try {
             const formBody = new URLSearchParams();
-            formBody.append("email", values.email);
-            formBody.append("password", values.password);
+            formBody.append("email", data.email);
+            formBody.append("password", data.password);
 
             const response = await fetch(`${API_URL}/login`, {
                 method: "POST",
@@ -69,7 +44,7 @@ export default function Login({
 
             const externalResponse = await response.json();
 
-            if (externalResponse.meta.code != 200) {
+            if (externalResponse.meta.code !== 200) {
                 throw new Error(
                     externalResponse.meta.message ||
                         "Gagal login ke API eksternal."
@@ -85,44 +60,48 @@ export default function Login({
             localStorage.setItem("external_api_token", token);
             localStorage.setItem("external_token_expired_at", expiredAt);
 
-            const checkResponse = await axios.post("/api/users/check", {
-                email: values.email,
+            const checkResponse = await fetch("/api/users/check", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+                body: JSON.stringify({ email: data.email }),
             });
 
-            if (!checkResponse.data.exists) {
-                await axios.post("/api/users", {
-                    name: "User",
-                    email: values.email,
-                    password: values.password,
+            const checkData = await checkResponse.json();
+
+            if (!checkData.exists) {
+                await fetch("/api/users", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                    },
+                    body: JSON.stringify({
+                        name: "User",
+                        email: data.email,
+                        password: data.password,
+                    }),
                 });
             }
 
-            const loginFormData = new FormData();
-            loginFormData.append("email", values.email);
-            loginFormData.append("password", values.password);
-            loginFormData.append("remember", values.remember ? "on" : "");
-
-            await axios.post("/login", loginFormData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    "X-Requested-With": "XMLHttpRequest",
+            post(route("login"), {
+                onSuccess: () => {
+                    reset("password");
+                },
+                onError: (errors) => {
+                    setApiError(
+                        errors.email ||
+                            errors.password ||
+                            "Gagal login ke aplikasi."
+                    );
                 },
             });
-
-            router.visit("/dashboard");
-            form.resetField("password");
         } catch (error: any) {
-            setApiError(
-                error.response?.data?.errors?.email?.[0] ||
-                    error.response?.data?.error ||
-                    error.response?.data?.meta?.message ||
-                    error.message ||
-                    "Terjadi kesalahan saat login."
-            );
-        } finally {
-            setLoading(false);
+            setApiError(error.message || "Terjadi kesalahan saat login.");
         }
-    }
+    };
 
     return (
         <>
@@ -152,77 +131,87 @@ export default function Login({
                                 </div>
                             )}
 
-                            <Form {...form}>
-                                <form
-                                    onSubmit={form.handleSubmit(onSubmit)}
-                                    className="space-y-4"
-                                >
-                                    <FormField
-                                        control={form.control}
-                                        name="email"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Email</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="m@mail.com"
-                                                        {...field}
-                                                        disabled={loading}
-                                                        type="email"
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="password"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Password</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="********"
-                                                        type="password"
-                                                        {...field}
-                                                        disabled={loading}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="remember"
-                                        render={({ field }) => (
-                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 bg-transparent">
-                                                <FormControl>
-                                                    <Checkbox
-                                                        checked={field.value}
-                                                        onCheckedChange={
-                                                            field.onChange
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <div className="space-y-1 leading-none">
-                                                    <FormLabel>
-                                                        Remember me
-                                                    </FormLabel>
-                                                </div>
-                                            </FormItem>
-                                        )}
-                                    />
+                            <form className="">
+                                <div className="flex flex-col gap-6">
+                                    <div className="gap-2 grid">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                            id="email"
+                                            type="email"
+                                            name="email"
+                                            value={data.email}
+                                            className="block mt-1 w-full"
+                                            autoComplete="username"
+                                            onChange={(e) =>
+                                                setData("email", e.target.value)
+                                            }
+                                        />
+                                        <InputError
+                                            message={errors.email}
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                    <div className="gap-2 grid">
+                                        <div className="flex items-center">
+                                            <Label htmlFor="password">
+                                                Password
+                                            </Label>
+                                            <Link
+                                                href={route("password.request")}
+                                                className="ml-auto text-sm hover:underline underline-offset-2"
+                                            >
+                                                Forgot your password?
+                                            </Link>
+                                        </div>
+                                        <Input
+                                            id="password"
+                                            type="password"
+                                            name="password"
+                                            value={data.password}
+                                            className="block mt-1 w-full"
+                                            autoComplete="current-password"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "password",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+                                        <InputError
+                                            message={errors.password}
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                    <div className="block mt-4">
+                                        <label className="flex items-center">
+                                            <Checkbox
+                                                name="remember"
+                                                checked={data.remember}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "remember",
+                                                        (e.target.checked ||
+                                                            false) as false
+                                                    )
+                                                }
+                                            />
+                                            <span className="ms-2 text-gray-600 text-sm">
+                                                Remember me
+                                            </span>
+                                        </label>
+                                    </div>
                                     <Button
                                         type="submit"
                                         className="w-full"
-                                        disabled={loading}
+                                        onClick={submit}
+                                        disabled={processing}
                                     >
-                                        {loading ? "Loading..." : "Login"}
+                                        {processing
+                                            ? "Logging in..."
+                                            : "Log in"}
                                     </Button>
-                                </form>
-                            </Form>
+                                </div>
+                            </form>
 
                             <p className="text-foreground text-sm">
                                 Don't have an account?{" "}
@@ -235,6 +224,7 @@ export default function Login({
                             </p>
                         </div>
                     </div>
+
                     <div className="hidden md:flex w-full md:w-1/2 h-screen">
                         <img
                             src={image}
