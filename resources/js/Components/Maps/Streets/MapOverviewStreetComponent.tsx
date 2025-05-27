@@ -42,13 +42,35 @@ export default function MapOverviewStreetComponent() {
 
                 const data = await response.json();
 
-                setStreets(data.ruasjalan);
+                const streets: StreetWithCoordinatesInterface[] = (
+                    data.ruasjalan as StreetInterface[]
+                ).map((street) => {
+                    return {
+                        ...street,
+                        coordinates: decode(street.paths).map(([lat, lng]) => [
+                            lat,
+                            lng,
+                        ]),
+                    };
+                });
+
+                setStreets(streets);
+
+                const decoded = decode(data.ruasjalan[0].paths);
+                const coordinates = decoded.map(([latitude, longitude]) => ({
+                    latitude,
+                    longitude,
+                }));
+
+                setMapCenter([
+                    coordinates[0].latitude,
+                    coordinates[1].longitude,
+                ]);
             } catch (error) {
                 console.error("Error fetching streets data:", error);
             }
         };
 
-        // Jalankan semua fetch secara paralel
         Promise.all([fetchDataStreets()]).catch((error) => {
             console.error("Error fetching initial data:", error);
         });
@@ -72,11 +94,10 @@ export default function MapOverviewStreetComponent() {
         kondisi: { "1": true, "2": true, "3": true },
     });
 
-    const [mapCenter, setMapCenter] = useState<[number, number]>(
-        streets.length > 0
-            ? [decode(streets[0].paths)[0][0], decode(streets[0].paths)[0][1]]
-            : [centerPoints[0], centerPoints[1]]
-    );
+    const [mapCenter, setMapCenter] = useState<[number, number]>([
+        centerPoints[0],
+        centerPoints[1],
+    ]);
     const [searchValue, setSearchValue] = useState("");
     const [loading, setLoading] = useState(false);
 
