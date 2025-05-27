@@ -1,14 +1,13 @@
+import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler } from "react";
 import image from "@/images/background/sign-in-bg.jpg";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
-import Checkbox from "@/Components/Checkbox";
-import { Label } from "@/Components/ui/label";
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Login({
     status,
@@ -17,8 +16,6 @@ export default function Login({
     status?: string;
     canResetPassword: boolean;
 }) {
-    const [apiError, setApiError] = useState("");
-
     const { data, setData, post, processing, errors, reset } = useForm({
         email: "",
         password: "",
@@ -32,84 +29,6 @@ export default function Login({
             onFinish: () => reset("password"),
         });
     };
-
-    // const submit: FormEventHandler = async (e) => {
-    //     e.preventDefault();
-    //     setApiError("");
-
-    //     try {
-    //         const formBody = new URLSearchParams();
-    //         formBody.append("email", data.email);
-    //         formBody.append("password", data.password);
-
-    //         const response = await fetch(`${API_URL}/login`, {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/x-www-form-urlencoded",
-    //             },
-    //             body: formBody.toString(),
-    //         });
-
-    //         const externalResponse = await response.json();
-
-    //         if (externalResponse.meta.code !== 200) {
-    //             throw new Error(
-    //                 externalResponse.meta.message ||
-    //                     "Gagal login ke API eksternal."
-    //             );
-    //         }
-
-    //         const token = externalResponse.meta.token;
-    //         const expiredInSeconds = externalResponse.meta["token-expired"];
-    //         const expiredAt = new Date(
-    //             Date.now() + expiredInSeconds * 1000
-    //         ).toISOString();
-
-    //         localStorage.setItem("external_api_token", token);
-    //         localStorage.setItem("external_token_expired_at", expiredAt);
-
-    //         const checkResponse = await fetch("/api/users/check", {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "X-Requested-With": "XMLHttpRequest",
-    //             },
-    //             body: JSON.stringify({ email: data.email }),
-    //         });
-
-    //         const checkData = await checkResponse.json();
-
-    //         if (!checkData.exists) {
-    //             await fetch("/api/users", {
-    //                 method: "POST",
-    //                 headers: {
-    //                     "Content-Type": "application/json",
-    //                     "X-Requested-With": "XMLHttpRequest",
-    //                 },
-    //                 body: JSON.stringify({
-    //                     name: "User",
-    //                     email: data.email,
-    //                     password: data.password,
-    //                 }),
-    //             });
-    //         }
-
-    //         post(route("login"), {
-    //             onSuccess: () => {
-    //                 reset("password");
-    //             },
-    //             onError: (errors) => {
-    //                 setApiError(
-    //                     errors.email ||
-    //                         errors.password ||
-    //                         "Gagal login ke aplikasi."
-    //                 );
-    //             },
-    //         });
-    //     } catch (error: any) {
-    //         setApiError(error.message || "Terjadi kesalahan saat login.");
-    //     }
-    // };
 
     return (
         <>
@@ -133,85 +52,85 @@ export default function Login({
                                     {status}
                                 </div>
                             )}
-                            {apiError && (
-                                <div className="mb-4 font-medium text-red-600 text-sm">
-                                    {apiError}
-                                </div>
-                            )}
 
-                            <form className="">
-                                <div className="flex flex-col gap-6">
-                                    <div className="gap-2 grid">
-                                        <Label htmlFor="email">Email</Label>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            name="email"
-                                            value={data.email}
-                                            className="block mt-1 w-full"
-                                            autoComplete="username"
-                                            onChange={(e) =>
-                                                setData("email", e.target.value)
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.email}
-                                            className="mt-2"
-                                        />
-                                    </div>
-                                    <div className="gap-2 grid">
-                                        <div className="flex items-center">
-                                            <Label htmlFor="password">
-                                                Password
-                                            </Label>
-                                            <Link
-                                                href={route("password.request")}
-                                                className="ml-auto text-sm hover:underline underline-offset-2"
-                                            >
-                                                Forgot your password?
-                                            </Link>
-                                        </div>
-                                        <Input
-                                            id="password"
-                                            type="password"
-                                            name="password"
-                                            value={data.password}
-                                            className="block mt-1 w-full"
-                                            autoComplete="current-password"
+                            <form onSubmit={submit}>
+                                <div>
+                                    <InputLabel htmlFor="email" value="Email" />
+
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        name="email"
+                                        value={data.email}
+                                        className="block mt-1 w-full"
+                                        autoComplete="username"
+                                        // isFocused={true}
+                                        onChange={(e) =>
+                                            setData("email", e.target.value)
+                                        }
+                                    />
+
+                                    <InputError
+                                        message={errors.email}
+                                        className="mt-2"
+                                    />
+                                </div>
+
+                                <div className="mt-4">
+                                    <InputLabel
+                                        htmlFor="password"
+                                        value="Password"
+                                    />
+
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        name="password"
+                                        value={data.password}
+                                        className="block mt-1 w-full"
+                                        autoComplete="current-password"
+                                        onChange={(e) =>
+                                            setData("password", e.target.value)
+                                        }
+                                    />
+
+                                    <InputError
+                                        message={errors.password}
+                                        className="mt-2"
+                                    />
+                                </div>
+
+                                <div className="block mt-4">
+                                    <label className="flex items-center">
+                                        <Checkbox
+                                            name="remember"
+                                            checked={data.remember}
                                             onChange={(e) =>
                                                 setData(
-                                                    "password",
-                                                    e.target.value
+                                                    "remember",
+                                                    (e.target.checked ||
+                                                        false) as false
                                                 )
                                             }
                                         />
-                                        <InputError
-                                            message={errors.password}
-                                            className="mt-2"
-                                        />
-                                    </div>
-                                    <div className="block mt-4">
-                                        <label className="flex items-center">
-                                            <Checkbox
-                                                name="remember"
-                                                checked={data.remember}
-                                                onChange={(e) =>
-                                                    setData(
-                                                        "remember",
-                                                        (e.target.checked ||
-                                                            false) as false
-                                                    )
-                                                }
-                                            />
-                                            <span className="ms-2 text-gray-600 text-sm">
-                                                Remember me
-                                            </span>
-                                        </label>
-                                    </div>
+                                        <span className="ms-2 text-gray-600 text-sm">
+                                            Remember me
+                                        </span>
+                                    </label>
+                                </div>
+
+                                <div className="flex justify-end items-center mt-4">
+                                    {canResetPassword && (
+                                        <Link
+                                            href={route("password.request")}
+                                            className="rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-gray-600 hover:text-gray-900 text-sm underline"
+                                        >
+                                            Forgot your password?
+                                        </Link>
+                                    )}
+
                                     <Button
-                                        type="submit"
-                                        className="w-full"
-                                        onClick={submit}
+                                        className="ms-4 px-8 py-2"
                                         disabled={processing}
                                     >
                                         {processing
@@ -232,7 +151,6 @@ export default function Login({
                             </p>
                         </div>
                     </div>
-
                     <div className="hidden md:flex w-full md:w-1/2 h-screen">
                         <img
                             src={image}

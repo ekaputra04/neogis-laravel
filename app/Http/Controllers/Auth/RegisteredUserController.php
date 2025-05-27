@@ -44,8 +44,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        // Auth::login($user);
+        Auth::login($user);
 
-        return redirect(route('login', absolute: false));
+        return redirect(route('maps.index', absolute: false));
     }
 }

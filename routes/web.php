@@ -44,7 +44,6 @@ Route::get('/api/token', function () {
 Route::get('/', [HomeController::class, 'homePage'])->name('home');
 Route::get('/maps', [HomeController::class, 'mapsPage']);
 
-// Route::middleware(['auth', 'verified', CheckExternalApiToken::class])->prefix('dashboard')->name('maps.')->group(function () {
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->group(function () {
     Route::get('/', [MapController::class, 'mapOverview'])->name('index');
 
@@ -69,6 +68,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
     Route::get('/circle/categories', [CircleCategoryController::class, 'index'])->name('circle.categories');
 
     Route::get('/settings', [SettingController::class, 'index'])->name('setting');
+
     // Route::get('/rectangle', [RectangleController::class, 'overviewRectangle'])->name('rectangle');
     // Route::get('/rectangle/add', [RectangleController::class, 'addRectangle'])->name('rectangle.add');
     // Route::get('/rectangle/categories', [RectangleCategoryController::class, 'index'])->name('rectangle.categories');

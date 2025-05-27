@@ -1,36 +1,14 @@
 import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 import image from "@/images/background/sign-up-bg.jpg";
 import { Button } from "@/Components/ui/button";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
-import { Badge } from "@/Components/ui/badge";
-import { Label } from "@/Components/ui/label";
-import { Input } from "@/Components/ui/input";
 
-type RegisterErrors = {
-    name?: string;
-    email?: string;
-    password?: string;
-    password_confirmation?: string;
-    external?: string;
-};
-
-const API_URL = import.meta.env.VITE_API_URL;
-
-type Props = {
-    errors: RegisterErrors;
-};
-
-export default function Register({ errors: backendErrors }: Props) {
-    const {
-        data,
-        setData,
-        post,
-        processing,
-        errors: formErrors,
-        reset,
-    } = useForm({
+export default function Register() {
+    const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
         password: "",
@@ -44,38 +22,6 @@ export default function Register({ errors: backendErrors }: Props) {
             onFinish: () => reset("password", "password_confirmation"),
         });
     };
-
-    // const submit: FormEventHandler = async (e) => {
-    //     e.preventDefault();
-
-    //     try {
-    //         const formBody = new URLSearchParams();
-    //         formBody.append("name", data.name);
-    //         formBody.append("email", data.email);
-    //         formBody.append("password", data.password);
-
-    //         const response = await fetch(`${API_URL}/register`, {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/x-www-form-urlencoded",
-    //             },
-    //             body: formBody.toString(),
-    //         });
-
-    //         const externalResponse = await response.json();
-
-    //         if (externalResponse.meta.code != 200) {
-    //             throw new Error(
-    //                 externalResponse.meta.message ||
-    //                     "Gagal register ke API eksternal."
-    //             );
-    //         } else {
-    //             post(route("register"), {
-    //                 onFinish: () => reset("password", "password_confirmation"),
-    //             });
-    //         }
-    //     } catch (error) {}
-    // };
 
     return (
         <>
@@ -92,40 +38,33 @@ export default function Register({ errors: backendErrors }: Props) {
                                 unlock full access!
                             </p>
 
-                            {/* Error dari backend */}
-                            {backendErrors.external && (
-                                <Badge variant={"destructive"}>
-                                    {backendErrors.external}
-                                </Badge>
-                            )}
-
                             <form onSubmit={submit}>
                                 <div>
-                                    <Label htmlFor="name">Name</Label>
+                                    <InputLabel htmlFor="name" value="Name" />
 
-                                    <Input
+                                    <TextInput
                                         id="name"
                                         name="name"
                                         value={data.name}
                                         className="block mt-1 w-full"
                                         autoComplete="name"
+                                        isFocused={true}
                                         onChange={(e) =>
                                             setData("name", e.target.value)
                                         }
                                         required
-                                        disabled={processing}
                                     />
 
                                     <InputError
-                                        message={formErrors.name}
+                                        message={errors.name}
                                         className="mt-2"
                                     />
                                 </div>
 
                                 <div className="mt-4">
-                                    <Label htmlFor="email">Email</Label>
+                                    <InputLabel htmlFor="email" value="Email" />
 
-                                    <Input
+                                    <TextInput
                                         id="email"
                                         type="email"
                                         name="email"
@@ -136,19 +75,21 @@ export default function Register({ errors: backendErrors }: Props) {
                                             setData("email", e.target.value)
                                         }
                                         required
-                                        disabled={processing}
                                     />
 
                                     <InputError
-                                        message={formErrors.email}
+                                        message={errors.email}
                                         className="mt-2"
                                     />
                                 </div>
 
                                 <div className="mt-4">
-                                    <Label htmlFor="password">Password</Label>
+                                    <InputLabel
+                                        htmlFor="password"
+                                        value="Password"
+                                    />
 
-                                    <Input
+                                    <TextInput
                                         id="password"
                                         type="password"
                                         name="password"
@@ -159,21 +100,21 @@ export default function Register({ errors: backendErrors }: Props) {
                                             setData("password", e.target.value)
                                         }
                                         required
-                                        disabled={processing}
                                     />
 
                                     <InputError
-                                        message={formErrors.password}
+                                        message={errors.password}
                                         className="mt-2"
                                     />
                                 </div>
 
                                 <div className="mt-4">
-                                    <Label htmlFor="password_confirmation">
-                                        Confirm Password
-                                    </Label>
+                                    <InputLabel
+                                        htmlFor="password_confirmation"
+                                        value="Confirm Password"
+                                    />
 
-                                    <Input
+                                    <TextInput
                                         id="password_confirmation"
                                         type="password"
                                         name="password_confirmation"
@@ -187,25 +128,27 @@ export default function Register({ errors: backendErrors }: Props) {
                                             )
                                         }
                                         required
-                                        disabled={processing}
                                     />
 
                                     <InputError
-                                        message={
-                                            formErrors.password_confirmation
-                                        }
+                                        message={errors.password_confirmation}
                                         className="mt-2"
                                     />
                                 </div>
 
                                 <div className="flex justify-end items-center mt-4">
+                                    <Link
+                                        href={route("login")}
+                                        className="rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-gray-600 hover:text-gray-900 text-sm underline"
+                                    >
+                                        Already registered?
+                                    </Link>
+
                                     <Button
                                         className="ms-4 px-8 py-2"
                                         disabled={processing}
                                     >
-                                        {processing
-                                            ? "Registering..."
-                                            : "Register"}
+                                        Register
                                     </Button>
                                 </div>
                             </form>

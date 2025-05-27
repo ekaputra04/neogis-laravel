@@ -23,7 +23,6 @@ Route::get('/user', function (Request $request) {
 Route::post('/users/check', [UserController::class, 'checkUser']);
 Route::post('/users', [UserController::class, 'store']);
 
-
 Route::get('/maps/markers-categories', [MarkerCategoryController::class, 'getAllMarkerCategories']);
 Route::post('/maps/markers-categories', [MarkerCategoryController::class, 'store']);
 Route::put('/maps/markers-categories/{id}', [MarkerCategoryController::class, 'update']);
