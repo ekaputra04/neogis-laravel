@@ -6,28 +6,22 @@ import {
     LocationCounterInterface,
     ProvinsiInterface,
 } from "@/types/types";
-import { Head, usePage } from "@inertiajs/react";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
-import { Button } from "@/Components/ui/button";
-import { Eye, Map } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
-import { capitalizeWords } from "@/lib/utils";
+import { Head } from "@inertiajs/react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardCounterCard from "../DashboardCounterCard";
 import { ProvinsiTable } from "./components/ProvinsiTable";
 import { KabupatenTable } from "./components/KabupatenTable";
 import { KecamatanTable } from "./components/KecamatanTable";
 import { DesaTable } from "./components/DesaTable";
 
+const TOKEN = localStorage.getItem("external_api_token") as string;
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function StreetLocationComponent() {
-    const { provinsi, kabupaten, kecamatan, desa } = usePage().props;
+    const [provinsi, setProvinsi] = useState<ProvinsiInterface[]>([]);
+    const [kabupaten, setKabupaten] = useState<KabupatenInterface[]>([]);
+    const [kecamatan, setKecamatan] = useState<KecamatanInterface[]>([]);
+    const [desa, setDesa] = useState<DesaInterface[]>([]);
 
     const [selectedProvinsi, setSelectedProvinsi] = useState<number>();
     const [selectedKabupaten, setSelectedKabupaten] = useState<number>();
@@ -35,7 +29,7 @@ export default function StreetLocationComponent() {
 
     const [filteredProvinsi, setFilteredProvinsi] = useState<
         ProvinsiInterface[]
-    >(provinsi as ProvinsiInterface[]);
+    >([]);
     const [filteredKabupaten, setFilteredKabupaten] = useState<
         KabupatenInterface[]
     >([]);
@@ -125,10 +119,39 @@ export default function StreetLocationComponent() {
 
     console.log("STREET LOCATION RENDER");
 
+    useEffect(() => {
+        const fetchDataLocations = async () => {
+            try {
+                const response = await fetch(`${API_URL}/mregion`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch locations data");
+                }
+
+                const data = await response.json();
+                setProvinsi(data.provinsi);
+                setKabupaten(data.kabupaten);
+                setKecamatan(data.kecamatan);
+                setDesa(data.desa);
+
+                setFilteredProvinsi(data.provinsi);
+            } catch (error) {
+                console.error("Error fetching locations data:", error);
+            }
+        };
+
+        Promise.all([fetchDataLocations()]).catch((error) => {
+            console.error("Error fetching initial data:", error);
+        });
+    }, []);
+
     return (
         <>
             <DashboardMapLayout currentPath={"/dashboard/street/location"}>
                 <Head title="Street Location" />
+
                 <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                     {LocationCounter.map((counter, index) => (
                         <DashboardCounterCard

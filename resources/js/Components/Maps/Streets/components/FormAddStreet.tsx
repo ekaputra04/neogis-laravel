@@ -68,16 +68,6 @@ export default function FormAddStreet({
     loading,
     setLoading,
 }: FormAddStreetProps) {
-    // const {
-    //     provinsi,
-    //     kabupaten,
-    //     kecamatan,
-    //     desa,
-    //     eksisting,
-    //     jenis,
-    //     kondisi,
-    //     token,
-    // } = usePage().props;
     const [provinsi, setProvinsi] = useState<ProvinsiInterface[]>([]);
     const [kabupaten, setKabupaten] = useState<KabupatenInterface[]>([]);
     const [kecamatan, setKecamatan] = useState<KecamatanInterface[]>([]);
