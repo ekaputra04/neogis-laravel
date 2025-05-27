@@ -19,9 +19,9 @@ import { Button } from "./ui/button";
 import { handleDownloadSampleStreetData } from "@/lib/utils";
 
 const API_URL = import.meta.env.VITE_API_URL;
+const TOKEN = localStorage.getItem("external_api_token") as string;
 
 export default function UploadFileDialog() {
-    const { token } = usePage().props;
     const [files, setFiles] = useState<File[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -86,7 +86,7 @@ export default function UploadFileDialog() {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded",
-                            Authorization: `Bearer ${token}`,
+                            Authorization: `Bearer ${TOKEN}`,
                         },
                         body: formBody.toString(),
                     });
