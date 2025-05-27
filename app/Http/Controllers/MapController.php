@@ -79,8 +79,6 @@ class MapController extends Controller
         $polygonCategories = PolygonCategory::count();
         $circleCategories = CircleCategory::count();
 
-        $API_KEY_GEOCODING = env('GEOCODING_API_KEY');
-
         return Inertia::render('MapOverview', [
             'currentPath' => '/dashboard',
             'markers' => $markers,
@@ -91,7 +89,6 @@ class MapController extends Controller
             'lineCategories' => $lineCategories,
             'polygonCategories' => $polygonCategories,
             'circleCategories' => $circleCategories,
-            // 'API_KEY_GEOCODING' => $API_KEY_GEOCODING
         ]);
     }
 }

@@ -25,83 +25,91 @@ export default function Login({
         remember: false as boolean,
     });
 
-    const submit: FormEventHandler = async (e) => {
+    const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        setApiError("");
 
-        try {
-            const formBody = new URLSearchParams();
-            formBody.append("email", data.email);
-            formBody.append("password", data.password);
-
-            const response = await fetch(`${API_URL}/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: formBody.toString(),
-            });
-
-            const externalResponse = await response.json();
-
-            if (externalResponse.meta.code !== 200) {
-                throw new Error(
-                    externalResponse.meta.message ||
-                        "Gagal login ke API eksternal."
-                );
-            }
-
-            const token = externalResponse.meta.token;
-            const expiredInSeconds = externalResponse.meta["token-expired"];
-            const expiredAt = new Date(
-                Date.now() + expiredInSeconds * 1000
-            ).toISOString();
-
-            localStorage.setItem("external_api_token", token);
-            localStorage.setItem("external_token_expired_at", expiredAt);
-
-            const checkResponse = await fetch("/api/users/check", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-                body: JSON.stringify({ email: data.email }),
-            });
-
-            const checkData = await checkResponse.json();
-
-            if (!checkData.exists) {
-                await fetch("/api/users", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Requested-With": "XMLHttpRequest",
-                    },
-                    body: JSON.stringify({
-                        name: "User",
-                        email: data.email,
-                        password: data.password,
-                    }),
-                });
-            }
-
-            post(route("login"), {
-                onSuccess: () => {
-                    reset("password");
-                },
-                onError: (errors) => {
-                    setApiError(
-                        errors.email ||
-                            errors.password ||
-                            "Gagal login ke aplikasi."
-                    );
-                },
-            });
-        } catch (error: any) {
-            setApiError(error.message || "Terjadi kesalahan saat login.");
-        }
+        post(route("login"), {
+            onFinish: () => reset("password"),
+        });
     };
+
+    // const submit: FormEventHandler = async (e) => {
+    //     e.preventDefault();
+    //     setApiError("");
+
+    //     try {
+    //         const formBody = new URLSearchParams();
+    //         formBody.append("email", data.email);
+    //         formBody.append("password", data.password);
+
+    //         const response = await fetch(`${API_URL}/login`, {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/x-www-form-urlencoded",
+    //             },
+    //             body: formBody.toString(),
+    //         });
+
+    //         const externalResponse = await response.json();
+
+    //         if (externalResponse.meta.code !== 200) {
+    //             throw new Error(
+    //                 externalResponse.meta.message ||
+    //                     "Gagal login ke API eksternal."
+    //             );
+    //         }
+
+    //         const token = externalResponse.meta.token;
+    //         const expiredInSeconds = externalResponse.meta["token-expired"];
+    //         const expiredAt = new Date(
+    //             Date.now() + expiredInSeconds * 1000
+    //         ).toISOString();
+
+    //         localStorage.setItem("external_api_token", token);
+    //         localStorage.setItem("external_token_expired_at", expiredAt);
+
+    //         const checkResponse = await fetch("/api/users/check", {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "X-Requested-With": "XMLHttpRequest",
+    //             },
+    //             body: JSON.stringify({ email: data.email }),
+    //         });
+
+    //         const checkData = await checkResponse.json();
+
+    //         if (!checkData.exists) {
+    //             await fetch("/api/users", {
+    //                 method: "POST",
+    //                 headers: {
+    //                     "Content-Type": "application/json",
+    //                     "X-Requested-With": "XMLHttpRequest",
+    //                 },
+    //                 body: JSON.stringify({
+    //                     name: "User",
+    //                     email: data.email,
+    //                     password: data.password,
+    //                 }),
+    //             });
+    //         }
+
+    //         post(route("login"), {
+    //             onSuccess: () => {
+    //                 reset("password");
+    //             },
+    //             onError: (errors) => {
+    //                 setApiError(
+    //                     errors.email ||
+    //                         errors.password ||
+    //                         "Gagal login ke aplikasi."
+    //                 );
+    //             },
+    //         });
+    //     } catch (error: any) {
+    //         setApiError(error.message || "Terjadi kesalahan saat login.");
+    //     }
+    // };
 
     return (
         <>

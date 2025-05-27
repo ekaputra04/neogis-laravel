@@ -37,37 +37,45 @@ export default function Register({ errors: backendErrors }: Props) {
         password_confirmation: "",
     });
 
-    const submit: FormEventHandler = async (e) => {
+    const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        try {
-            const formBody = new URLSearchParams();
-            formBody.append("name", data.name);
-            formBody.append("email", data.email);
-            formBody.append("password", data.password);
-
-            const response = await fetch(`${API_URL}/register`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: formBody.toString(),
-            });
-
-            const externalResponse = await response.json();
-
-            if (externalResponse.meta.code != 200) {
-                throw new Error(
-                    externalResponse.meta.message ||
-                        "Gagal register ke API eksternal."
-                );
-            } else {
-                post(route("register"), {
-                    onFinish: () => reset("password", "password_confirmation"),
-                });
-            }
-        } catch (error) {}
+        post(route("register"), {
+            onFinish: () => reset("password", "password_confirmation"),
+        });
     };
+
+    // const submit: FormEventHandler = async (e) => {
+    //     e.preventDefault();
+
+    //     try {
+    //         const formBody = new URLSearchParams();
+    //         formBody.append("name", data.name);
+    //         formBody.append("email", data.email);
+    //         formBody.append("password", data.password);
+
+    //         const response = await fetch(`${API_URL}/register`, {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/x-www-form-urlencoded",
+    //             },
+    //             body: formBody.toString(),
+    //         });
+
+    //         const externalResponse = await response.json();
+
+    //         if (externalResponse.meta.code != 200) {
+    //             throw new Error(
+    //                 externalResponse.meta.message ||
+    //                     "Gagal register ke API eksternal."
+    //             );
+    //         } else {
+    //             post(route("register"), {
+    //                 onFinish: () => reset("password", "password_confirmation"),
+    //             });
+    //         }
+    //     } catch (error) {}
+    // };
 
     return (
         <>

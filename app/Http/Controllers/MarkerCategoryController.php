@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\MarkerCategory;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreMarkerCategoryRequest;
-use App\Http\Requests\UpdateMarkerCategoryRequest;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
