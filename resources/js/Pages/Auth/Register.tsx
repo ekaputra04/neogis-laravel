@@ -1,11 +1,15 @@
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
-import { Head, Link, useForm } from "@inertiajs/react";
-import { FormEventHandler } from "react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
+import { FormEventHandler, useState } from "react";
 import image from "@/images/background/sign-up-bg.jpg";
 import { Button } from "@/Components/ui/button";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
+import { toast } from "sonner";
+
+const API_URL = import.meta.env.VITE_API_URL;
+const LOCAL_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -15,12 +19,99 @@ export default function Register() {
         password_confirmation: "",
     });
 
-    const submit: FormEventHandler = (e) => {
+    const [apiError, setApiError] = useState<string>("");
+
+    const registerToExternalAPI = async (): Promise<boolean> => {
+        try {
+            const formBody = new URLSearchParams();
+            formBody.append("name", data.name);
+            formBody.append("email", data.email);
+            formBody.append("password", data.password);
+
+            const response = await fetch(`${API_URL}/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: formBody.toString(),
+                redirect: "manual",
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API error:", errorText);
+                setApiError(`Gagal register ke sistem eksternal: ${errorText}`);
+                toast.error(`Gagal register ke sistem eksternal`);
+                return false;
+            }
+
+            const result = await response.json();
+            console.log("REGISTER RESULT", result);
+
+            const dataRegister = result.meta?.data;
+            if (!dataRegister) {
+                setApiError(result.meta?.message || "Data register tidak ditemukan.");
+                return false;
+            }
+
+            return true;
+        } catch (error: any) {
+            console.error("Error during external API register:", error);
+            setApiError(error.message || "Terjadi kesalahan saat register ke API eksternal.");
+            return false;
+        }
+    };
+
+    const checkUserExistInLocal = async (): Promise<boolean> => {
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
+            const response = await fetch(`${LOCAL_API_URL}/user/check`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken || "",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+                body: JSON.stringify({ email: data.email }),
+            });
+
+            if (!response.ok) {
+                console.error("Check user error:", await response.text());
+                return false;
+            }
+
+            const responseData = await response.json();
+
+            console.log("CHECK USER RESPONSE", responseData);
+
+            return responseData.exists;
+        } catch (error: any) {
+            console.error("Error checking user in local:", error);
+            setApiError("Gagal memeriksa pengguna di sistem lokal.");
+            toast.error("Gagal memeriksa pengguna di sistem lokal.");
+            return false;
+        }
+    };
+
+    const submit: FormEventHandler = async (e) => {
         e.preventDefault();
 
-        post(route("register"), {
-            onFinish: () => reset("password", "password_confirmation"),
-        });
+        setApiError("");
+
+        const isExternalValid = await registerToExternalAPI();
+        if (!isExternalValid) {
+            return;
+        }
+
+        const isUserExist = await checkUserExistInLocal();
+        if (isUserExist) {
+            router.visit(route("login"));
+            return;
+        } else {
+            post("/register-local"), {
+                onFinish: () => reset("password", "password_confirmation"),
+            }
+        }
     };
 
     return (
@@ -37,6 +128,12 @@ export default function Register() {
                                 information more efficiently. Sign up now to
                                 unlock full access!
                             </p>
+
+                            {apiError && (
+                                <div className="mb-4 font-medium text-red-600 text-sm">
+                                    {apiError}
+                                </div>
+                            )}
 
                             <form onSubmit={submit}>
                                 <div>
