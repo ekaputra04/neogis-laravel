@@ -13,16 +13,28 @@ class MarkerController extends Controller
 {
     public function getAllMarkers()
     {
-        $markers = DB::table('markers')
-            ->select(
-                'id',
-                'name',
-                'description',
-                'category_id',
-                DB::raw('ST_Y(coordinates) AS latitude'),
-                DB::raw('ST_X(coordinates) AS longitude')
-            )
-            ->get();
+        // $markers = DB::table('markers')
+        //     ->select(
+        //         'id',
+        //         'name',
+        //         'description',
+        //         'category_id',
+        //         DB::raw('ST_Y(coordinates) AS latitude'),
+        //         DB::raw('ST_X(coordinates) AS longitude')
+        //     )
+        //     ->get();
+
+        $markers = Marker::with('category')->get()->map(function ($marker) {
+            return [
+                'id' => $marker->id,
+                'name' => $marker->name,
+                'description' => $marker->description,
+                'latitude' => $marker->latitude,
+                'longitude' => $marker->longitude,
+                'category_name' => $marker->category?->name,
+                'category_id' => $marker->category?->id,
+            ];
+        });
 
         return response()->json($markers);
     }
@@ -148,21 +160,7 @@ class MarkerController extends Controller
 
     public function overviewMarker()
     {
-        $markers = Marker::with('category')->get()->map(function ($marker) {
-            return [
-                'id' => $marker->id,
-                'name' => $marker->name,
-                'description' => $marker->description,
-                'latitude' => $marker->latitude,
-                'longitude' => $marker->longitude,
-                'category_name' => $marker->category?->name, // pakai optional chaining
-            ];
-        });
-
-        return Inertia::render('MapOverviewMarker', [
-            'currentPath' => '/dashboard/marker',
-            'markers' => $markers,
-        ]);
+        return Inertia::render('MapOverviewMarker',);
     }
 
     public function addMarker()

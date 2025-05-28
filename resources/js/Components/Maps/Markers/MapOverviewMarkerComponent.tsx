@@ -16,28 +16,21 @@ import { ElementControls } from "@/Components/ElementControls";
 import { ElementList } from "@/Components/ElementList";
 import { SearchAddress } from "@/Components/SearchAddress";
 
-interface MapOverviewMarkerComponentProps {
-    markers: MarkerInterface[];
-}
-export default function MapOverviewMarkerComponent({
-    markers: initialMarkers,
-}: MapOverviewMarkerComponentProps) {
+const LOCAL_API_URL = import.meta.env.VITE_LOCAL_API_URL;
+const TOKEN = localStorage.getItem("external_api_token") as string;
+
+export default function MapOverviewMarkerComponent() {
     console.log("MAP OVERVIEW MARKER RENDER");
 
-    const [markers, setMarkers] = useState<MarkerInterface[]>(initialMarkers);
+    const [markers, setMarkers] = useState<MarkerInterface[]>([]);
     const [filteredMarkers, setFilteredMarkers] =
-        useState<MarkerInterface[]>(initialMarkers);
+        useState<MarkerInterface[]>([]);
     const [address, setAddress] = useState<GeocodingResponseInterface>();
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
-        markers && markers.length > 0
-            ? {
-                  latitude: markers[0].latitude,
-                  longitude: markers[0].longitude,
-              }
-            : {
-                  latitude: centerPoints[0],
-                  longitude: centerPoints[1],
-              }
+        {
+            latitude: centerPoints[0],
+            longitude: centerPoints[1],
+        }
     );
     const [searchValue, setSearchValue] = useState<string>("");
     const [loading, setLoading] = useState(false);
@@ -123,6 +116,45 @@ export default function MapOverviewMarkerComponent({
             });
         }
     }, [address]);
+
+    useEffect(() => {
+        const fetchDataMarkers = async () => {
+            try {
+                const response = await fetch(`${LOCAL_API_URL}/maps/markers`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch markers data");
+                }
+
+                const data = await response.json();
+
+                console.log("MARKERS", data);
+
+                setMarkers(data);
+                setFilteredMarkers(data);
+                if (data.length > 0) {
+
+                    const centerPoint = data[0] as MarkerInterface
+                    setMapCenter({
+                        latitude: Number(centerPoint.latitude),
+                        longitude: Number(centerPoint.longitude),
+                    })
+                }
+
+            } catch (error) {
+                console.error("Error fetching markers data:", error);
+            }
+        };
+
+        Promise.all([
+            fetchDataMarkers(),
+        ]).catch((error) => {
+            console.error("Error fetching initial data:", error);
+        });
+    }, []);
+
 
     return (
         <>
