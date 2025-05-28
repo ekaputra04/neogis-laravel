@@ -98,7 +98,7 @@ export default function MapAddRectangleComponent({
         setLoading(true);
 
         try {
-            const response = await fetch(`${origin}/api/maps/rectangles`, {
+            const response = await fetch(`/api/maps/rectangles`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),

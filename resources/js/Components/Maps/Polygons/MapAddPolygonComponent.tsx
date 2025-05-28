@@ -110,7 +110,7 @@ export default function MapAddPolygonComponent({
         setLoading(true);
 
         try {
-            const response = await fetch(`${origin}/api/maps/polygons`, {
+            const response = await fetch(`/api/maps/polygons`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),

@@ -16,7 +16,6 @@ import { ElementControls } from "@/Components/ElementControls";
 import { ElementList } from "@/Components/ElementList";
 import { SearchAddress } from "@/Components/SearchAddress";
 
-const LOCAL_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 const TOKEN = localStorage.getItem("external_api_token") as string;
 
 export default function MapOverviewMarkerComponent() {
@@ -120,7 +119,7 @@ export default function MapOverviewMarkerComponent() {
     useEffect(() => {
         const fetchDataMarkers = async () => {
             try {
-                const response = await fetch(`${LOCAL_API_URL}/maps/markers`, {
+                const response = await fetch(`/api/maps/markers`, {
                     headers: { Authorization: `Bearer ${TOKEN}` },
                 });
 

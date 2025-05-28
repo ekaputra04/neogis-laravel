@@ -102,7 +102,7 @@ export default function MapAddMarkerComponent({
         setLoading(true);
 
         try {
-            const response = await fetch(`${origin}/api/maps/markers`, {
+            const response = await fetch(`/api/maps/markers`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),

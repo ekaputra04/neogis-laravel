@@ -13,17 +13,6 @@ class MarkerController extends Controller
 {
     public function getAllMarkers()
     {
-        // $markers = DB::table('markers')
-        //     ->select(
-        //         'id',
-        //         'name',
-        //         'description',
-        //         'category_id',
-        //         DB::raw('ST_Y(coordinates) AS latitude'),
-        //         DB::raw('ST_X(coordinates) AS longitude')
-        //     )
-        //     ->get();
-
         $markers = Marker::with('category')->get()->map(function ($marker) {
             return [
                 'id' => $marker->id,
@@ -61,10 +50,8 @@ class MarkerController extends Controller
     }
 
 
-    // Menyimpan data marker
     public function store(Request $request)
     {
-        // Validasi input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -73,7 +60,6 @@ class MarkerController extends Controller
             'category_id' => 'required|numeric',
         ]);
 
-        // Simpan marker
         $marker = Marker::create([
             'name' => $validated['name'],
             'description' => $validated['description'],
@@ -81,10 +67,8 @@ class MarkerController extends Controller
             'coordinates' => DB::raw("ST_GeomFromText('POINT({$validated['longitude']} {$validated['latitude']})')"),
         ]);
 
-        // Ambil coordinates dengan query
         $location = DB::selectOne("SELECT ST_X(coordinates) AS longitude, ST_Y(coordinates) AS latitude FROM markers WHERE id = ?", [$marker->id]);
 
-        // Gabungkan data marker dengan koordinat
         $response = [
             'id' => $marker->id,
             'name' => $marker->name,

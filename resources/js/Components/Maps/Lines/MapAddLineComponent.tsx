@@ -107,7 +107,7 @@ export default function MapAddLineComponent({
         setLoading(true);
 
         try {
-            const response = await fetch(`${origin}/api/maps/lines`, {
+            const response = await fetch(`/api/maps/lines`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),

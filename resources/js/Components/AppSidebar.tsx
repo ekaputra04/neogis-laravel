@@ -16,6 +16,7 @@ import {
 } from "@/Components/ui/sidebar";
 
 import { sidebarData } from "@/consts/sidebarData";
+import { Link, router } from "@inertiajs/react";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     currentPath: string;
@@ -28,7 +29,7 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <a href="/">
+                            <Link href="/">
                                 <div className="flex justify-center items-center bg-sidebar-primary rounded-lg size-8 aspect-square text-sidebar-primary-foreground">
                                     <EarthIcon className="size-4" />
                                 </div>
@@ -38,7 +39,7 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                                     </span>
                                     <span className="">v3.1.0</span>
                                 </div>
-                            </a>
+                            </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
@@ -49,9 +50,9 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                         {sidebarData.navMain.map((item) => (
                             <SidebarMenuItem key={item.title}>
                                 <SidebarMenuButton asChild>
-                                    <a href={item.url} className="font-medium">
+                                    <Link href={item.url} className="font-medium">
                                         {item.title}
-                                    </a>
+                                    </Link>
                                 </SidebarMenuButton>
                                 {item.items?.length ? (
                                     <SidebarMenuSub>
@@ -62,21 +63,21 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                                             return (
                                                 <SidebarMenuSubItem
                                                     key={subItem.title}
+                                                    onClick={
+                                                        () =>
+                                                            router.visit(subItem.url)
+                                                    }
                                                 >
                                                     <SidebarMenuSubButton
                                                         asChild
                                                         isActive={isActive}
+                                                        className="hover:cursor-pointer"
+
                                                     >
                                                         <div className="flex items-center gap-2">
                                                             {subItem.icon &&
                                                                 subItem.icon}
-                                                            <a
-                                                                href={
-                                                                    subItem.url
-                                                                }
-                                                            >
-                                                                {subItem.title}
-                                                            </a>
+                                                            {subItem.title}
                                                         </div>
                                                     </SidebarMenuSubButton>
                                                 </SidebarMenuSubItem>

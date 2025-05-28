@@ -46,13 +46,13 @@ export default function MapOverviewComponent({
     const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
         markers && markers.length > 0
             ? {
-                  latitude: markers[0].latitude,
-                  longitude: markers[0].longitude,
-              }
+                latitude: markers[0].latitude,
+                longitude: markers[0].longitude,
+            }
             : {
-                  latitude: centerPoints[0],
-                  longitude: centerPoints[1],
-              }
+                latitude: centerPoints[0],
+                longitude: centerPoints[1],
+            }
     );
     const [filteredMarkers, setFilteredMarkers] =
         useState<MarkerInterface[]>(markers);

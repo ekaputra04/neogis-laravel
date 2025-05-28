@@ -104,7 +104,7 @@ export default function MapAddCircleComponent({
         setLoading(true);
 
         try {
-            const response = await fetch(`${origin}/api/maps/circles`, {
+            const response = await fetch(`/api/maps/circles`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),

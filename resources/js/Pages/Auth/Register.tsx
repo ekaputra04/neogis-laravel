@@ -9,7 +9,6 @@ import { ThemeProvider } from "@/Components/ui/theme-provider";
 import { toast } from "sonner";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const LOCAL_API_URL = import.meta.env.VITE_LOCAL_API_URL;
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -65,7 +64,7 @@ export default function Register() {
     const checkUserExistInLocal = async (): Promise<boolean> => {
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
-            const response = await fetch(`${LOCAL_API_URL}/user/check`, {
+            const response = await fetch(`/api/user/check`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
