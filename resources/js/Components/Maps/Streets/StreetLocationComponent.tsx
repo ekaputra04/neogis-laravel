@@ -14,10 +14,10 @@ import { KabupatenTable } from "./components/KabupatenTable";
 import { KecamatanTable } from "./components/KecamatanTable";
 import { DesaTable } from "./components/DesaTable";
 
-const TOKEN = localStorage.getItem("external_api_token") as string;
-const API_URL = import.meta.env.VITE_API_URL;
-
 export default function StreetLocationComponent() {
+    const TOKEN = localStorage.getItem("external_api_token") as string;
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const [provinsi, setProvinsi] = useState<ProvinsiInterface[]>([]);
     const [kabupaten, setKabupaten] = useState<KabupatenInterface[]>([]);
     const [kecamatan, setKecamatan] = useState<KecamatanInterface[]>([]);

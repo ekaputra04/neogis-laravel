@@ -44,6 +44,7 @@ Route::get('/api/token', function () {
 Route::get('/', [HomeController::class, 'homePage'])->name('home');
 Route::get('/maps', [HomeController::class, 'mapsPage']);
 
+// Route::prefix('dashboard')->name('maps.')->group(function () {
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->group(function () {
     Route::get('/', [MapController::class, 'mapOverview'])->name('index');
 
@@ -80,6 +81,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('maps.')->gro
 });
 
 
+// Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

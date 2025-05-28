@@ -9,8 +9,6 @@ class StreetController extends Controller
 {
     public function overviewStreet()
     {
-
-
         return Inertia::render('MapOverviewStreet');
     }
 
@@ -21,7 +19,7 @@ class StreetController extends Controller
 
     public function addStreet()
     {
-        return Inertia::render('MapAddStreet',);
+        return Inertia::render('MapAddStreet');
     }
 
     public function editStreet($id)

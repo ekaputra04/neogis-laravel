@@ -19,11 +19,11 @@ import { Skeleton } from "@/Components/ui/skeleton";
 import { SearchAddress } from "@/Components/SearchAddress";
 import { TableStreetFilterCounter } from "./components/TableStreetFilterCounter";
 
-const TOKEN = localStorage.getItem("external_api_token") as string;
-const API_URL = import.meta.env.VITE_API_URL;
-
 export default function MapOverviewStreetComponent() {
     console.log("PARENT STREET OVERVIEW RENDER");
+
+    const TOKEN = localStorage.getItem("external_api_token") as string;
+    const API_URL = import.meta.env.VITE_API_URL;
 
     const [streets, setStreets] = useState<StreetWithCoordinatesInterface[]>(
         []

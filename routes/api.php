@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\ExternalAuthController;
 use App\Http\Controllers\CircleCategoryController;
 use App\Http\Controllers\CircleController;
 use App\Http\Controllers\LineCategoryController;
@@ -11,7 +10,6 @@ use App\Http\Controllers\PolygonCategoryController;
 use App\Http\Controllers\PolygonController;
 use App\Http\Controllers\RectangleCategoryController;
 use App\Http\Controllers\RectangleController;
-use App\Http\Controllers\StreetController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,8 +18,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/users/check', [UserController::class, 'checkUser']);
-Route::post('/users', [UserController::class, 'store']);
+Route::post('/user/check', [UserController::class, 'checkUser']);
 
 Route::get('/maps/markers-categories', [MarkerCategoryController::class, 'getAllMarkerCategories']);
 Route::post('/maps/markers-categories', [MarkerCategoryController::class, 'store']);
