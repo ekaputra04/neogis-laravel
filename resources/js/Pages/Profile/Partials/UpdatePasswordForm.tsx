@@ -78,6 +78,7 @@ export default function UpdatePasswordForm({
                         type="password"
                         className="block mt-1 w-full"
                         autoComplete="current-password"
+                        disabled
                     />
 
                     <InputError
@@ -97,6 +98,7 @@ export default function UpdatePasswordForm({
                         type="password"
                         className="block mt-1 w-full"
                         autoComplete="new-password"
+                        disabled
                     />
 
                     <InputError message={errors.password} className="mt-2" />
@@ -116,6 +118,7 @@ export default function UpdatePasswordForm({
                         type="password"
                         className="block mt-1 w-full"
                         autoComplete="new-password"
+                        disabled
                     />
 
                     <InputError
@@ -125,7 +128,7 @@ export default function UpdatePasswordForm({
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <Button disabled={processing}>Save</Button>
+                    <Button disabled>Save</Button>
 
                     <Transition
                         show={recentlySuccessful}

@@ -7,6 +7,7 @@ import {
     BreadcrumbSeparator,
 } from "@/Components/ui/breadcrumb";
 import { sidebarData } from "@/consts/sidebarData";
+import { router } from "@inertiajs/react";
 import React from "react";
 
 export default function BreadCrumbMaps({
@@ -14,9 +15,8 @@ export default function BreadCrumbMaps({
 }: {
     currentPath: string;
 }) {
-    const pathSegments = currentPath.split("/").filter(Boolean); // Menghapus string kosong dari split
+    const pathSegments = currentPath.split("/").filter(Boolean);
 
-    // Fungsi untuk menemukan item sidebar berdasarkan path
     const findBreadcrumbItems = () => {
         const breadcrumbs: { title: string; url: string }[] = [];
         let currentPath = "";
@@ -24,7 +24,6 @@ export default function BreadCrumbMaps({
         for (const segment of pathSegments) {
             currentPath += `/${segment}`;
 
-            // Cari dalam data sidebar
             let foundItem = null;
 
             for (const category of sidebarData.navMain) {
@@ -58,16 +57,13 @@ export default function BreadCrumbMaps({
                     <BreadcrumbList>
                         {breadcrumbs.map((crumb, index) => (
                             <React.Fragment key={crumb.url}>
-                                <BreadcrumbItem>
-                                    {index === breadcrumbs.length - 1 ? (
-                                        <BreadcrumbPage>
-                                            {crumb.title}
-                                        </BreadcrumbPage>
-                                    ) : (
-                                        <BreadcrumbLink href={crumb.url}>
-                                            {crumb.title}
-                                        </BreadcrumbLink>
-                                    )}
+                                <BreadcrumbItem
+                                    onClick={() => router.visit(crumb.url)}
+                                    className="hover:cursor-pointer"
+                                >
+                                    <BreadcrumbPage>
+                                        {crumb.title}
+                                    </BreadcrumbPage>
                                 </BreadcrumbItem>
                                 {index < breadcrumbs.length - 1 && (
                                     <BreadcrumbSeparator />

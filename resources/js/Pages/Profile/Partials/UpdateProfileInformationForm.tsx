@@ -71,6 +71,7 @@ export default function UpdateProfileInformation({
                         onChange={(e) => setData("email", e.target.value)}
                         required
                         autoComplete="username"
+                        disabled
                     />
 
                     <InputError className="mt-2" message={errors.email} />

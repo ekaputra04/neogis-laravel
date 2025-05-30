@@ -65,7 +65,11 @@ export default function DeleteUserForm({
                 </p>
             </header>
 
-            <Button onClick={confirmUserDeletion} variant={"destructive"}>
+            <Button
+                onClick={confirmUserDeletion}
+                variant={"destructive"}
+                disabled
+            >
                 Delete Account
             </Button>
 
