@@ -53,22 +53,26 @@ export const StreetMap = memo(
                 />
 
                 {streets.map((street) => {
-                    let color = "#000000";
+                    let color = "blue";
+                    let weight = 3;
                     if (type === "eksisting") {
                         const match = eksisting.find(
                             (item) => item.id == street.eksisting_id
                         );
                         color = match ? match.color : color;
+                        weight = match ? match.weight : weight;
                     } else if (type === "jenis") {
                         const match = jenis.find(
                             (item) => item.id == street.jenisjalan_id
                         );
                         color = match ? match.color : color;
+                        weight = match ? match.weight : weight;
                     } else if (type === "kondisi") {
                         const match = kondisi.find(
                             (item) => item.id == street.kondisi_id
                         );
                         color = match ? match.color : color;
+                        weight = match ? match.weight : weight;
                     }
 
                     return (
@@ -76,7 +80,7 @@ export const StreetMap = memo(
                             key={street.id}
                             positions={street.coordinates}
                             color={color}
-                            weight={3}
+                            weight={weight}
                         >
                             <Popup>
                                 <strong>

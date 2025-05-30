@@ -17,6 +17,7 @@ import {
 
 import { sidebarData } from "@/consts/sidebarData";
 import { Link, router } from "@inertiajs/react";
+import { toast } from "sonner";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     currentPath: string;
@@ -50,7 +51,10 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                         {sidebarData.navMain.map((item) => (
                             <SidebarMenuItem key={item.title}>
                                 <SidebarMenuButton asChild>
-                                    <Link href={item.url} className="font-medium">
+                                    <Link
+                                        href={item.url}
+                                        className="font-medium"
+                                    >
                                         {item.title}
                                     </Link>
                                 </SidebarMenuButton>
@@ -63,16 +67,19 @@ export function AppSidebar({ currentPath, ...props }: AppSidebarProps) {
                                             return (
                                                 <SidebarMenuSubItem
                                                     key={subItem.title}
-                                                    onClick={
-                                                        () =>
-                                                            router.visit(subItem.url)
-                                                    }
+                                                    onClick={() => {
+                                                        toast.info(
+                                                            "Processing request, please wait..."
+                                                        );
+                                                        router.visit(
+                                                            subItem.url
+                                                        );
+                                                    }}
                                                 >
                                                     <SidebarMenuSubButton
                                                         asChild
                                                         isActive={isActive}
                                                         className="hover:cursor-pointer"
-
                                                     >
                                                         <div className="flex items-center gap-2">
                                                             {subItem.icon &&
