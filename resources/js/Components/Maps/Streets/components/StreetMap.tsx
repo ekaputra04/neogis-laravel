@@ -22,6 +22,7 @@ import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 import { toast } from "sonner";
 import { router } from "@inertiajs/react";
 import { useStreetLegendStore } from "@/Store/useStreetLegendStore";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 interface StreetMapProps {
     selectedStreet: StreetWithCoordinatesInterface | null;
@@ -157,6 +158,7 @@ export const StreetMap = memo(
                         </Polyline>
                     );
                 })}
+                <TemporaryMarker />
             </MapContainer>
         );
     }
