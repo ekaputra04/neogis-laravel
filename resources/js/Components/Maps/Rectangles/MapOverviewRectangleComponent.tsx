@@ -35,8 +35,9 @@ import { Badge } from "@/Components/ui/badge";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerOverview } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { tileLayers } from "@/consts/tileLayers";
+import { tileLayerAttributtions, tileLayers } from "@/consts/tileLayers";
 import { MapCenterUpdater } from "@/Components/MapCenterUpdater";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 interface MapOverviewRectangleComponentProps {
     currentPath: string;
@@ -181,7 +182,12 @@ export default function MapOverviewRectangleComponent({
                                     mapCenter.longitude,
                                 ]}
                             />
-                            <TileLayer url={tileLayers[selectedLayer]} />
+                            <TileLayer
+                                url={tileLayers[selectedLayer]}
+                                attribution={
+                                    tileLayerAttributtions[selectedLayer]
+                                }
+                            />
 
                             {rectangles &&
                                 rectangles.map((rectangle) => (
@@ -263,6 +269,7 @@ export default function MapOverviewRectangleComponent({
                                         </Popup>
                                     </Polygon>
                                 ))}
+                            <TemporaryMarker />
                         </MapContainer>
                     </div>
                 </div>

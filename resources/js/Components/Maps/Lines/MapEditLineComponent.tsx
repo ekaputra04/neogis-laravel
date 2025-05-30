@@ -40,9 +40,10 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { tileLayers } from "@/consts/tileLayers";
+import { tileLayerAttributtions, tileLayers } from "@/consts/tileLayers";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseLineUpdate } from "@/consts/howToUse";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -287,7 +288,12 @@ export default function MapEditLineComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer url={tileLayers[selectedLayer]} />
+                                <TileLayer
+                                    url={tileLayers[selectedLayer]}
+                                    attribution={
+                                        tileLayerAttributtions[selectedLayer]
+                                    }
+                                />
 
                                 <FeatureGroup>
                                     <EditControl
@@ -323,6 +329,7 @@ export default function MapEditLineComponent({
                                         </Popup>
                                     </Polyline>
                                 </FeatureGroup>
+                                <TemporaryMarker />
                             </MapContainer>
                         )}
                     </div>

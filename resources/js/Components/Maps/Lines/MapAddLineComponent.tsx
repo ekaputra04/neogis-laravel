@@ -42,6 +42,7 @@ import { HowToUseLineAdd, HowToUseMarkerAdd } from "@/consts/howToUse";
 import { SearchAddress } from "@/Components/SearchAddress";
 import { centerPoints } from "@/consts/centerPoints";
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -357,6 +358,7 @@ export default function MapAddLineComponent({
                                         }}
                                     />
                                 </FeatureGroup>
+                                <TemporaryMarker />
                             </MapContainer>
                         )}
                     </div>

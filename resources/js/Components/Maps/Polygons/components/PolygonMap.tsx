@@ -1,4 +1,5 @@
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -116,6 +117,7 @@ export const PolygonMap = memo(
                             </Popup>
                         </Polygon>
                     ))}
+                <TemporaryMarker />
             </MapContainer>
         );
     }

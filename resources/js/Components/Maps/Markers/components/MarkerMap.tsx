@@ -21,6 +21,7 @@ import {
     MarkerInterface,
 } from "@/types/types";
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 interface MarkerMapProps {
     markers: MarkerInterface[];
@@ -117,6 +118,7 @@ export const MarkerMap = memo(
                                 </Popup>
                             </Marker>
                         ))}
+                    <TemporaryMarker />
                 </MapContainer>
             </div>
         );

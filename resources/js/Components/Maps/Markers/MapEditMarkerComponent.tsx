@@ -47,7 +47,8 @@ import {
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseMarkerUpdate } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { tileLayers } from "@/consts/tileLayers";
+import { tileLayerAttributtions, tileLayers } from "@/consts/tileLayers";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -286,7 +287,12 @@ export default function MapEditMarkerComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer url={tileLayers[selectedLayer]} />
+                                <TileLayer
+                                    url={tileLayers[selectedLayer]}
+                                    attribution={
+                                        tileLayerAttributtions[selectedLayer]
+                                    }
+                                />
 
                                 <FeatureGroup>
                                     <EditControl
@@ -327,6 +333,7 @@ export default function MapEditMarkerComponent({
                                         </Marker>
                                     )}
                                 </FeatureGroup>
+                                <TemporaryMarker />
                             </MapContainer>
                         )}
                     </div>

@@ -18,6 +18,7 @@ import { centerPoints } from "@/consts/centerPoints";
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 import { SearchAddress } from "@/Components/SearchAddress";
 import FormAddStreet from "./components/FormAddStreet";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 interface DrawCreatedEvent {
     layerType: string;
@@ -190,6 +191,7 @@ export default function MapAddStreetComponent() {
                                         }}
                                     />
                                 </FeatureGroup>
+                                <TemporaryMarker />
                             </MapContainer>
                         )}
                     </div>

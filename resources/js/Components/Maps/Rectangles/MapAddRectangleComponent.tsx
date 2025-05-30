@@ -36,7 +36,8 @@ import {
 import HowToUse from "@/Components/HowToUseComponent";
 import { HowToUseMarkerAdd } from "@/consts/howToUse";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { tileLayers } from "@/consts/tileLayers";
+import { tileLayerAttributtions, tileLayers } from "@/consts/tileLayers";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -314,7 +315,12 @@ export default function MapAddRectangleComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer url={tileLayers[selectedLayer]} />
+                                <TileLayer
+                                    url={tileLayers[selectedLayer]}
+                                    attribution={
+                                        tileLayerAttributtions[selectedLayer]
+                                    }
+                                />
 
                                 <FeatureGroup>
                                     <EditControl
@@ -342,6 +348,7 @@ export default function MapAddRectangleComponent({
                                         }}
                                     />
                                 </FeatureGroup>
+                                <TemporaryMarker />
                             </MapContainer>
                         )}
                     </div>

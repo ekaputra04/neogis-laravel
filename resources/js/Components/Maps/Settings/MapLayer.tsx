@@ -1,3 +1,4 @@
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 import {
     Select,
     SelectContent,
@@ -5,7 +6,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import { tileLayers } from "@/consts/tileLayers";
+import { tileLayerAttributtions, tileLayers } from "@/consts/tileLayers";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { toast } from "sonner";
@@ -34,7 +35,11 @@ export default function MapLayerComponent() {
                         style={{ height: "200px", width: "100%" }}
                         className="z-10"
                     >
-                        <TileLayer url={tileLayers[selectedLayer]} />
+                        <TileLayer
+                            url={tileLayers[selectedLayer]}
+                            attribution={tileLayerAttributtions[selectedLayer]}
+                        />
+                        <TemporaryMarker />
                     </MapContainer>
                     <Select
                         onValueChange={(value) => {

@@ -39,8 +39,9 @@ import {
 } from "@/Components/ui/select";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseCircleUpdate, HowToUseMarkerUpdate } from "@/consts/howToUse";
-import { tileLayers } from "@/consts/tileLayers";
+import { tileLayerAttributtions, tileLayers } from "@/consts/tileLayers";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -287,7 +288,12 @@ export default function MapEditCircleComponent({
                                 style={{ height: "500px", width: "100%" }}
                                 className="z-10"
                             >
-                                <TileLayer url={tileLayers[selectedLayer]} />
+                                <TileLayer
+                                    url={tileLayers[selectedLayer]}
+                                    attribution={
+                                        tileLayerAttributtions[selectedLayer]
+                                    }
+                                />
 
                                 <FeatureGroup>
                                     <EditControl
@@ -315,6 +321,7 @@ export default function MapEditCircleComponent({
                                         />
                                     )}
                                 </FeatureGroup>
+                                <TemporaryMarker />
                             </MapContainer>
                         )}
                     </div>

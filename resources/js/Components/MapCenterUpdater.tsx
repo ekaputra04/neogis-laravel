@@ -1,4 +1,4 @@
-import { tileLayers } from "@/consts/tileLayers";
+import { tileLayerAttributtions, tileLayers } from "@/consts/tileLayers";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import {
     CoordinatesInterface,
@@ -33,7 +33,10 @@ export const MapCenterLayerUpdater = memo(
                 <MapCenterUpdater
                     center={[mapCenter.latitude, mapCenter.longitude]}
                 />
-                <TileLayer url={tileLayers[selectedLayer]} />
+                <TileLayer
+                    url={tileLayers[selectedLayer]}
+                    attribution={tileLayerAttributtions[selectedLayer]}
+                />
                 {address && (
                     <Polygon
                         key={address.place_id}

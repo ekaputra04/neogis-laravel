@@ -1,6 +1,7 @@
 import { customIcon } from "@/Components/CustomMarkerIcon";
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 import { SearchAddress } from "@/Components/SearchAddress";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 import { Badge } from "@/Components/ui/badge";
 import {
     CircleInterface,
@@ -200,6 +201,7 @@ export const MapOverviewLayer = memo(
                                     </Popup>
                                 </Circle>
                             ))}
+                        <TemporaryMarker />
                     </MapContainer>
                 </div>
             </div>

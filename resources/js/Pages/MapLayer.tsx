@@ -1,5 +1,6 @@
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 import { centerPoints } from "@/consts/centerPoints";
-import { tileLayers } from "@/consts/tileLayers";
+import { tileLayerAttributtions, tileLayers } from "@/consts/tileLayers";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { MapContainer, TileLayer } from "react-leaflet";
 
@@ -12,7 +13,11 @@ export default function MapLayer() {
                 zoom={12}
                 style={{ height: "100%", width: "100%" }}
             >
-                <TileLayer url={tileLayers[selectedLayer]} />
+                <TileLayer
+                    url={tileLayers[selectedLayer]}
+                    attribution={tileLayerAttributtions[selectedLayer]}
+                />
+                <TemporaryMarker />
             </MapContainer>
         </div>
     );

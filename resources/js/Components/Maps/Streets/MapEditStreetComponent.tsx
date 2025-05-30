@@ -55,7 +55,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import { useMapLayerStore } from "@/Store/useMapLayerStore";
-import { tileLayers } from "@/consts/tileLayers";
+import { tileLayerAttributtions, tileLayers } from "@/consts/tileLayers";
 import { decode, encode } from "@mapbox/polyline";
 import { capitalizeWords, roundToTwo } from "@/lib/utils";
 import { Label } from "@/Components/ui/label";
@@ -64,6 +64,7 @@ import { RefreshCcw } from "lucide-react";
 import { buttonDestructiveCss } from "@/consts/buttonCss";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseStreetUpdate } from "@/consts/howToUse";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 const formSchema = z.object({
     desa_id: z.number(),
@@ -1053,6 +1054,11 @@ export default function MapEditStreetComponent() {
                                     >
                                         <TileLayer
                                             url={tileLayers[selectedLayer]}
+                                            attribution={
+                                                tileLayerAttributtions[
+                                                    selectedLayer
+                                                ]
+                                            }
                                         />
 
                                         <FeatureGroup>
@@ -1102,6 +1108,7 @@ export default function MapEditStreetComponent() {
                                                 </Popup>
                                             </Polyline>
                                         </FeatureGroup>
+                                        <TemporaryMarker />
                                     </MapContainer>
                                 )}
                             </>

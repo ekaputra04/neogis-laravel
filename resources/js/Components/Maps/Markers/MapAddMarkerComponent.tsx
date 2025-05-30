@@ -43,6 +43,7 @@ import { useMapLayerStore } from "@/Store/useMapLayerStore";
 import { centerPoints } from "@/consts/centerPoints";
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 import { SearchAddress } from "@/Components/SearchAddress";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -341,6 +342,7 @@ export default function MapAddMarkerComponent({
                                         }}
                                     />
                                 </FeatureGroup>
+                                <TemporaryMarker />
                             </MapContainer>
                         )}
                     </div>

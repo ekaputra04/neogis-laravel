@@ -13,7 +13,6 @@ export function TemporaryMarker() {
 
     if (!marker) return null;
 
-    // URL Google Street View berdasarkan koordinat marker
     const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${marker.lat},${marker.lng}`;
 
     return (

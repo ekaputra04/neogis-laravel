@@ -1,4 +1,5 @@
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
+import { TemporaryMarker } from "@/Components/TemporaryMarker";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -117,6 +118,7 @@ export const CircleMap = memo(
                             </Popup>
                         </Circle>
                     ))}
+                <TemporaryMarker />
             </MapContainer>
         );
     }
