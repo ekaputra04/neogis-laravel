@@ -16,7 +16,9 @@ interface StreetListProps {
     streetLength: number;
     filteredStreets: StreetWithCoordinatesInterface[];
     loading: boolean;
-    onCenterMap: (coords: [number, number]) => void;
+    selectedStreet?: StreetWithCoordinatesInterface | null;
+    handleCenterMap: (coords: [number, number]) => void;
+    handleSelectedStreet: (street: StreetWithCoordinatesInterface) => void;
 }
 
 export const StreetList = memo(
@@ -24,7 +26,9 @@ export const StreetList = memo(
         streetLength,
         filteredStreets,
         loading,
-        onCenterMap,
+        selectedStreet,
+        handleCenterMap,
+        handleSelectedStreet,
     }: StreetListProps) => {
         console.log("STREET LIST RENDER");
 
@@ -53,17 +57,22 @@ export const StreetList = memo(
                             {filteredStreets.map((street) => (
                                 <TableRow
                                     key={street.id}
-                                    className="block w-full"
+                                    className={`block w-full ${
+                                        selectedStreet?.id === street.id
+                                            ? "bg-green-100 hover:bg-green-100"
+                                            : ""
+                                    }`}
                                 >
                                     <TableCell className="flex justify-between items-center">
                                         {street.nama_ruas}
                                         <Button
                                             variant={"outline"}
-                                            onClick={() =>
-                                                onCenterMap(
+                                            onClick={() => {
+                                                handleCenterMap(
                                                     street.coordinates[0]
-                                                )
-                                            }
+                                                );
+                                                handleSelectedStreet(street);
+                                            }}
                                         >
                                             <Eye />
                                         </Button>

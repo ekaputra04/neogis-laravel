@@ -1,10 +1,10 @@
 import { Input } from "@/Components/ui/input";
-import { Download, PlusCircle } from "lucide-react";
+import { Download, PlusCircle, Search } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseStreetOverview } from "@/consts/howToUse";
 import { FilterStateInterface, StreetInterface } from "@/types/types";
-import { memo } from "react";
+import { memo, useState } from "react";
 import DialogFilterStreetComponent from "./DialogFilterStreetComponent";
 import { handleDownload } from "@/lib/utils";
 import { toast } from "sonner";
@@ -25,6 +25,8 @@ export const StreetControls = memo(
         streets,
     }: StreetControlsProps) => {
         console.log("STREET CONTROL RENDER");
+
+        const [searchValue, setSearchValue] = useState<string>("");
 
         return (
             <>
@@ -51,11 +53,20 @@ export const StreetControls = memo(
                     onFilterChange={onFilterChange}
                     initialFilters={initialFilters}
                 />
-                <Input
-                    placeholder="Search..."
-                    className="my-2"
-                    onChange={(e) => onSearch(e.target.value)}
-                />
+                <div className="flex justify-between items-center gap-2">
+                    <Input
+                        placeholder="Search..."
+                        className="my-2"
+                        onChange={(e) => setSearchValue(e.target.value)}
+                    />
+                    <Button
+                        className="h-9"
+                        variant={"outline"}
+                        onClick={() => onSearch(searchValue)}
+                    >
+                        <Search />
+                    </Button>
+                </div>
             </>
         );
     }
