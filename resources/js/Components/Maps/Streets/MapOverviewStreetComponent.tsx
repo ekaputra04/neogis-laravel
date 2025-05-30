@@ -18,12 +18,16 @@ import { StreetMap } from "./components/StreetMap";
 import { Skeleton } from "@/Components/ui/skeleton";
 import { SearchAddress } from "@/Components/SearchAddress";
 import { TableStreetFilterCounter } from "./components/TableStreetFilterCounter";
+import StreetLegend from "./components/StreetLegend";
+import { useStreetLegendStore } from "@/Store/useStreetLegendStore";
 
 const TOKEN = localStorage.getItem("external_api_token") as string;
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function MapOverviewStreetComponent() {
     console.log("PARENT STREET OVERVIEW RENDER");
+
+    const { type } = useStreetLegendStore();
 
     const [streets, setStreets] = useState<StreetWithCoordinatesInterface[]>(
         []
@@ -178,7 +182,7 @@ export default function MapOverviewStreetComponent() {
 
     useEffect(() => {
         setMapKey((prevKey) => prevKey + 1);
-    }, [filteredStreets]);
+    }, [filteredStreets, type]);
 
     useEffect(() => {
         const fetchDataStreets = async () => {
@@ -263,6 +267,8 @@ export default function MapOverviewStreetComponent() {
                     />
                 </div>
                 <div className="z-0 md:col-span-3">
+                    <StreetLegend />
+                    <hr className="my-4" />
                     {loading ? (
                         <Skeleton className="w-full h-[500px]" />
                     ) : (
