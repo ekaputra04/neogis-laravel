@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head, router } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { decode } from "@mapbox/polyline";
 import { toast } from "sonner";
@@ -140,6 +140,9 @@ export default function MapOverviewStreetComponent() {
 
     const handleCenterMap = useCallback((coords: [number, number]) => {
         setMapCenter(coords);
+
+        // rerender yang menyebabkan tidak bisa smooth flying
+        setMapKey((prevKey) => prevKey + 1);
     }, []);
 
     const handleSelectedStreet = useCallback(
@@ -274,6 +277,7 @@ export default function MapOverviewStreetComponent() {
                     ) : (
                         <StreetMap
                             key={mapKey}
+                            selectedStreet={selectedStreet!!}
                             streets={filteredStreets}
                             onDelete={handleDeleted}
                             loading={loading}

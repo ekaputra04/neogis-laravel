@@ -24,6 +24,7 @@ import { router } from "@inertiajs/react";
 import { useStreetLegendStore } from "@/Store/useStreetLegendStore";
 
 interface StreetMapProps {
+    selectedStreet: StreetWithCoordinatesInterface | null;
     streets: StreetWithCoordinatesInterface[];
     onDelete: (id: number) => void;
     loading: boolean;
@@ -32,7 +33,14 @@ interface StreetMapProps {
 }
 
 export const StreetMap = memo(
-    ({ streets, onDelete, loading, address, mapCenter }: StreetMapProps) => {
+    ({
+        selectedStreet,
+        streets,
+        onDelete,
+        loading,
+        address,
+        mapCenter,
+    }: StreetMapProps) => {
         const { type, eksisting, jenis, kondisi } = useStreetLegendStore();
 
         if (loading) return <Skeleton className="w-full h-[500px]" />;
@@ -81,6 +89,11 @@ export const StreetMap = memo(
                             positions={street.coordinates}
                             color={color}
                             weight={weight}
+                            dashArray={
+                                selectedStreet?.id === street.id
+                                    ? "10, 10"
+                                    : "0, 0"
+                            }
                         >
                             <Popup>
                                 <strong>
