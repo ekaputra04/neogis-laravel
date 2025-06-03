@@ -62,7 +62,10 @@ export const StreetControls = memo(
                     <Button
                         className="h-9"
                         variant={"outline"}
-                        onClick={() => onSearch(searchValue)}
+                        onClick={() => {
+                            onSearch(searchValue);
+                            toast.info("Searching...");
+                        }}
                     >
                         <Search />
                     </Button>

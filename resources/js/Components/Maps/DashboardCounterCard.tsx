@@ -19,7 +19,6 @@ interface DashboardCounterCardProps {
 
 const DashboardCounterCard = memo(
     ({ title, value, link }: DashboardCounterCardProps) => {
-        const { theme } = useThemeStore();
         console.log("DASHBOARD COUNTER CARD RENDER");
 
         return (
@@ -33,10 +32,7 @@ const DashboardCounterCard = memo(
                             <p className="group-hover:dark:text-black">
                                 {title}
                             </p>
-                            <Map
-                                className="w-4 h-4"
-                                color={theme == "dark" ? "white" : "black"}
-                            />
+                            <Map className="w-4 h-4 group-hover:dark:text-black" />
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="-mt-2">

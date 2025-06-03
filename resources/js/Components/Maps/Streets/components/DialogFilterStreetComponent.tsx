@@ -21,6 +21,7 @@ import {
     KondisiJalanInterface,
 } from "@/types/types";
 import { ChangeEvent, memo, useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface DialogFilterStreetComponentProps {
     onFilterChange: (filters: FilterStateInterface) => void;
@@ -32,8 +33,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const DialogFilterStreetComponent = memo(
     ({ onFilterChange, initialFilters }: DialogFilterStreetComponentProps) => {
-        // const { eksisting, jenis, kondisi } = usePage().props;
-
         const [eksisting, setEksisting] = useState<EksistingJalanInterface[]>(
             []
         );
@@ -189,6 +188,7 @@ const DialogFilterStreetComponent = memo(
                 jenis: jenisChecks,
                 kondisi: kondisiChecks,
             });
+            toast.success("Filter applied successfully!");
         }, [eksistingChecks, jenisChecks, kondisiChecks, onFilterChange]);
 
         // Inisialisasi checkbox state dengan semua terpilih

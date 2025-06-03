@@ -8,7 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/Components/ui/table";
-import { CoordinatesInterface, MarkerInterface } from "@/types/types";
+import { MarkerInterface } from "@/types/types";
 import { Button } from "@/Components/ui/button";
 import { Eye } from "lucide-react";
 

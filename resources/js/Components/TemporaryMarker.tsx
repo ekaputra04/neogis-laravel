@@ -1,27 +1,35 @@
 import { LatLng } from "leaflet";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Marker, Popup, useMapEvents } from "react-leaflet";
 
 export function TemporaryMarker() {
     const [marker, setMarker] = useState<LatLng | null>(null);
+    const markerRef = useRef<L.Marker | null>(null);
 
-    useMapEvents({
+    const map = useMapEvents({
         click(e) {
             setMarker(e.latlng);
         },
     });
+
+    useEffect(() => {
+        if (marker && markerRef.current) {
+            markerRef.current.openPopup();
+        }
+    }, [marker]);
 
     if (!marker) return null;
 
     const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${marker.lat},${marker.lng}`;
 
     return (
-        <Marker position={marker}>
+        <Marker position={marker} ref={markerRef}>
             <Popup>
                 <div>
-                    <strong>Marker</strong>
+                    <strong>Street View</strong>
                     <br />
-                    Koordinat: {marker.lat.toFixed(6)}, {marker.lng.toFixed(6)}
+                    Coordinates: {marker.lat.toFixed(6)},{" "}
+                    {marker.lng.toFixed(6)}
                     <br />
                     <a
                         href={streetViewUrl}

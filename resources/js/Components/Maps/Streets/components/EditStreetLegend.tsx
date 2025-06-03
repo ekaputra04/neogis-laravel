@@ -9,6 +9,7 @@ import {
 } from "@/Components/ui/sheet";
 import { Slider } from "@/Components/ui/slider";
 import { buttonOutlineCss } from "@/consts/buttonCss";
+import { delay } from "@/lib/utils";
 import { useStreetLegendStore } from "@/Store/useStreetLegendStore";
 import { Save, Settings } from "lucide-react";
 import { useState } from "react";
@@ -52,9 +53,9 @@ export default function EditStreetLegend() {
         }));
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setLoading(true);
-        setTimeout(() => {}, 300);
+        await delay(300);
         localData[type].forEach((item) => {
             setColor(type, item.id, item.color);
             setWeight(type, item.id, item.weight);
@@ -68,10 +69,11 @@ export default function EditStreetLegend() {
             <SheetTrigger
                 className={
                     buttonOutlineCss +
-                    " bg-green-200 hover:bg-green-300 text-black space-x-2 w-full"
+                    " bg-green-200 hover:bg-green-300 text-black space-x-2 w-full "
                 }
             >
-                <Settings /> Settings {type} legend
+                <Settings className="text-black" />{" "}
+                <span className="text-black">Settings {type} legend</span>
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
@@ -200,7 +202,10 @@ export default function EditStreetLegend() {
                         ))}
                     <Button onClick={handleSave} disabled={loading}>
                         {loading ? (
-                            "Loading..."
+                            <>
+                                <Save className="mr-2 w-4 h-4" />
+                                Loading...
+                            </>
                         ) : (
                             <>
                                 <Save className="mr-2 w-4 h-4" /> Save

@@ -16,13 +16,18 @@ import {
     GeocodingResponseInterface,
     StreetWithCoordinatesInterface,
 } from "@/types/types";
-import { memo } from "react";
+import { memo, useEffect, useRef } from "react";
 import { Skeleton } from "@/Components/ui/skeleton";
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 import { toast } from "sonner";
 import { router } from "@inertiajs/react";
 import { useStreetLegendStore } from "@/Store/useStreetLegendStore";
 import { TemporaryMarker } from "@/Components/TemporaryMarker";
+import {
+    EksistingJalan,
+    JenisJalan,
+    KondisiJalan,
+} from "@/consts/streetProperties";
 
 interface StreetMapProps {
     selectedStreet: StreetWithCoordinatesInterface | null;
@@ -91,7 +96,7 @@ export const StreetMap = memo(
                             color={color}
                             weight={weight}
                             dashArray={
-                                selectedStreet?.id === street.id
+                                selectedStreet?.id == street.id
                                     ? "10, 10"
                                     : "0, 0"
                             }
@@ -110,7 +115,25 @@ export const StreetMap = memo(
                                 meter
                                 <br />
                                 <br />
-                                Lebar: {street.lebar || "-"} meter
+                                Lebar: {roundToTwo(street.lebar) || "-"} meter
+                                <br />
+                                <br />
+                                Eksisting:{" "}
+                                {EksistingJalan.find(
+                                    (item) => item.id == street.eksisting_id
+                                )?.eksisting || "-"}
+                                <br />
+                                <br />
+                                Jenis:{" "}
+                                {JenisJalan.find(
+                                    (item) => item.id == street.jenisjalan_id
+                                )?.jenisjalan || "-"}
+                                <br />
+                                <br />
+                                Kondisi:{" "}
+                                {KondisiJalan.find(
+                                    (item) => item.id == street.kondisi_id
+                                )?.kondisi || "-"}
                                 <br />
                                 <br />
                                 <Button
