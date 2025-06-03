@@ -35,11 +35,6 @@ import {
     KecamatanInterface,
     KondisiJalanInterface,
     ProvinsiInterface,
-    SelectedDesaInterface,
-    SelectedKabupatenInterface,
-    SelectedKecamatanInterface,
-    SelectedProvinsiInterface,
-    StreetInterface,
     StreetWithCoordinatesInterface,
 } from "@/types/types";
 import { toast } from "sonner";
@@ -322,7 +317,7 @@ export default function MapEditStreetComponent() {
     useEffect(() => {
         const fetchDataStreets = async () => {
             try {
-                const response = await fetch(`${API_URL}/ruasjalan`, {
+                const response = await fetch(`${API_URL}/ruasjalan/${id}`, {
                     headers: { Authorization: `Bearer ${TOKEN}` },
                 });
 
@@ -332,9 +327,7 @@ export default function MapEditStreetComponent() {
 
                 const data = await response.json();
 
-                const streetData = data.ruasjalan.find(
-                    (s: StreetInterface) => s.id == id
-                );
+                const streetData = data.ruasjalan;
 
                 if (!streetData) {
                     router.visit("/");
