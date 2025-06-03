@@ -54,6 +54,7 @@ export default function EditStreetLegend() {
 
     const handleSave = () => {
         setLoading(true);
+        setTimeout(() => {}, 300);
         localData[type].forEach((item) => {
             setColor(type, item.id, item.color);
             setWeight(type, item.id, item.weight);
@@ -70,7 +71,7 @@ export default function EditStreetLegend() {
                     " bg-green-200 hover:bg-green-300 text-black space-x-2 w-full"
                 }
             >
-                <Settings /> Setting {type} legend
+                <Settings /> Settings {type} legend
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>

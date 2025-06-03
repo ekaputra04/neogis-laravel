@@ -11,13 +11,12 @@ import { toast } from "sonner";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export default function Login({
-    status,
-    canResetPassword,
-}: {
+interface LoginProps {
     status?: string;
     canResetPassword: boolean;
-}) {
+}
+
+export default function Login({ status, canResetPassword }: LoginProps) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: "",
         password: "",
@@ -27,6 +26,7 @@ export default function Login({
     });
 
     const [apiError, setApiError] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     const loginToExternalAPI = async (): Promise<boolean> => {
         try {
@@ -64,12 +64,17 @@ export default function Login({
             localStorage.setItem("external_api_token", token);
             localStorage.setItem(
                 "external_token_expired_at",
-                new Date(Date.now() + (result.meta["token-expired"] || 3600) * 1000).toISOString()
+                new Date(
+                    Date.now() + (result.meta["token-expired"] || 3600) * 1000
+                ).toISOString()
             );
             return true;
         } catch (error: any) {
             console.error("Error during external API login:", error);
-            setApiError(error.message || "Terjadi kesalahan saat login ke API eksternal.");
+            setApiError(
+                error.message ||
+                    "Terjadi kesalahan saat login ke API eksternal."
+            );
             toast.error(error.message || "Terjadi kesalahan saat login.");
             return false;
         }
@@ -77,7 +82,9 @@ export default function Login({
 
     const checkUserExistInLocal = async (): Promise<boolean> => {
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
+            const csrfToken = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content");
             const response = await fetch(`/api/user/check`, {
                 method: "POST",
                 headers: {
@@ -109,40 +116,51 @@ export default function Login({
     const submit: FormEventHandler = async (e) => {
         e.preventDefault();
         setApiError("");
+        setLoading(true);
 
-        const isExternalValid = await loginToExternalAPI();
-        if (!isExternalValid) {
-            return;
-        }
+        try {
+            const isExternalValid = await loginToExternalAPI();
+            if (!isExternalValid) {
+                return;
+            }
 
-        const isUserExist = await checkUserExistInLocal();
-        if (!isUserExist) {
-            post(route("register"), {
-                onSuccess: () => {
-                    reset("password", "password_confirmation");
-                },
-                onError: (errors) => {
-                    setApiError(
-                        errors.email || errors.password || errors.name || "Gagal mendaftar di sistem lokal."
-                    );
-                    toast.error("Gagal mendaftar di sistem lokal.");
-                },
-                onFinish: () => { },
-            });
-        } else {
-
-            post(route("login"), {
-                onSuccess: () => {
-                    reset("password");
-                },
-                onError: (errors) => {
-                    setApiError(
-                        errors.email || errors.password || "Gagal login ke aplikasi."
-                    );
-                    toast.error("Gagal login ke aplikasi.");
-                },
-                onFinish: () => { },
-            });
+            const isUserExist = await checkUserExistInLocal();
+            if (!isUserExist) {
+                post(route("register"), {
+                    onSuccess: () => {
+                        reset("password", "password_confirmation");
+                    },
+                    onError: (errors) => {
+                        setApiError(
+                            errors.email ||
+                                errors.password ||
+                                errors.name ||
+                                "Gagal mendaftar di sistem lokal."
+                        );
+                        toast.error("Gagal mendaftar di sistem lokal.");
+                    },
+                    onFinish: () => {},
+                });
+            } else {
+                post(route("login"), {
+                    onSuccess: () => {
+                        reset("password");
+                    },
+                    onError: (errors) => {
+                        setApiError(
+                            errors.email ||
+                                errors.password ||
+                                "Gagal login ke aplikasi."
+                        );
+                        toast.error("Gagal login ke aplikasi.");
+                    },
+                    onFinish: () => {},
+                });
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -186,10 +204,11 @@ export default function Login({
                                         value={data.email}
                                         className="block mt-1 w-full"
                                         autoComplete="username"
-
                                         onChange={(e) =>
                                             setData("email", e.target.value)
                                         }
+                                        placeholder="johndoe@mail.com"
+                                        disabled={loading}
                                     />
 
                                     <InputError
@@ -213,9 +232,13 @@ export default function Login({
                                         autoComplete="current-password"
                                         onChange={(e) => {
                                             setData("password", e.target.value);
-                                            setData("password_confirmation", e.target.value);
-                                        }
-                                        }
+                                            setData(
+                                                "password_confirmation",
+                                                e.target.value
+                                            );
+                                        }}
+                                        placeholder="••••••••"
+                                        disabled={loading}
                                     />
 
                                     <InputError
@@ -236,6 +259,7 @@ export default function Login({
                                                         false) as false
                                                 )
                                             }
+                                            disabled={loading}
                                         />
                                         <span className="ms-2 text-gray-600 text-sm">
                                             Remember me
@@ -255,11 +279,9 @@ export default function Login({
 
                                     <Button
                                         className="ms-4 px-8 py-2"
-                                        disabled={processing}
+                                        disabled={loading}
                                     >
-                                        {processing
-                                            ? "Logging in..."
-                                            : "Log in"}
+                                        {loading ? "Logging in..." : "Log in"}
                                     </Button>
                                 </div>
                             </form>

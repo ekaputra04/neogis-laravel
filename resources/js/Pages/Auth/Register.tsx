@@ -7,6 +7,7 @@ import image from "@/images/background/sign-up-bg.jpg";
 import { Button } from "@/Components/ui/button";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
 import { toast } from "sonner";
+import { Input } from "@/Components/ui/input";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -19,6 +20,7 @@ export default function Register() {
     });
 
     const [apiError, setApiError] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     const registerToExternalAPI = async (): Promise<boolean> => {
         try {
@@ -49,21 +51,28 @@ export default function Register() {
 
             const dataRegister = result.meta?.data;
             if (!dataRegister) {
-                setApiError(result.meta?.message || "Data register tidak ditemukan.");
+                setApiError(
+                    result.meta?.message || "Data register tidak ditemukan."
+                );
                 return false;
             }
 
             return true;
         } catch (error: any) {
             console.error("Error during external API register:", error);
-            setApiError(error.message || "Terjadi kesalahan saat register ke API eksternal.");
+            setApiError(
+                error.message ||
+                    "Terjadi kesalahan saat register ke API eksternal."
+            );
             return false;
         }
     };
 
     const checkUserExistInLocal = async (): Promise<boolean> => {
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
+            const csrfToken = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content");
             const response = await fetch(`/api/user/check`, {
                 method: "POST",
                 headers: {
@@ -94,22 +103,31 @@ export default function Register() {
 
     const submit: FormEventHandler = async (e) => {
         e.preventDefault();
-
         setApiError("");
+        setLoading(true);
 
-        const isExternalValid = await registerToExternalAPI();
-        if (!isExternalValid) {
-            return;
-        }
-
-        const isUserExist = await checkUserExistInLocal();
-        if (isUserExist) {
-            router.visit(route("login"));
-            return;
-        } else {
-            post("/register-local"), {
-                onFinish: () => reset("password", "password_confirmation"),
+        try {
+            const isExternalValid = await registerToExternalAPI();
+            if (!isExternalValid) {
+                return;
             }
+
+            const isUserExist = await checkUserExistInLocal();
+            if (isUserExist) {
+                router.visit(route("login"));
+                return;
+            } else {
+                post("/register-local"),
+                    {
+                        onFinish: () =>
+                            reset("password", "password_confirmation"),
+                    };
+            }
+        } catch (error) {
+            console.error("Error during registration:", error);
+            setApiError("Gagal mendaftar di sistem lokal.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -138,17 +156,17 @@ export default function Register() {
                                 <div>
                                     <InputLabel htmlFor="name" value="Name" />
 
-                                    <TextInput
+                                    <Input
                                         id="name"
                                         name="name"
                                         value={data.name}
-                                        className="block mt-1 w-full"
                                         autoComplete="name"
-                                        isFocused={true}
                                         onChange={(e) =>
                                             setData("name", e.target.value)
                                         }
                                         required
+                                        disabled={loading}
+                                        placeholder="John Doe"
                                     />
 
                                     <InputError
@@ -160,17 +178,18 @@ export default function Register() {
                                 <div className="mt-4">
                                     <InputLabel htmlFor="email" value="Email" />
 
-                                    <TextInput
+                                    <Input
                                         id="email"
                                         type="email"
                                         name="email"
                                         value={data.email}
-                                        className="block mt-1 w-full"
                                         autoComplete="username"
                                         onChange={(e) =>
                                             setData("email", e.target.value)
                                         }
                                         required
+                                        disabled={loading}
+                                        placeholder="johndoe@mail.com"
                                     />
 
                                     <InputError
@@ -185,7 +204,7 @@ export default function Register() {
                                         value="Password"
                                     />
 
-                                    <TextInput
+                                    <Input
                                         id="password"
                                         type="password"
                                         name="password"
@@ -196,6 +215,8 @@ export default function Register() {
                                             setData("password", e.target.value)
                                         }
                                         required
+                                        disabled={loading}
+                                        placeholder="••••••••"
                                     />
 
                                     <InputError
@@ -210,7 +231,7 @@ export default function Register() {
                                         value="Confirm Password"
                                     />
 
-                                    <TextInput
+                                    <Input
                                         id="password_confirmation"
                                         type="password"
                                         name="password_confirmation"
@@ -224,6 +245,8 @@ export default function Register() {
                                             )
                                         }
                                         required
+                                        disabled={loading}
+                                        placeholder="••••••••"
                                     />
 
                                     <InputError
@@ -242,9 +265,9 @@ export default function Register() {
 
                                     <Button
                                         className="ms-4 px-8 py-2"
-                                        disabled={processing}
+                                        disabled={loading}
                                     >
-                                        Register
+                                        {loading ? "Loading..." : "Register"}
                                     </Button>
                                 </div>
                             </form>
