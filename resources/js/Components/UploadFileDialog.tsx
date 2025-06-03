@@ -13,17 +13,24 @@ import { buttonOutlineCss } from "@/consts/buttonCss";
 import { Download, Upload } from "lucide-react";
 import { useState } from "react";
 import { FileUpload } from "./ui/file-upload";
-import { router, usePage } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
-import { handleDownloadSampleStreetData } from "@/lib/utils";
+import { delay, handleDownloadSampleStreetData } from "@/lib/utils";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const TOKEN = localStorage.getItem("external_api_token") as string;
 
-export default function UploadFileDialog() {
+interface UploadFileDialogProps {
+    loading: boolean;
+    setLoading: (loading: boolean) => void;
+}
+
+export default function UploadFileDialog({
+    loading,
+    setLoading,
+}: UploadFileDialogProps) {
     const [files, setFiles] = useState<File[]>([]);
-    const [loading, setLoading] = useState(false);
 
     const expectedKeys = [
         "paths",
@@ -46,6 +53,10 @@ export default function UploadFileDialog() {
     };
 
     const handleSubmit = async () => {
+        if (files.length === 0) {
+            toast.error("No file selected.");
+            return;
+        }
         setLoading(true);
 
         for (const file of files) {
@@ -121,6 +132,7 @@ export default function UploadFileDialog() {
                         buttonOutlineCss +
                         " bg-green-200 hover:bg-green-200 text-black dark:text-black"
                     }
+                    disabled={loading}
                 >
                     <Upload color="black" />
                     <p className="text-black">Add via file</p>
@@ -149,7 +161,7 @@ export default function UploadFileDialog() {
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
-                            disabled={loading}
+                            disabled={loading || files.length === 0}
                             onClick={handleSubmit}
                         >
                             {loading ? "Uploading..." : "Submit"}

@@ -136,7 +136,10 @@ export default function MapAddStreetComponent() {
                     <h2 className="mb-4 font-bold text-slate-900 dark:text-white text-3xl">
                         Add Street
                     </h2>
-                    <UploadFileDialog />
+                    <UploadFileDialog
+                        loading={loading}
+                        setLoading={handleLoading}
+                    />
                 </div>
                 <div className="gap-8 grid grid-cols-1 md:grid-cols-3">
                     <div className="">
