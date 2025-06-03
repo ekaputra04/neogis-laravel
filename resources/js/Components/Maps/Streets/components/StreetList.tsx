@@ -59,7 +59,7 @@ export const StreetList = memo(
                                     key={street.id}
                                     className={`block w-full ${
                                         selectedStreet?.id === street.id
-                                            ? "bg-green-100 hover:bg-green-100"
+                                            ? "bg-green-100 hover:bg-green-100 text-black dark:text-white dark:bg-green-950"
                                             : ""
                                     }`}
                                 >
