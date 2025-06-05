@@ -34,7 +34,7 @@ interface StreetLegendStore {
     setWeight: (type: LegendType, id: number, weight: number) => void;
 }
 
-const eksistingData: EksistingJalanInterface[] = [
+export const eksistingData: EksistingJalanInterface[] = [
     { id: 1, eksisting: "Tanah", color: "#8B4513", weight: 2 }, // Tipis untuk tanah
     { id: 2, eksisting: "Tanah/Beton", color: "#A0522D", weight: 3 },
     { id: 3, eksisting: "Perkerasan", color: "#696969", weight: 4 },
@@ -46,13 +46,13 @@ const eksistingData: EksistingJalanInterface[] = [
     { id: 9, eksisting: "Beton/Lapen", color: "#808080", weight: 5 },
 ];
 
-const jenisData: JenisJalanInterface[] = [
+export const jenisData: JenisJalanInterface[] = [
     { id: 1, jenisjalan: "Desa", color: "#32CD32", weight: 3 }, // Tipis untuk desa
     { id: 2, jenisjalan: "Kabupaten", color: "#FFD700", weight: 5 },
     { id: 3, jenisjalan: "Provinsi", color: "#FF4500", weight: 7 }, // Tebal untuk provinsi
 ];
 
-const kondisiData: KondisiJalanInterface[] = [
+export const kondisiData: KondisiJalanInterface[] = [
     { id: 1, kondisi: "Baik", color: "#008000", weight: 6 }, // Tebal untuk baik
     { id: 2, kondisi: "Sedang", color: "#FFA500", weight: 4 },
     { id: 3, kondisi: "Rusak", color: "#FF0000", weight: 2 }, // Tipis untuk rusak

@@ -220,7 +220,7 @@ const DialogFilterStreetComponent = memo(
                 <AlertDialogTrigger
                     className={
                         buttonOutlineCss +
-                        " flex w-full mt-4 bg-green-200 border-green-600 border hover:bg-green-300 "
+                        " flex w-full  bg-green-200 border-green-600 border hover:bg-green-300 "
                     }
                 >
                     <Filter className="w-4 h-4" color="black" />

@@ -48,7 +48,7 @@ export const StreetControls = memo(
                 >
                     <Download /> Download Street Data
                 </Button>
-                <hr />
+                <hr className="mb-2" />
                 <DialogFilterStreetComponent
                     onFilterChange={onFilterChange}
                     initialFilters={initialFilters}

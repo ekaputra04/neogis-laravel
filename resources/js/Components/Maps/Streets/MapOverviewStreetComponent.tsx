@@ -8,12 +8,16 @@ import { StreetInterface, StreetWithCoordinatesInterface } from "@/types/types";
 import { TableStreetFilterCounter } from "./components/TableStreetFilterCounter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import SpatialView from "./components/SpatialView";
+import TabularView from "./components/TabularView";
+import { toast } from "sonner";
 
 const TOKEN = localStorage.getItem("external_api_token") as string;
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function MapOverviewStreetComponent() {
     console.log("PARENT STREET OVERVIEW RENDER");
+
+    const [loading, setLoading] = useState(false);
 
     const [streets, setStreets] = useState<StreetWithCoordinatesInterface[]>(
         []
@@ -26,6 +30,61 @@ export default function MapOverviewStreetComponent() {
 
     const handleMapCenterChange = useCallback((coords: [number, number]) => {
         setMapCenter(coords);
+    }, []);
+
+    const fetchStreets = useCallback(async () => {
+        try {
+            const response = await fetch(`${API_URL}/ruasjalan`, {
+                headers: { Authorization: `Bearer ${TOKEN}` },
+            });
+            const { ruasjalan } = await response.json();
+            handleMapCenterChange(
+                ruasjalan.map((street: StreetInterface) => ({
+                    ...street,
+                    coordinates: decode(street.paths).map(([lat, lng]) => [
+                        lat,
+                        lng,
+                    ]),
+                }))
+            );
+            setStreets(ruasjalan);
+        } catch (error) {
+            console.error("Fetch error:", error);
+        }
+    }, []);
+
+    const handleDeleted = useCallback(
+        async (streetId: number) => {
+            setLoading(true);
+            try {
+                const response = await fetch(
+                    `${API_URL}/ruasjalan/${streetId}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            Authorization: `Bearer ${TOKEN}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to delete street");
+                }
+
+                await fetchStreets();
+                toast.success("Street deleted successfully!");
+            } catch (error) {
+                toast.error("Error deleting street");
+            } finally {
+                setLoading(false);
+            }
+        },
+        [fetchStreets]
+    );
+
+    const handleLoadingChange = useCallback((isLoading: boolean) => {
+        setLoading(isLoading);
     }, []);
 
     useEffect(() => {
@@ -90,7 +149,7 @@ export default function MapOverviewStreetComponent() {
             </div>
             <hr />
             <Tabs defaultValue="spatial" className="mt-4 w-full">
-                <div className="flex justify-center mb-4 w-full">
+                <div className="flex justify-center mb-8 w-full">
                     <TabsList className="">
                         <TabsTrigger value="spatial">Spatial View</TabsTrigger>
                         <TabsTrigger value="tabular">Tabular View</TabsTrigger>
@@ -101,16 +160,18 @@ export default function MapOverviewStreetComponent() {
                     <SpatialView
                         streets={streets}
                         mapCenter={mapCenter}
+                        loading={loading}
+                        setLoading={handleLoadingChange}
                         handleMapCenterChange={handleMapCenterChange}
+                        handleDeleted={handleDeleted}
                     />
                 </TabsContent>
                 <TabsContent value="tabular">
-                    {/* <TabularView
+                    <TabularView
                         streets={streets}
-                        // initialFilters={filters}
-                        // onFilterChange={handleFilterChange}
-                        // onSearch={handleSearch}
-                    /> */}
+                        loading={loading}
+                        handleDeleted={handleDeleted}
+                    />
                 </TabsContent>
                 <TabsContent value="chart">{/* <TabularView /> */}</TabsContent>
             </Tabs>

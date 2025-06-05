@@ -8,99 +8,40 @@ import {
     CoordinatesInterface,
     FilterStateInterface,
     GeocodingResponseInterface,
-    StreetInterface,
     StreetWithCoordinatesInterface,
 } from "@/types/types";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useStreetLegendStore } from "@/Store/useStreetLegendStore";
-import { decode } from "@mapbox/polyline";
-import { toast } from "sonner";
-
-const TOKEN = localStorage.getItem("external_api_token") as string;
-const API_URL = import.meta.env.VITE_API_URL;
+import { filterData } from "@/consts/filtersData";
 
 interface SpatialViewProps {
     streets: StreetWithCoordinatesInterface[];
     mapCenter: [number, number];
+    loading: boolean;
+    setLoading: (loading: boolean) => void;
     handleMapCenterChange: (coords: [number, number]) => void;
+    handleDeleted: (id: number) => void;
 }
 
 const SpatialView = memo(
-    ({ streets, mapCenter, handleMapCenterChange }: SpatialViewProps) => {
+    ({
+        streets,
+        mapCenter,
+        loading,
+        setLoading,
+        handleMapCenterChange,
+        handleDeleted,
+    }: SpatialViewProps) => {
         const { type } = useStreetLegendStore();
 
         const [selectedStreet, setSelectedStreet] =
             useState<StreetWithCoordinatesInterface | null>();
         const [address, setAddress] = useState<GeocodingResponseInterface>();
-        const [filters, setFilters] = useState<FilterStateInterface>({
-            eksisting: {
-                "1": true,
-                "2": true,
-                "3": true,
-                "4": true,
-                "5": true,
-                "6": true,
-                "7": true,
-                "8": true,
-                "9": true,
-            },
-            jenis: { "1": true, "2": true, "3": true },
-            kondisi: { "1": true, "2": true, "3": true },
-        });
+        const [filters, setFilters] =
+            useState<FilterStateInterface>(filterData);
 
         const [searchValue, setSearchValue] = useState("");
-        const [loading, setLoading] = useState(false);
         const [mapKey, setMapKey] = useState(0);
-
-        const fetchStreets = useCallback(async () => {
-            try {
-                const response = await fetch(`${API_URL}/ruasjalan`, {
-                    headers: { Authorization: `Bearer ${TOKEN}` },
-                });
-                const { ruasjalan } = await response.json();
-                handleMapCenterChange(
-                    ruasjalan.map((street: StreetInterface) => ({
-                        ...street,
-                        coordinates: decode(street.paths).map(([lat, lng]) => [
-                            lat,
-                            lng,
-                        ]),
-                    }))
-                );
-            } catch (error) {
-                console.error("Fetch error:", error);
-            }
-        }, []);
-
-        const handleDeleted = useCallback(
-            async (streetId: number) => {
-                setLoading(true);
-                try {
-                    const response = await fetch(
-                        `${API_URL}/ruasjalan/${streetId}`,
-                        {
-                            method: "DELETE",
-                            headers: {
-                                Authorization: `Bearer ${TOKEN}`,
-                                "Content-Type": "application/json",
-                            },
-                        }
-                    );
-
-                    if (!response.ok) {
-                        throw new Error("Failed to delete street");
-                    }
-
-                    await fetchStreets();
-                    toast.success("Street deleted successfully!");
-                } catch (error) {
-                    toast.error("Error deleting street");
-                } finally {
-                    setLoading(false);
-                }
-            },
-            [fetchStreets]
-        );
 
         const filteredStreets = useMemo(() => {
             if (!streets) return [];
@@ -191,7 +132,7 @@ const SpatialView = memo(
             setMapKey((prevKey) => prevKey + 1);
         }, [filteredStreets, type]);
         return (
-            <div className="gap-8 grid grid-cols-1 lg:grid-cols-4 mt-8">
+            <div className="gap-8 grid grid-cols-1 lg:grid-cols-4">
                 <div>
                     <SearchAddress
                         handleSelectAddress={handleSelectAddress}
