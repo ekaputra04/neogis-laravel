@@ -130,8 +130,8 @@ const SpatialView = memo(
             setMapKey((prevKey) => prevKey + 1);
         }, [filteredStreets, type]);
         return (
-            <div className="gap-8 grid grid-cols-1 lg:grid-cols-4">
-                <div>
+            <div className="lg:gap-8 grid grid-cols-1 lg:grid-cols-4 w-full">
+                <div className="w-full">
                     <SearchAddress
                         handleSelectAddress={handleSelectAddress}
                         addressId={address?.place_id || 0}

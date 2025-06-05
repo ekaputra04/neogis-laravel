@@ -14,7 +14,7 @@ interface ChartViewProps {
 export default function ChartView({ streets }: ChartViewProps) {
     return (
         <div className="">
-            <Tabs defaultValue="bar" className="w-full">
+            <Tabs defaultValue="pie" className="w-full">
                 <TabsList>
                     <TabsTrigger value="pie">Pie Chart</TabsTrigger>
                     <TabsTrigger value="bar">Bar Chart</TabsTrigger>
