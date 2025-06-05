@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import SpatialView from "./components/SpatialView";
 import TabularView from "./components/TabularView";
 import { toast } from "sonner";
+import ChartView from "./components/ChartView";
 
 const TOKEN = localStorage.getItem("external_api_token") as string;
 const API_URL = import.meta.env.VITE_API_URL;
@@ -161,7 +162,6 @@ export default function MapOverviewStreetComponent() {
                         streets={streets}
                         mapCenter={mapCenter}
                         loading={loading}
-                        setLoading={handleLoadingChange}
                         handleMapCenterChange={handleMapCenterChange}
                         handleDeleted={handleDeleted}
                     />
@@ -173,7 +173,9 @@ export default function MapOverviewStreetComponent() {
                         handleDeleted={handleDeleted}
                     />
                 </TabsContent>
-                <TabsContent value="chart">{/* <TabularView /> */}</TabsContent>
+                <TabsContent value="chart">
+                    <ChartView streets={streets} />
+                </TabsContent>
             </Tabs>
         </DashboardMapLayout>
     );

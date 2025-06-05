@@ -18,7 +18,6 @@ interface SpatialViewProps {
     streets: StreetWithCoordinatesInterface[];
     mapCenter: [number, number];
     loading: boolean;
-    setLoading: (loading: boolean) => void;
     handleMapCenterChange: (coords: [number, number]) => void;
     handleDeleted: (id: number) => void;
 }
@@ -28,7 +27,6 @@ const SpatialView = memo(
         streets,
         mapCenter,
         loading,
-        setLoading,
         handleMapCenterChange,
         handleDeleted,
     }: SpatialViewProps) => {

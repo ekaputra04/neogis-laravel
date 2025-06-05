@@ -13,7 +13,6 @@ import {
     KondisiJalanInterface,
     StreetInterface,
 } from "@/types/types";
-import { usePage } from "@inertiajs/react";
 import { memo, useEffect, useMemo, useState } from "react";
 
 interface TableStreetFilterCounterProps {
@@ -26,8 +25,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const TableStreetFilterCounter = memo(
     ({ title, streets }: TableStreetFilterCounterProps) => {
-        // const { eksisting, jenis, kondisi } = usePage().props;
-
         const [eksisting, setEksisting] = useState<EksistingJalanInterface[]>(
             []
         );

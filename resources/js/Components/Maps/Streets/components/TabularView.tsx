@@ -42,6 +42,13 @@ import {
     AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
 
 interface TabularViewProps {
     streets: StreetWithCoordinatesInterface[];
@@ -59,9 +66,9 @@ export default function TabularView({
     const [filters, setFilters] = useState<FilterStateInterface>(filterData);
     const [searchInput, setSearchInput] = useState<string>("");
     const [searchValue, setSearchValue] = useState<string>("");
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
 
     const filteredStreets = useMemo(() => {
         if (!streets) return [];
@@ -148,6 +155,22 @@ export default function TabularView({
                     </Button>
                 </div>
                 <div className="flex justify-between items-center gap-2">
+                    <div className="">
+                        <Select
+                            onValueChange={(e) => setItemsPerPage(parseInt(e))}
+                            defaultValue={itemsPerPage.toString()}
+                        >
+                            <SelectTrigger className="w-32 h-8">
+                                <SelectValue placeholder="Row Count" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="10">10</SelectItem>
+                                <SelectItem value="25">25</SelectItem>
+                                <SelectItem value="50">50</SelectItem>
+                                <SelectItem value="100">100</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                     <DialogFilterStreetComponent
                         onFilterChange={handleFilterChange}
                         initialFilters={filters}
