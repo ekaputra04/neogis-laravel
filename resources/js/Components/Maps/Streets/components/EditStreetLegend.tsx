@@ -15,7 +15,13 @@ import { Save, Settings } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function EditStreetLegend() {
+interface EditStreetLegendProps {
+    handleMapKeyChange: () => void;
+}
+
+export default function EditStreetLegend({
+    handleMapKeyChange,
+}: EditStreetLegendProps) {
     const { type, eksisting, jenis, kondisi, setColor, setWeight } =
         useStreetLegendStore();
 
@@ -61,6 +67,7 @@ export default function EditStreetLegend() {
             setWeight(type, item.id, item.weight);
         });
         toast.success("Legend updated successfully!");
+        handleMapKeyChange();
         setLoading(false);
     };
 

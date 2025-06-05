@@ -9,9 +9,15 @@ import { LegendType, useStreetLegendStore } from "@/Store/useStreetLegendStore";
 import EditStreetLegend from "./EditStreetLegend";
 import { useState } from "react";
 
-export default function StreetLegend() {
+interface StreetLegendInterface {
+    handleMapKeyChange: () => void;
+}
+
+export default function StreetLegend({
+    handleMapKeyChange,
+}: StreetLegendInterface) {
     const { type, setType, eksisting, jenis, kondisi } = useStreetLegendStore();
-    const [selectedType, setSelectedType] = useState("");
+    const [selectedType, setSelectedType] = useState<LegendType>(type);
 
     return (
         <div className="mb-4">
@@ -21,8 +27,15 @@ export default function StreetLegend() {
                     <Select
                         onValueChange={(value) => {
                             setType(value as LegendType);
-                            setSelectedType(value);
+                            setSelectedType(value as LegendType);
                         }}
+                        value={
+                            selectedType
+                                ? selectedType
+                                : type
+                                ? type
+                                : "eksisting"
+                        }
                     >
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Choice legend type" />
@@ -33,7 +46,7 @@ export default function StreetLegend() {
                             <SelectItem value="kondisi">Kondisi</SelectItem>
                         </SelectContent>
                     </Select>
-                    {selectedType != "" && <EditStreetLegend />}
+                    <EditStreetLegend handleMapKeyChange={handleMapKeyChange} />
                 </div>
                 <div className="lg:col-span-2">
                     {type == "eksisting" && (

@@ -174,6 +174,10 @@ export default function MapOverviewStreetComponent() {
         setMapCenter([center.latitude, center.longitude]);
     };
 
+    const handleMapKeyChange = useCallback(() => {
+        setMapKey((prevKey) => prevKey + 1);
+    }, []);
+
     useEffect(() => {
         if (address) {
             handleSetMapCenter({
@@ -270,7 +274,7 @@ export default function MapOverviewStreetComponent() {
                     />
                 </div>
                 <div className="z-0 md:col-span-3">
-                    <StreetLegend />
+                    <StreetLegend handleMapKeyChange={handleMapKeyChange} />
                     <hr className="my-4" />
                     {loading ? (
                         <Skeleton className="w-full h-[500px]" />
