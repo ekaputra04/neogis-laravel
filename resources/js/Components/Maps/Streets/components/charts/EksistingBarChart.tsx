@@ -16,27 +16,27 @@ import {
 } from "@/Components/ui/chart";
 import { StreetWithCoordinatesInterface } from "@/types/types";
 import { useMemo } from "react";
-import { jenisData } from "@/Store/useStreetLegendStore";
+import { eksistingData } from "@/Store/useStreetLegendStore";
 
 export const description = "A bar chart with a label";
 
 const chartConfig = {
     street: {
         label: "street",
-        color: "hsl(var(--chart-2))",
+        color: "hsl(var(--chart-1))",
     },
 } satisfies ChartConfig;
 
-interface JenisChartProps {
+interface EksistingBarChartProps {
     streets: StreetWithCoordinatesInterface[];
 }
 
-export function JenisChart({ streets }: JenisChartProps) {
+export function EksistingBarChart({ streets }: EksistingBarChartProps) {
     const chartData = useMemo(() => {
-        const sourceData = jenisData;
+        const sourceData = eksistingData;
 
         return (sourceData as any[]).map((item) => {
-            const filterKey = "jenisjalan_id";
+            const filterKey = "eksisting_id";
 
             const count = streets.filter(
                 (s) => s[filterKey] === item.id
@@ -44,7 +44,7 @@ export function JenisChart({ streets }: JenisChartProps) {
 
             return {
                 id: item.id,
-                eksisting: item.jenisjalan,
+                eksisting: item.eksisting,
                 street: count,
             };
         });
@@ -54,8 +54,8 @@ export function JenisChart({ streets }: JenisChartProps) {
         <div className="">
             <Card>
                 <CardHeader>
-                    <CardTitle>Jenis Data</CardTitle>
-                    <CardDescription>List of Jenis Data</CardDescription>
+                    <CardTitle>Eksisting Data</CardTitle>
+                    <CardDescription>List of Eksisting Data</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig}>
@@ -95,7 +95,7 @@ export function JenisChart({ streets }: JenisChartProps) {
                 </CardContent>
                 <CardFooter className="flex-col items-start gap-2 text-sm">
                     <div className="text-muted-foreground leading-none">
-                        Showing total street with their respective jenis
+                        Showing total street with their respective eksisting
                     </div>
                 </CardFooter>
             </Card>

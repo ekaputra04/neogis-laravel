@@ -27,11 +27,11 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-interface KondisiChartProps {
+interface KondisiBarChartProps {
     streets: StreetWithCoordinatesInterface[];
 }
 
-export function KondisiChart({ streets }: KondisiChartProps) {
+export function KondisiBarChart({ streets }: KondisiBarChartProps) {
     const chartData = useMemo(() => {
         const sourceData = kondisiData;
 
