@@ -12,15 +12,12 @@ import {
     StreetInterface,
     StreetWithCoordinatesInterface,
 } from "@/types/types";
-import { StreetControls } from "./components/StreetControls";
-import { StreetList } from "./components/StreetList";
-import { StreetMap } from "./components/StreetMap";
-import { Skeleton } from "@/Components/ui/skeleton";
-import { SearchAddress } from "@/Components/SearchAddress";
 import { TableStreetFilterCounter } from "./components/TableStreetFilterCounter";
-import StreetLegend from "./components/StreetLegend";
 import { useStreetLegendStore } from "@/Store/useStreetLegendStore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+import SpatialView from "./components/SpatialView";
+import TabularView from "./components/TabularView";
+import { Map } from "lucide-react";
 
 const TOKEN = localStorage.getItem("external_api_token") as string;
 const API_URL = import.meta.env.VITE_API_URL;
@@ -253,58 +250,36 @@ export default function MapOverviewStreetComponent() {
                 <TableStreetFilterCounter title="Kondisi" streets={streets} />
             </div>
             <hr />
-            <Tabs defaultValue="account" className="w-[400px]">
-                <TabsList>
-                    <TabsTrigger value="account">Account</TabsTrigger>
-                    <TabsTrigger value="password">Password</TabsTrigger>
-                </TabsList>
-                <TabsContent value="account">
-                    Make changes to your account here.
-                </TabsContent>
-                <TabsContent value="password">
-                    Change your password here.
-                </TabsContent>
-            </Tabs>
-
-            <div className="gap-8 grid grid-cols-1 lg:grid-cols-4 mt-8">
-                <div>
-                    <SearchAddress
-                        handleSelectAddress={handleSelectAddress}
-                        addressId={address?.place_id || 0}
-                    />
-                    <StreetControls
-                        onFilterChange={handleFilterChange}
-                        onSearch={handleSearch}
-                        initialFilters={filters}
-                        streets={filteredStreets}
-                    />
-                    <StreetList
-                        streetLength={streets.length}
+            <Tabs defaultValue="spatial" className="mt-4 w-full">
+                <div className="flex justify-center w-full">
+                    <TabsList className="">
+                        <TabsTrigger value="spatial">Spatial View</TabsTrigger>
+                        <TabsTrigger value="tabular">Tabular View</TabsTrigger>
+                    </TabsList>
+                </div>
+                <TabsContent value="spatial">
+                    <SpatialView
+                        streets={streets}
                         filteredStreets={filteredStreets}
                         loading={loading}
                         selectedStreet={selectedStreet!!}
+                        mapKey={mapKey}
+                        address={address!!}
+                        filters={filters}
+                        mapCenter={mapCenter}
                         handleCenterMap={handleCenterMap}
                         handleSelectedStreet={handleSelectedStreet}
+                        handleFilterChange={handleFilterChange}
+                        handleSearch={handleSearch}
+                        handleMapKeyChange={handleMapKeyChange}
+                        handleSelectAddress={handleSelectAddress}
+                        handleDeleted={handleDeleted}
                     />
-                </div>
-                <div className="z-0 md:col-span-3">
-                    <StreetLegend handleMapKeyChange={handleMapKeyChange} />
-                    <hr className="my-4" />
-                    {loading ? (
-                        <Skeleton className="w-full h-[500px]" />
-                    ) : (
-                        <StreetMap
-                            key={mapKey}
-                            selectedStreet={selectedStreet!!}
-                            streets={filteredStreets}
-                            onDelete={handleDeleted}
-                            loading={loading}
-                            address={address!!}
-                            mapCenter={mapCenter}
-                        />
-                    )}
-                </div>
-            </div>
+                </TabsContent>
+                <TabsContent value="tabular">
+                    <TabularView />
+                </TabsContent>
+            </Tabs>
         </DashboardMapLayout>
     );
 }
