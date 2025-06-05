@@ -20,6 +20,7 @@ import { SearchAddress } from "@/Components/SearchAddress";
 import { TableStreetFilterCounter } from "./components/TableStreetFilterCounter";
 import StreetLegend from "./components/StreetLegend";
 import { useStreetLegendStore } from "@/Store/useStreetLegendStore";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 
 const TOKEN = localStorage.getItem("external_api_token") as string;
 const API_URL = import.meta.env.VITE_API_URL;
@@ -252,6 +253,19 @@ export default function MapOverviewStreetComponent() {
                 <TableStreetFilterCounter title="Kondisi" streets={streets} />
             </div>
             <hr />
+            <Tabs defaultValue="account" className="w-[400px]">
+                <TabsList>
+                    <TabsTrigger value="account">Account</TabsTrigger>
+                    <TabsTrigger value="password">Password</TabsTrigger>
+                </TabsList>
+                <TabsContent value="account">
+                    Make changes to your account here.
+                </TabsContent>
+                <TabsContent value="password">
+                    Change your password here.
+                </TabsContent>
+            </Tabs>
+
             <div className="gap-8 grid grid-cols-1 lg:grid-cols-4 mt-8">
                 <div>
                     <SearchAddress

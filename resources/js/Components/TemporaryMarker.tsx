@@ -1,6 +1,7 @@
 import { LatLng } from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { Marker, Popup, useMapEvents } from "react-leaflet";
+import { customIcon } from "./CustomMarkerIcon";
 
 export function TemporaryMarker() {
     const [marker, setMarker] = useState<LatLng | null>(null);
@@ -23,7 +24,7 @@ export function TemporaryMarker() {
     const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${marker.lat},${marker.lng}`;
 
     return (
-        <Marker position={marker} ref={markerRef}>
+        <Marker position={marker} ref={markerRef} icon={customIcon}>
             <Popup>
                 <div>
                     <strong>Street View</strong>

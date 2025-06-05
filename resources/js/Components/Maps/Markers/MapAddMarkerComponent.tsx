@@ -44,6 +44,7 @@ import { centerPoints } from "@/consts/centerPoints";
 import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 import { SearchAddress } from "@/Components/SearchAddress";
 import { TemporaryMarker } from "@/Components/TemporaryMarker";
+import { customIcon } from "@/Components/CustomMarkerIcon";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -336,7 +337,10 @@ export default function MapAddMarkerComponent({
                                             rectangle: false,
                                             polygon: false,
                                             circle: false,
-                                            marker: marker == null,
+                                            marker:
+                                                marker == null
+                                                    ? { icon: customIcon }
+                                                    : false,
                                             polyline: false,
                                             circlemarker: false,
                                         }}
