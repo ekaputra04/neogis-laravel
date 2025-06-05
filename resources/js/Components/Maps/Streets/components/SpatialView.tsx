@@ -5,48 +5,191 @@ import StreetLegend from "./StreetLegend";
 import { Skeleton } from "@/Components/ui/skeleton";
 import { StreetMap } from "./StreetMap";
 import {
+    CoordinatesInterface,
     FilterStateInterface,
     GeocodingResponseInterface,
+    StreetInterface,
     StreetWithCoordinatesInterface,
 } from "@/types/types";
-import { memo } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { useStreetLegendStore } from "@/Store/useStreetLegendStore";
+import { decode } from "@mapbox/polyline";
+import { toast } from "sonner";
+
+const TOKEN = localStorage.getItem("external_api_token") as string;
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface SpatialViewProps {
     streets: StreetWithCoordinatesInterface[];
-    filteredStreets: StreetWithCoordinatesInterface[];
-    loading: boolean;
-    selectedStreet: StreetWithCoordinatesInterface | null;
-    mapKey: number;
-    address: GeocodingResponseInterface;
-    filters: FilterStateInterface;
     mapCenter: [number, number];
-    handleCenterMap: (coords: [number, number]) => void;
-    handleSelectedStreet: (street: StreetWithCoordinatesInterface) => void;
-    handleFilterChange: (filters: FilterStateInterface) => void;
-    handleSearch: (search: string) => void;
-    handleMapKeyChange: () => void;
-    handleSelectAddress: (address: GeocodingResponseInterface) => void;
-    handleDeleted: (streetId: number) => void;
+    handleMapCenterChange: (coords: [number, number]) => void;
 }
 
 const SpatialView = memo(
-    ({
-        streets,
-        filteredStreets,
-        loading,
-        selectedStreet,
-        mapKey,
-        address,
-        filters,
-        mapCenter,
-        handleCenterMap,
-        handleSelectedStreet,
-        handleFilterChange,
-        handleSearch,
-        handleMapKeyChange,
-        handleSelectAddress,
-        handleDeleted,
-    }: SpatialViewProps) => {
+    ({ streets, mapCenter, handleMapCenterChange }: SpatialViewProps) => {
+        const { type } = useStreetLegendStore();
+
+        const [selectedStreet, setSelectedStreet] =
+            useState<StreetWithCoordinatesInterface | null>();
+        const [address, setAddress] = useState<GeocodingResponseInterface>();
+        const [filters, setFilters] = useState<FilterStateInterface>({
+            eksisting: {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true,
+                "7": true,
+                "8": true,
+                "9": true,
+            },
+            jenis: { "1": true, "2": true, "3": true },
+            kondisi: { "1": true, "2": true, "3": true },
+        });
+
+        const [searchValue, setSearchValue] = useState("");
+        const [loading, setLoading] = useState(false);
+        const [mapKey, setMapKey] = useState(0);
+
+        const fetchStreets = useCallback(async () => {
+            try {
+                const response = await fetch(`${API_URL}/ruasjalan`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+                const { ruasjalan } = await response.json();
+                handleMapCenterChange(
+                    ruasjalan.map((street: StreetInterface) => ({
+                        ...street,
+                        coordinates: decode(street.paths).map(([lat, lng]) => [
+                            lat,
+                            lng,
+                        ]),
+                    }))
+                );
+            } catch (error) {
+                console.error("Fetch error:", error);
+            }
+        }, []);
+
+        const handleDeleted = useCallback(
+            async (streetId: number) => {
+                setLoading(true);
+                try {
+                    const response = await fetch(
+                        `${API_URL}/ruasjalan/${streetId}`,
+                        {
+                            method: "DELETE",
+                            headers: {
+                                Authorization: `Bearer ${TOKEN}`,
+                                "Content-Type": "application/json",
+                            },
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error("Failed to delete street");
+                    }
+
+                    await fetchStreets();
+                    toast.success("Street deleted successfully!");
+                } catch (error) {
+                    toast.error("Error deleting street");
+                } finally {
+                    setLoading(false);
+                }
+            },
+            [fetchStreets]
+        );
+
+        const filteredStreets = useMemo(() => {
+            if (!streets) return [];
+            const { eksisting, jenis, kondisi } = filters;
+            const searchLower = searchValue.toLowerCase();
+
+            const allFiltersFalse =
+                !Object.values(eksisting).some(Boolean) &&
+                !Object.values(jenis).some(Boolean) &&
+                !Object.values(kondisi).some(Boolean);
+
+            if (allFiltersFalse) return [];
+
+            return streets.filter((street) => {
+                const eksistingMatch =
+                    !Object.values(eksisting).some(Boolean) ||
+                    eksisting[street.eksisting_id];
+                const jenisMatch =
+                    !Object.values(jenis).some(Boolean) ||
+                    jenis[street.jenisjalan_id];
+                const kondisiMatch =
+                    !Object.values(kondisi).some(Boolean) ||
+                    kondisi[street.kondisi_id];
+                const nameMatch = street.nama_ruas
+                    .toLowerCase()
+                    .includes(searchLower);
+
+                return (
+                    eksistingMatch && jenisMatch && kondisiMatch && nameMatch
+                );
+            });
+        }, [streets, filters, searchValue]);
+
+        const handleCenterMap = useCallback((coords: [number, number]) => {
+            handleMapCenterChange(coords);
+
+            // rerender yang menyebabkan tidak bisa smooth flying
+            setMapKey((prevKey) => prevKey + 1);
+        }, []);
+
+        const handleSelectedStreet = useCallback(
+            (street: StreetWithCoordinatesInterface) => {
+                setSelectedStreet(street);
+            },
+            []
+        );
+
+        const handleFilterChange = useCallback(
+            (newFilters: FilterStateInterface) => {
+                setFilters(newFilters);
+            },
+            []
+        );
+
+        const handleSearch = useCallback((value: string) => {
+            setSearchValue(value);
+        }, []);
+
+        const handleSelectAddress = useCallback(
+            (address: GeocodingResponseInterface) => {
+                setAddress(address);
+            },
+            []
+        );
+
+        const handleSetMapCenter = (center: CoordinatesInterface) => {
+            handleMapCenterChange([center.latitude, center.longitude]);
+        };
+
+        const handleMapKeyChange = useCallback(() => {
+            setMapKey((prevKey) => prevKey + 1);
+        }, []);
+
+        useEffect(() => {
+            if (address) {
+                handleSetMapCenter({
+                    latitude: Number(
+                        (address as GeocodingResponseInterface).lat
+                    ),
+                    longitude: Number(
+                        (address as GeocodingResponseInterface)?.lon
+                    ),
+                });
+            }
+        }, [address]);
+
+        useEffect(() => {
+            setMapKey((prevKey) => prevKey + 1);
+        }, [filteredStreets, type]);
         return (
             <div className="gap-8 grid grid-cols-1 lg:grid-cols-4 mt-8">
                 <div>
