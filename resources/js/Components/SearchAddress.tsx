@@ -88,7 +88,7 @@ export const SearchAddress = memo(
                 <SheetTrigger
                     className={
                         buttonOutlineCss +
-                        "my-4 bg-green-200 w-full mb-4 border-green-600 hover:bg-green-200  border"
+                        "my-4 bg-green-200 w-full mb-4 border-green-600 hover:bg-green-300  border"
                     }
                 >
                     <Search color="black" />

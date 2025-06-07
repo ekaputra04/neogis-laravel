@@ -18,8 +18,11 @@ interface SpatialViewProps {
     streets: StreetWithCoordinatesInterface[];
     mapCenter: [number, number];
     loading: boolean;
+    mapKey: number;
     handleMapCenterChange: (coords: [number, number]) => void;
     handleDeleted: (id: number) => void;
+    handleIsFullScreenChange: (isFullScreen: boolean) => void;
+    handleMapKeyChange: () => void;
 }
 
 const SpatialView = memo(
@@ -27,8 +30,11 @@ const SpatialView = memo(
         streets,
         mapCenter,
         loading,
+        mapKey,
         handleMapCenterChange,
         handleDeleted,
+        handleIsFullScreenChange,
+        handleMapKeyChange,
     }: SpatialViewProps) => {
         const { type } = useStreetLegendStore();
 
@@ -39,7 +45,6 @@ const SpatialView = memo(
             useState<FilterStateInterface>(filterData);
 
         const [searchValue, setSearchValue] = useState("");
-        const [mapKey, setMapKey] = useState(0);
 
         const filteredStreets = useMemo(() => {
             if (!streets) return [];
@@ -77,7 +82,7 @@ const SpatialView = memo(
             handleMapCenterChange(coords);
 
             // rerender yang menyebabkan tidak bisa smooth flying
-            setMapKey((prevKey) => prevKey + 1);
+            handleMapKeyChange();
         }, []);
 
         const handleSelectedStreet = useCallback(
@@ -109,10 +114,6 @@ const SpatialView = memo(
             handleMapCenterChange([center.latitude, center.longitude]);
         };
 
-        const handleMapKeyChange = useCallback(() => {
-            setMapKey((prevKey) => prevKey + 1);
-        }, []);
-
         useEffect(() => {
             if (address) {
                 handleSetMapCenter({
@@ -126,9 +127,6 @@ const SpatialView = memo(
             }
         }, [address]);
 
-        useEffect(() => {
-            setMapKey((prevKey) => prevKey + 1);
-        }, [filteredStreets, type]);
         return (
             <div className="lg:gap-8 grid grid-cols-1 lg:grid-cols-4 w-full">
                 <div className="w-full">
@@ -152,7 +150,11 @@ const SpatialView = memo(
                     />
                 </div>
                 <div className="z-0 md:col-span-3">
-                    <StreetLegend handleMapKeyChange={handleMapKeyChange} />
+                    <StreetLegend
+                        isFullScreen={false}
+                        handleMapKeyChange={handleMapKeyChange}
+                        handleIsFullScreenChange={handleIsFullScreenChange}
+                    />
                     <hr className="my-4" />
                     {loading ? (
                         <Skeleton className="w-full h-[500px]" />

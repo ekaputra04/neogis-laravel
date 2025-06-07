@@ -11,6 +11,7 @@ import SpatialView from "./components/SpatialView";
 import TabularView from "./components/TabularView";
 import { toast } from "sonner";
 import ChartView from "./components/ChartView";
+import MapStreetFullScreen from "./components/MapStreetFullScreen";
 
 const TOKEN = localStorage.getItem("external_api_token") as string;
 const API_URL = import.meta.env.VITE_API_URL;
@@ -19,15 +20,15 @@ export default function MapOverviewStreetComponent() {
     console.log("PARENT STREET OVERVIEW RENDER");
 
     const [loading, setLoading] = useState(false);
-
+    const [isFullScreen, setIsFullScreen] = useState(false);
     const [streets, setStreets] = useState<StreetWithCoordinatesInterface[]>(
         []
     );
-
     const [mapCenter, setMapCenter] = useState<[number, number]>([
         centerPoints[0],
         centerPoints[1],
     ]);
+    const [mapKey, setMapKey] = useState<number>(0);
 
     const handleMapCenterChange = useCallback((coords: [number, number]) => {
         setMapCenter(coords);
@@ -84,8 +85,14 @@ export default function MapOverviewStreetComponent() {
         [fetchStreets]
     );
 
-    const handleLoadingChange = useCallback((isLoading: boolean) => {
-        setLoading(isLoading);
+    const handleIsFullScreenChange = useCallback((isFullScreen: boolean) => {
+        setIsFullScreen(isFullScreen);
+    }, []);
+
+    const handleMapKeyChange = useCallback(() => {
+        console.log("MAP KEY CHANGE", mapKey);
+
+        setMapKey((prevKey) => prevKey + 1);
     }, []);
 
     useEffect(() => {
@@ -136,47 +143,79 @@ export default function MapOverviewStreetComponent() {
     }, []);
 
     return (
-        <DashboardMapLayout currentPath="/dashboard/street">
+        <div>
             <Head title="Street" />
 
-            <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                <DashboardCounterCard
-                    title="Total Streets"
-                    value={streets.length}
+            {isFullScreen ? (
+                <MapStreetFullScreen
+                    mapKey={mapKey}
+                    streets={streets}
+                    onDelete={handleDeleted}
+                    handleIsFullScreenChange={handleIsFullScreenChange}
+                    handleMapKeyChange={handleMapKeyChange}
                 />
-                <TableStreetFilterCounter title="Eksisting" streets={streets} />
-                <TableStreetFilterCounter title="Jenis" streets={streets} />
-                <TableStreetFilterCounter title="Kondisi" streets={streets} />
-            </div>
-            <hr />
-            <Tabs defaultValue="spatial" className="mt-4 w-full">
-                <div className="flex justify-center mb-8 w-full">
-                    <TabsList className="">
-                        <TabsTrigger value="spatial">Spatial View</TabsTrigger>
-                        <TabsTrigger value="tabular">Tabular View</TabsTrigger>
-                        <TabsTrigger value="chart">Chart View</TabsTrigger>
-                    </TabsList>
-                </div>
-                <TabsContent value="spatial">
-                    <SpatialView
-                        streets={streets}
-                        mapCenter={mapCenter}
-                        loading={loading}
-                        handleMapCenterChange={handleMapCenterChange}
-                        handleDeleted={handleDeleted}
-                    />
-                </TabsContent>
-                <TabsContent value="tabular">
-                    <TabularView
-                        streets={streets}
-                        loading={loading}
-                        handleDeleted={handleDeleted}
-                    />
-                </TabsContent>
-                <TabsContent value="chart">
-                    <ChartView streets={streets} />
-                </TabsContent>
-            </Tabs>
-        </DashboardMapLayout>
+            ) : (
+                <DashboardMapLayout currentPath="/dashboard/street">
+                    <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                        <DashboardCounterCard
+                            title="Total Streets"
+                            value={streets.length}
+                        />
+                        <TableStreetFilterCounter
+                            title="Eksisting"
+                            streets={streets}
+                        />
+                        <TableStreetFilterCounter
+                            title="Jenis"
+                            streets={streets}
+                        />
+                        <TableStreetFilterCounter
+                            title="Kondisi"
+                            streets={streets}
+                        />
+                    </div>
+                    <hr />
+                    <Tabs defaultValue="spatial" className="mt-4 w-full">
+                        <div className="flex justify-center mb-8 w-full">
+                            <TabsList className="">
+                                <TabsTrigger value="spatial">
+                                    Spatial View
+                                </TabsTrigger>
+                                <TabsTrigger value="tabular">
+                                    Tabular View
+                                </TabsTrigger>
+                                <TabsTrigger value="chart">
+                                    Chart View
+                                </TabsTrigger>
+                            </TabsList>
+                        </div>
+                        <TabsContent value="spatial">
+                            <SpatialView
+                                streets={streets}
+                                mapCenter={mapCenter}
+                                loading={loading}
+                                mapKey={mapKey}
+                                handleMapCenterChange={handleMapCenterChange}
+                                handleDeleted={handleDeleted}
+                                handleIsFullScreenChange={
+                                    handleIsFullScreenChange
+                                }
+                                handleMapKeyChange={handleMapKeyChange}
+                            />
+                        </TabsContent>
+                        <TabsContent value="tabular">
+                            <TabularView
+                                streets={streets}
+                                loading={loading}
+                                handleDeleted={handleDeleted}
+                            />
+                        </TabsContent>
+                        <TabsContent value="chart">
+                            <ChartView streets={streets} />
+                        </TabsContent>
+                    </Tabs>
+                </DashboardMapLayout>
+            )}
+        </div>
     );
 }

@@ -209,6 +209,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                         }
                                         placeholder="johndoe@mail.com"
                                         disabled={loading}
+                                        required
                                     />
 
                                     <InputError
@@ -239,6 +240,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                         }}
                                         placeholder="••••••••"
                                         disabled={loading}
+                                        required
                                     />
 
                                     <InputError
