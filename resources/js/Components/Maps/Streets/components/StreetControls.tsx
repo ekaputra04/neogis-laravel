@@ -6,7 +6,7 @@ import { HowToUseStreetOverview } from "@/consts/howToUse";
 import { FilterStateInterface, StreetInterface } from "@/types/types";
 import { memo, useState } from "react";
 import DialogFilterStreetComponent from "./DialogFilterStreetComponent";
-import { handleDownload } from "@/lib/utils";
+import { handleDownloadJson } from "@/lib/utils";
 import { toast } from "sonner";
 import { router } from "@inertiajs/react";
 
@@ -44,7 +44,7 @@ export const StreetControls = memo(
                 <Button
                     className="mb-2 w-full"
                     variant={"link"}
-                    onClick={() => handleDownload(streets)}
+                    onClick={() => handleDownloadJson(streets)}
                 >
                     <Download /> Download Street Data
                 </Button>

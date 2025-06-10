@@ -7,7 +7,7 @@ import {
     HowToUseMarkerOverview,
     HowToUsePolygonOverview,
 } from "@/consts/howToUse";
-import { capitalizeFirstLetter, handleDownload } from "@/lib/utils";
+import { capitalizeFirstLetter, handleDownloadJson } from "@/lib/utils";
 import { Link } from "@inertiajs/react";
 import { Download, PlusCircle } from "lucide-react";
 import { memo } from "react";
@@ -45,7 +45,7 @@ export const ElementControls = memo(
                 <Button
                     className="mb-2 w-full"
                     variant={"link"}
-                    onClick={() => handleDownload(elements)}
+                    onClick={() => handleDownloadJson(elements)}
                 >
                     <Download /> Download{" "}
                     {capitalizeFirstLetter(elementType.toString())} Data

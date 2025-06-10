@@ -73,6 +73,11 @@ export default function Authenticated({
                                             href={route("logout")}
                                             method="post"
                                             as="button"
+                                            onClick={() => {
+                                                localStorage.removeItem(
+                                                    "external_api_token"
+                                                );
+                                            }}
                                         >
                                             Log Out
                                         </Dropdown.Link>
@@ -157,6 +162,11 @@ export default function Authenticated({
                                 method="post"
                                 href={route("logout")}
                                 as="button"
+                                onClick={() => {
+                                    localStorage.removeItem(
+                                        "external_api_token"
+                                    );
+                                }}
                             >
                                 Log Out
                             </ResponsiveNavLink>

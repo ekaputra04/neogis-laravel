@@ -70,6 +70,11 @@ export default function DashboardMapLayout({
                                         href={route("logout")}
                                         method="post"
                                         as="button"
+                                        onClick={() => {
+                                            localStorage.removeItem(
+                                                "external_api_token"
+                                            );
+                                        }}
                                     >
                                         Log Out
                                     </Dropdown.Link>

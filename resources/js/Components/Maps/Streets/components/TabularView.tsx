@@ -8,7 +8,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/Components/ui/table";
-import { getContrastTextColor, handleDownload, roundToTwo } from "@/lib/utils";
+import {
+    getContrastTextColor,
+    handleDownloadJson,
+    roundToTwo,
+} from "@/lib/utils";
 import {
     FilterStateInterface,
     StreetWithCoordinatesInterface,
@@ -134,7 +138,7 @@ export default function TabularView({
                 <Button
                     className="mb-2 w-fit"
                     variant={"link"}
-                    onClick={() => handleDownload(streets)}
+                    onClick={() => handleDownloadJson(streets)}
                 >
                     <Download /> Download Street Data
                 </Button>
