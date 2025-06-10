@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge";
 import SampleStreetData from "@/json/SampleStreetData.json";
 import { StreetWithCoordinatesInterface } from "@/types/types";
 import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import { autoTable } from "jspdf-autotable";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -30,19 +32,27 @@ export function roundToTwo(num: number): string {
 }
 
 export function handleDownloadJson(streets: Object[]) {
+    if (streets.length == 0) {
+        return;
+    }
+
     const jsonStr = JSON.stringify(streets, null, 2);
     const blob = new Blob([jsonStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = new Date().toISOString() + ".json";
+    link.download = "streets-data - " + new Date().toISOString() + ".json";
     link.click();
 
     URL.revokeObjectURL(url);
 }
 
 export function handleDownloadExcel(data: StreetWithCoordinatesInterface[]) {
+    if (data.length == 0) {
+        return;
+    }
+
     const formattedData = data.map((item) => ({
         ID: item.id,
         "Nama Ruas": item.nama_ruas,
@@ -84,7 +94,83 @@ export function handleDownloadExcel(data: StreetWithCoordinatesInterface[]) {
         { wch: 25 },
     ];
 
-    XLSX.writeFile(workbook, "ruas_jalan.xlsx");
+    XLSX.writeFile(
+        workbook,
+        "streets-data - " + new Date().toISOString() + ".xlsx"
+    );
+}
+
+export function handleDownloadPdf(data: StreetWithCoordinatesInterface[]) {
+    if (data.length == 0) {
+        return;
+    }
+
+    const doc = new jsPDF({ orientation: "landscape" });
+
+    // Tambahkan judul
+    doc.setFontSize(18);
+    doc.text("Laporan Data Ruas Jalan", 14, 22);
+
+    // Tambahkan tanggal
+    doc.setFontSize(12);
+    doc.text(
+        `Tanggal: ${new Date().toLocaleString("id-ID", {
+            timeZone: "Asia/Makassar",
+        })}`,
+        14,
+        30
+    );
+
+    // Format data untuk tabel
+    const tableData = data.map((item) => [
+        item.id.toString(),
+        item.nama_ruas,
+        item.kode_ruas,
+        roundToTwo(item.panjang),
+        roundToTwo(item.lebar),
+        item.desa_id.toString(),
+        item.jenisjalan_id.toString(),
+        item.kondisi_id.toString(),
+        item.eksisting_id.toString(),
+        item.keterangan,
+        item.coordinates[0]
+            ? `${item.coordinates[0][0]}, ${item.coordinates[0][1]}`
+            : "",
+        item.coordinates[item.coordinates.length - 1]
+            ? `${item.coordinates[item.coordinates.length - 1][0]}, ${
+                  item.coordinates[item.coordinates.length - 1][1]
+              }`
+            : "",
+    ]);
+
+    // Definisikan header tabel
+    const headers = [
+        "ID",
+        "Nama Ruas",
+        "Kode Ruas",
+        "Panjang (m)",
+        "Lebar (m)",
+        "Desa ID",
+        "Jenis Jalan ID",
+        "Kondisi ID",
+        "Eksisting ID",
+        "Keterangan",
+        "Koordinat Awal",
+        "Koordinat Akhir",
+    ];
+
+    // Tambahkan tabel ke PDF
+    autoTable(doc, {
+        head: [headers],
+        body: tableData,
+        startY: 40,
+        styles: { cellPadding: 3, fontSize: 10 },
+        headStyles: { fillColor: "#28a745", textColor: "#ffffff" },
+        alternateRowStyles: { fillColor: "#f5f5f5" },
+        margin: { top: 30, left: 10, right: 10 },
+    });
+
+    doc.save("streets-data - " + new Date().toISOString() + ".pdf");
 }
 
 export function handleDownloadSampleStreetData() {

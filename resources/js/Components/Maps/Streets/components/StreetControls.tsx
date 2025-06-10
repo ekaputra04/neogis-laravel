@@ -3,18 +3,23 @@ import { Download, PlusCircle, Search } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseStreetOverview } from "@/consts/howToUse";
-import { FilterStateInterface, StreetInterface } from "@/types/types";
+import {
+    FilterStateInterface,
+    StreetInterface,
+    StreetWithCoordinatesInterface,
+} from "@/types/types";
 import { memo, useState } from "react";
 import DialogFilterStreetComponent from "./DialogFilterStreetComponent";
-import { handleDownloadJson } from "@/lib/utils";
+import { handleDownloadExcel, handleDownloadJson } from "@/lib/utils";
 import { toast } from "sonner";
 import { router } from "@inertiajs/react";
+import DialogDownloadStreetData from "@/Components/DialogDownloadStreetData";
 
 interface StreetControlsProps {
     onFilterChange: (filters: FilterStateInterface) => void;
     onSearch: (value: string) => void;
     initialFilters: FilterStateInterface;
-    streets: StreetInterface[];
+    streets: StreetWithCoordinatesInterface[];
 }
 
 export const StreetControls = memo(
@@ -41,13 +46,9 @@ export const StreetControls = memo(
                     <PlusCircle />
                     Add New Street
                 </Button>
-                <Button
-                    className="mb-2 w-full"
-                    variant={"link"}
-                    onClick={() => handleDownloadJson(streets)}
-                >
-                    <Download /> Download Street Data
-                </Button>
+
+                <DialogDownloadStreetData streets={streets} />
+
                 <hr className="mb-2" />
                 <DialogFilterStreetComponent
                     onFilterChange={onFilterChange}

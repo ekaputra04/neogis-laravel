@@ -53,6 +53,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
+import DialogDownloadStreetData from "@/Components/DialogDownloadStreetData";
 
 interface TabularViewProps {
     streets: StreetWithCoordinatesInterface[];
@@ -135,13 +136,7 @@ export default function TabularView({
                     <PlusCircle />
                     Add New Street
                 </Button>
-                <Button
-                    className="mb-2 w-fit"
-                    variant={"link"}
-                    onClick={() => handleDownloadJson(streets)}
-                >
-                    <Download /> Download Street Data
-                </Button>
+                <DialogDownloadStreetData streets={streets} />
             </div>
 
             <div className="flex flex-wrap justify-between items-center gap-2">

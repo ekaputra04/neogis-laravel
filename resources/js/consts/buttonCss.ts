@@ -8,3 +8,6 @@ export const buttonDestructiveCss =
 export const buttonOutlineCss =
     buttonCss +
     " border border-input bg-background shadow-sm dark:text-white hover:bg-accent hover:text-accent-foreground";
+
+export const buttonLinkCss =
+    buttonCss + " text-primary underline-offset-4 hover:underline";
