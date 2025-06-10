@@ -10,8 +10,7 @@ export default function ChangeThemeComponent() {
                     </h2>
 
                     <p className="mt-1 text-gray-600 dark:text-gray-200 text-sm">
-                        Manage and update map layers to control what is
-                        displayed on the map.
+                        Change the theme of website.
                     </p>
                 </header>
 

@@ -130,7 +130,7 @@ export default function UploadFileDialog({
                 <AlertDialogTrigger
                     className={
                         buttonOutlineCss +
-                        " bg-green-200 hover:bg-green-200 text-black dark:text-black"
+                        " bg-green-200 hover:bg-green-300 text-black dark:text-black"
                     }
                     disabled={loading}
                 >

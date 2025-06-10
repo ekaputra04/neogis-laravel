@@ -5,6 +5,7 @@ import { StreetWithCoordinatesInterface } from "@/types/types";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import { autoTable } from "jspdf-autotable";
+import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -33,6 +34,7 @@ export function roundToTwo(num: number): string {
 
 export function handleDownloadJson(streets: Object[]) {
     if (streets.length == 0) {
+        toast.error("No data found.");
         return;
     }
 
@@ -50,6 +52,7 @@ export function handleDownloadJson(streets: Object[]) {
 
 export function handleDownloadExcel(data: StreetWithCoordinatesInterface[]) {
     if (data.length == 0) {
+        toast.error("No data found.");
         return;
     }
 
@@ -102,16 +105,15 @@ export function handleDownloadExcel(data: StreetWithCoordinatesInterface[]) {
 
 export function handleDownloadPdf(data: StreetWithCoordinatesInterface[]) {
     if (data.length == 0) {
+        toast.error("No data found.");
         return;
     }
 
     const doc = new jsPDF({ orientation: "landscape" });
 
-    // Tambahkan judul
     doc.setFontSize(18);
     doc.text("Laporan Data Ruas Jalan", 14, 22);
 
-    // Tambahkan tanggal
     doc.setFontSize(12);
     doc.text(
         `Tanggal: ${new Date().toLocaleString("id-ID", {
@@ -121,7 +123,6 @@ export function handleDownloadPdf(data: StreetWithCoordinatesInterface[]) {
         30
     );
 
-    // Format data untuk tabel
     const tableData = data.map((item) => [
         item.id.toString(),
         item.nama_ruas,
@@ -143,7 +144,6 @@ export function handleDownloadPdf(data: StreetWithCoordinatesInterface[]) {
             : "",
     ]);
 
-    // Definisikan header tabel
     const headers = [
         "ID",
         "Nama Ruas",
@@ -159,7 +159,6 @@ export function handleDownloadPdf(data: StreetWithCoordinatesInterface[]) {
         "Koordinat Akhir",
     ];
 
-    // Tambahkan tabel ke PDF
     autoTable(doc, {
         head: [headers],
         body: tableData,
