@@ -13,7 +13,7 @@ import { memo } from "react";
 
 interface DashboardCounterCardProps {
     title: string;
-    value: number;
+    value: number | string;
     link?: string;
 }
 

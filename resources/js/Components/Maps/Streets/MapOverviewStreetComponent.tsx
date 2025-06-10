@@ -3,9 +3,7 @@ import { Head } from "@inertiajs/react";
 import { useCallback, useEffect, useState } from "react";
 import { decode } from "@mapbox/polyline";
 import { centerPoints } from "@/consts/centerPoints";
-import DashboardCounterCard from "../DashboardCounterCard";
 import { StreetInterface, StreetWithCoordinatesInterface } from "@/types/types";
-import { TableStreetFilterCounter } from "./components/TableStreetFilterCounter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import SpatialView from "./components/SpatialView";
 import TabularView from "./components/TabularView";
@@ -156,39 +154,24 @@ export default function MapOverviewStreetComponent() {
                 />
             ) : (
                 <DashboardMapLayout currentPath="/dashboard/street">
-                    <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                        <DashboardCounterCard
-                            title="Total Streets"
-                            value={streets.length}
-                        />
-                        <TableStreetFilterCounter
-                            title="Eksisting"
-                            streets={streets}
-                        />
-                        <TableStreetFilterCounter
-                            title="Jenis"
-                            streets={streets}
-                        />
-                        <TableStreetFilterCounter
-                            title="Kondisi"
-                            streets={streets}
-                        />
-                    </div>
-                    <hr />
-                    <Tabs defaultValue="spatial" className="mt-4 w-full">
-                        <div className="flex justify-center mb-8 w-full">
+                    <Tabs defaultValue="spatial" className="w-full">
+                        <div className="flex flex-wrap justify-between w-full">
+                            <h2 className="font-bold text-3xl">
+                                Streets Overview
+                            </h2>
                             <TabsList className="">
                                 <TabsTrigger value="spatial">
-                                    Spatial View
+                                    Spatial
                                 </TabsTrigger>
                                 <TabsTrigger value="tabular">
-                                    Tabular View
+                                    Tabular
                                 </TabsTrigger>
-                                <TabsTrigger value="chart">
-                                    Chart View
+                                <TabsTrigger value="analytic">
+                                    Analytic
                                 </TabsTrigger>
                             </TabsList>
                         </div>
+                        <hr className="my-4" />
                         <TabsContent value="spatial">
                             <SpatialView
                                 streets={streets}
@@ -210,7 +193,7 @@ export default function MapOverviewStreetComponent() {
                                 handleDeleted={handleDeleted}
                             />
                         </TabsContent>
-                        <TabsContent value="chart">
+                        <TabsContent value="analytic">
                             <ChartView streets={streets} />
                         </TabsContent>
                     </Tabs>

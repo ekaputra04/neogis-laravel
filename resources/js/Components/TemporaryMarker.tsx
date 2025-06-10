@@ -41,7 +41,7 @@ export function TemporaryMarker() {
                             textDecoration: "underline",
                         }}
                     >
-                        Buka Google Street View
+                        Open Google Street View
                     </a>
                 </div>
             </Popup>

@@ -18,8 +18,14 @@ export function capitalizeWords(text: string): string {
         .join(" ");
 }
 
-export function roundToTwo(num: number): number {
-    return Math.round(num * 100) / 100;
+export function roundToTwo(num: number): string {
+    // Bulatkan ke dua desimal
+    const rounded = Math.round(num * 100) / 100;
+    // Format dengan titik sebagai pemisah ribuan dan pastikan dua desimal
+    return rounded.toLocaleString("id-ID", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 }
 
 export function handleDownload(streets: Object[]) {

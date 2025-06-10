@@ -328,7 +328,12 @@ export default function TabularView({
                                                                 cannot be
                                                                 undone. This
                                                                 will permanently
-                                                                delete street
+                                                                delete{" "}
+                                                                <span className="font-semibold">
+                                                                    {
+                                                                        street.nama_ruas
+                                                                    }
+                                                                </span>{" "}
                                                                 from our
                                                                 servers.
                                                             </AlertDialogDescription>

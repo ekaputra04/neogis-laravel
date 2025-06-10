@@ -7,6 +7,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/Components/ui/table";
+import { roundToTwo } from "@/lib/utils";
 import {
     EksistingJalanInterface,
     JenisJalanInterface,
@@ -119,11 +120,19 @@ export const TableStreetFilterCounter = memo(
                     (s) => s[filterKey] === item.id
                 ).length;
 
+                const length = streets.reduce((total, street) => {
+                    if (street[filterKey] === item.id) {
+                        return total + street.panjang;
+                    }
+                    return total;
+                }, 0);
+
                 if (title === "Eksisting") {
                     return {
                         id: item.id,
                         name: item.eksisting,
                         count,
+                        length,
                     };
                 }
                 if (title === "Jenis") {
@@ -131,6 +140,7 @@ export const TableStreetFilterCounter = memo(
                         id: item.id,
                         name: item.jenisjalan,
                         count,
+                        length,
                     };
                 }
                 if (title === "Kondisi") {
@@ -138,18 +148,20 @@ export const TableStreetFilterCounter = memo(
                         id: item.id,
                         name: item.kondisi,
                         count,
+                        length,
                     };
                 }
             });
         }, [title, streets, eksisting, jenis, kondisi]);
 
         return (
-            <div className="shadow-md p-2 border rounded-lg max-h-32 overflow-y-auto">
+            <div className="shadow-md p-2 border rounded-lg">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>{title}</TableHead>
+                            <TableHead className="min-w-24">{title}</TableHead>
                             <TableHead>Count</TableHead>
+                            <TableHead>Total Length (m)</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -159,6 +171,9 @@ export const TableStreetFilterCounter = memo(
                                     {item?.name}
                                 </TableCell>
                                 <TableCell>{item?.count}</TableCell>
+                                <TableCell>
+                                    {roundToTwo(item?.length as number)}
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

@@ -8,6 +8,7 @@ import {
     SidebarTrigger,
 } from "@/Components/ui/sidebar";
 import { ThemeProvider } from "@/Components/ui/theme-provider";
+import { useThemeStore } from "@/Store/themeStore";
 import { usePage } from "@inertiajs/react";
 import { Toaster } from "sonner";
 
@@ -19,6 +20,7 @@ export default function DashboardMapLayout({
     children: React.ReactNode;
 }) {
     const user = usePage().props.auth.user;
+    const { theme } = useThemeStore();
     return (
         <ThemeProvider>
             <SidebarProvider>
@@ -76,7 +78,7 @@ export default function DashboardMapLayout({
                         </div>
                     </header>
                     <div className="p-8">{children}</div>
-                    <Toaster />
+                    <Toaster theme={theme} />
                 </SidebarInset>
             </SidebarProvider>
         </ThemeProvider>
