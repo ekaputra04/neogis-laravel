@@ -22,15 +22,14 @@ export default function MapOverviewMarkerComponent() {
     console.log("MAP OVERVIEW MARKER RENDER");
 
     const [markers, setMarkers] = useState<MarkerInterface[]>([]);
-    const [filteredMarkers, setFilteredMarkers] =
-        useState<MarkerInterface[]>([]);
-    const [address, setAddress] = useState<GeocodingResponseInterface>();
-    const [mapCenter, setMapCenter] = useState<CoordinatesInterface>(
-        {
-            latitude: centerPoints[0],
-            longitude: centerPoints[1],
-        }
+    const [filteredMarkers, setFilteredMarkers] = useState<MarkerInterface[]>(
+        []
     );
+    const [address, setAddress] = useState<GeocodingResponseInterface>();
+    const [mapCenter, setMapCenter] = useState<CoordinatesInterface>({
+        latitude: centerPoints[0],
+        longitude: centerPoints[1],
+    });
     const [searchValue, setSearchValue] = useState<string>("");
     const [loading, setLoading] = useState(false);
 
@@ -134,26 +133,21 @@ export default function MapOverviewMarkerComponent() {
                 setMarkers(data);
                 setFilteredMarkers(data);
                 if (data.length > 0) {
-
-                    const centerPoint = data[0] as MarkerInterface
+                    const centerPoint = data[0] as MarkerInterface;
                     setMapCenter({
                         latitude: Number(centerPoint.latitude),
                         longitude: Number(centerPoint.longitude),
-                    })
+                    });
                 }
-
             } catch (error) {
                 console.error("Error fetching markers data:", error);
             }
         };
 
-        Promise.all([
-            fetchDataMarkers(),
-        ]).catch((error) => {
+        Promise.all([fetchDataMarkers()]).catch((error) => {
             console.error("Error fetching initial data:", error);
         });
     }, []);
-
 
     return (
         <>

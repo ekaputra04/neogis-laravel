@@ -28,11 +28,11 @@ interface DialogFilterStreetComponentProps {
     initialFilters?: FilterStateInterface;
 }
 
-const TOKEN = localStorage.getItem("external_api_token") as string;
-const API_URL = import.meta.env.VITE_API_URL;
-
 const DialogFilterStreetComponent = memo(
     ({ onFilterChange, initialFilters }: DialogFilterStreetComponentProps) => {
+        const TOKEN = localStorage.getItem("external_api_token") as string;
+        const API_URL = import.meta.env.VITE_API_URL;
+
         const [eksisting, setEksisting] = useState<EksistingJalanInterface[]>(
             []
         );

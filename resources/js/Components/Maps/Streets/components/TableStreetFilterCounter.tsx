@@ -21,11 +21,11 @@ interface TableStreetFilterCounterProps {
     streets: StreetInterface[];
 }
 
-const TOKEN = localStorage.getItem("external_api_token") as string;
-const API_URL = import.meta.env.VITE_API_URL;
-
 export const TableStreetFilterCounter = memo(
     ({ title, streets }: TableStreetFilterCounterProps) => {
+        const TOKEN = localStorage.getItem("external_api_token") as string;
+        const API_URL = import.meta.env.VITE_API_URL;
+
         const [eksisting, setEksisting] = useState<EksistingJalanInterface[]>(
             []
         );

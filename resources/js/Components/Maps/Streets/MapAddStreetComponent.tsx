@@ -19,6 +19,7 @@ import { MapCenterLayerUpdater } from "@/Components/MapCenterUpdater";
 import { SearchAddress } from "@/Components/SearchAddress";
 import FormAddStreet from "./components/FormAddStreet";
 import { TemporaryMarker } from "@/Components/TemporaryMarker";
+import LoadingView from "@/Components/LoadingView";
 
 interface DrawCreatedEvent {
     layerType: string;
@@ -130,6 +131,7 @@ export default function MapAddStreetComponent() {
 
     return (
         <>
+            {loading && <LoadingView />}
             <DashboardMapLayout currentPath={"/dashboard/street/add"}>
                 <Head title="Add Street" />
                 <div className="flex justify-between items-start">

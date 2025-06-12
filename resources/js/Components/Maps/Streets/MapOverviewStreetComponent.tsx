@@ -10,11 +10,12 @@ import TabularView from "./components/TabularView";
 import { toast } from "sonner";
 import ChartView from "./components/ChartView";
 import MapStreetFullScreen from "./components/MapStreetFullScreen";
-
-const TOKEN = localStorage.getItem("external_api_token") as string;
-const API_URL = import.meta.env.VITE_API_URL;
+import LoadingView from "@/Components/LoadingView";
 
 export default function MapOverviewStreetComponent() {
+    const TOKEN = localStorage.getItem("external_api_token") as string;
+    const API_URL = import.meta.env.VITE_API_URL;
+
     console.log("PARENT STREET OVERVIEW RENDER");
 
     const [loading, setLoading] = useState(false);
@@ -71,6 +72,7 @@ export default function MapOverviewStreetComponent() {
 
     useEffect(() => {
         const fetchDataStreets = async () => {
+            setLoading(true);
             try {
                 const response = await fetch(`${API_URL}/ruasjalan`, {
                     headers: { Authorization: `Bearer ${TOKEN}` },
@@ -108,6 +110,8 @@ export default function MapOverviewStreetComponent() {
                 ]);
             } catch (error) {
                 console.error("Error fetching streets data:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -119,6 +123,8 @@ export default function MapOverviewStreetComponent() {
     return (
         <div>
             <Head title="Street" />
+
+            {loading && <LoadingView />}
 
             {isFullScreen ? (
                 <MapStreetFullScreen

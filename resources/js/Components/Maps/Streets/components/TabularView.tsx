@@ -374,7 +374,7 @@ export default function TabularView({
                     <PaginationContent>
                         <PaginationItem>
                             <PaginationPrevious
-                                href="#"
+                                // href="#"
                                 onClick={() =>
                                     handlePageChange(currentPage - 1)
                                 }
@@ -388,7 +388,7 @@ export default function TabularView({
                         {[...Array(totalPages)].map((_, index) => (
                             <PaginationItem key={index}>
                                 <PaginationLink
-                                    href="#"
+                                    // href="#"
                                     isActive={currentPage === index + 1}
                                     onClick={() => handlePageChange(index + 1)}
                                 >
@@ -398,7 +398,7 @@ export default function TabularView({
                         ))}
                         <PaginationItem>
                             <PaginationNext
-                                href="#"
+                                // href="#"
                                 onClick={() =>
                                     handlePageChange(currentPage + 1)
                                 }

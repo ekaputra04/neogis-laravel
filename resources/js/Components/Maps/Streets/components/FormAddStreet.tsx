@@ -52,9 +52,6 @@ const formSchema = z.object({
     keterangan: z.string().min(2).max(255),
 });
 
-const TOKEN = localStorage.getItem("external_api_token") as string;
-const API_URL = import.meta.env.VITE_API_URL;
-
 interface FormAddStreetProps {
     streetCoordinates: CoordinatesInterface[];
     setStreetCoordinates: (coordinates: CoordinatesInterface[]) => void;
@@ -68,6 +65,9 @@ export default function FormAddStreet({
     loading,
     setLoading,
 }: FormAddStreetProps) {
+    const TOKEN = localStorage.getItem("external_api_token") as string;
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const [provinsi, setProvinsi] = useState<ProvinsiInterface[]>([]);
     const [kabupaten, setKabupaten] = useState<KabupatenInterface[]>([]);
     const [kecamatan, setKecamatan] = useState<KecamatanInterface[]>([]);

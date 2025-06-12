@@ -60,6 +60,7 @@ import { buttonDestructiveCss } from "@/consts/buttonCss";
 import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseStreetUpdate } from "@/consts/howToUse";
 import { TemporaryMarker } from "@/Components/TemporaryMarker";
+import LoadingView from "@/Components/LoadingView";
 
 const formSchema = z.object({
     desa_id: z.number(),
@@ -83,11 +84,13 @@ interface DrawEditedEvent {
     layers: L.LayerGroup;
 }
 
-const API_URL = import.meta.env.VITE_API_URL;
-const TOKEN = localStorage.getItem("external_api_token") as string;
-
 export default function MapEditStreetComponent() {
+    const API_URL = import.meta.env.VITE_API_URL;
+    const TOKEN = localStorage.getItem("external_api_token") as string;
+
     const { id } = usePage().props;
+
+    console.log("MAP EDIT STREET RENDER");
 
     const { selectedLayer } = useMapLayerStore();
     const [provinsi, setProvinsi] = useState<ProvinsiInterface[]>([]);
@@ -521,6 +524,8 @@ export default function MapEditStreetComponent() {
 
     return (
         <>
+            {loading && <LoadingView />}
+
             <DashboardMapLayout currentPath={"/dashboard/street/edit"}>
                 <Head title="Edit Line" />
 

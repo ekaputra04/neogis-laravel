@@ -18,9 +18,6 @@ import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { delay, handleDownloadSampleStreetData } from "@/lib/utils";
 
-const API_URL = import.meta.env.VITE_API_URL;
-const TOKEN = localStorage.getItem("external_api_token") as string;
-
 interface UploadFileDialogProps {
     loading: boolean;
     setLoading: (loading: boolean) => void;
@@ -30,6 +27,8 @@ export default function UploadFileDialog({
     loading,
     setLoading,
 }: UploadFileDialogProps) {
+    const API_URL = import.meta.env.VITE_API_URL;
+    const TOKEN = localStorage.getItem("external_api_token") as string;
     const [files, setFiles] = useState<File[]>([]);
 
     const expectedKeys = [
