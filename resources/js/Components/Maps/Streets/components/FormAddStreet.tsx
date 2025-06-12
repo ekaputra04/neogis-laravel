@@ -357,7 +357,7 @@ export default function FormAddStreet({
                             />
 
                             <div className="gap-4 grid grid-cols-2">
-                                <div className="space-y-2">
+                                {/* <div className="space-y-2">
                                     <Label>Panjang (m)</Label>
                                     <Input
                                         type="number"
@@ -365,7 +365,35 @@ export default function FormAddStreet({
                                         value={roundToTwo(streetLength ?? 0)}
                                         disabled
                                     />
-                                </div>
+                                </div> */}
+
+                                <FormField
+                                    control={form.control}
+                                    name="panjang"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Panjang (m)</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Panjang"
+                                                    // {...field}
+                                                    value={streetLength ?? 0}
+                                                    disabled
+                                                    type="number"
+                                                    onChange={(e) => {
+                                                        form.setValue(
+                                                            "panjang",
+                                                            Number(
+                                                                e.target.value
+                                                            )
+                                                        );
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
                                 <FormField
                                     control={form.control}

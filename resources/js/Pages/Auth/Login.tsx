@@ -150,11 +150,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         setApiError(
                             errors.email ||
                                 errors.password ||
-                                "Gagal login ke aplikasi."
+                                "Failed to login."
                         );
-                        toast.error("Gagal login ke aplikasi.");
+                        toast.error("Failed to login.");
                     },
-                    onFinish: () => {},
+                    onFinish: () => {
+                        toast.success("Login successfully.");
+                    },
                 });
             }
         } catch (error) {

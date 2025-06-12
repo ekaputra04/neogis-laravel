@@ -1,5 +1,5 @@
 import DashboardMapLayout from "@/Layouts/DashboardMapLayout";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { useCallback, useEffect, useState } from "react";
 import { decode } from "@mapbox/polyline";
 import { centerPoints } from "@/consts/centerPoints";
@@ -32,56 +32,32 @@ export default function MapOverviewStreetComponent() {
         setMapCenter(coords);
     }, []);
 
-    const fetchStreets = useCallback(async () => {
+    const handleDeleted = useCallback(async (streetId: number) => {
+        setLoading(true);
         try {
-            const response = await fetch(`${API_URL}/ruasjalan`, {
-                headers: { Authorization: `Bearer ${TOKEN}` },
+            const response = await fetch(`${API_URL}/ruasjalan/${streetId}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${TOKEN}`,
+                    "Content-Type": "application/json",
+                },
             });
-            const { ruasjalan } = await response.json();
-            handleMapCenterChange(
-                ruasjalan.map((street: StreetInterface) => ({
-                    ...street,
-                    coordinates: decode(street.paths).map(([lat, lng]) => [
-                        lat,
-                        lng,
-                    ]),
-                }))
-            );
-            setStreets(ruasjalan);
+
+            if (!response.ok) {
+                throw new Error("Failed to delete street");
+            }
+            const result = await response.json();
+
+            console.log(result);
+
+            toast.success("Street deleted successfully!");
+            router.visit("/dashboard/street");
         } catch (error) {
-            console.error("Fetch error:", error);
+            toast.error("Error deleting street");
+        } finally {
+            setLoading(false);
         }
     }, []);
-
-    const handleDeleted = useCallback(
-        async (streetId: number) => {
-            setLoading(true);
-            try {
-                const response = await fetch(
-                    `${API_URL}/ruasjalan/${streetId}`,
-                    {
-                        method: "DELETE",
-                        headers: {
-                            Authorization: `Bearer ${TOKEN}`,
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error("Failed to delete street");
-                }
-
-                await fetchStreets();
-                toast.success("Street deleted successfully!");
-            } catch (error) {
-                toast.error("Error deleting street");
-            } finally {
-                setLoading(false);
-            }
-        },
-        [fetchStreets]
-    );
 
     const handleIsFullScreenChange = useCallback((isFullScreen: boolean) => {
         setIsFullScreen(isFullScreen);
