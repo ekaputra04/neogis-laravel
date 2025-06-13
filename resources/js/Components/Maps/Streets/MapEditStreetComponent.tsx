@@ -35,6 +35,7 @@ import {
     KecamatanInterface,
     KondisiJalanInterface,
     ProvinsiInterface,
+    StreetInterface,
     StreetWithCoordinatesInterface,
 } from "@/types/types";
 import { toast } from "sonner";
@@ -61,6 +62,11 @@ import HowToUseComponent from "@/Components/HowToUseComponent";
 import { HowToUseStreetUpdate } from "@/consts/howToUse";
 import { TemporaryMarker } from "@/Components/TemporaryMarker";
 import LoadingView from "@/Components/LoadingView";
+import {
+    EksistingJalan,
+    JenisJalan,
+    KondisiJalan,
+} from "@/consts/streetProperties";
 
 const formSchema = z.object({
     desa_id: z.number(),
@@ -93,6 +99,9 @@ export default function MapEditStreetComponent() {
     console.log("MAP EDIT STREET RENDER");
 
     const { selectedLayer } = useMapLayerStore();
+    const [streets, setStreets] = useState<StreetWithCoordinatesInterface[]>(
+        []
+    );
     const [provinsi, setProvinsi] = useState<ProvinsiInterface[]>([]);
     const [kabupaten, setKabupaten] = useState<KabupatenInterface[]>([]);
     const [kecamatan, setKecamatan] = useState<KecamatanInterface[]>([]);
@@ -318,7 +327,7 @@ export default function MapEditStreetComponent() {
     }, [streetCoordinates]);
 
     useEffect(() => {
-        const fetchDataStreets = async () => {
+        const fetchDataStreetById = async () => {
             try {
                 const response = await fetch(`${API_URL}/ruasjalan/${id}`, {
                     headers: { Authorization: `Bearer ${TOKEN}` },
@@ -377,6 +386,39 @@ export default function MapEditStreetComponent() {
                 setStreetCoordinates(coordinates);
             } catch (error) {
                 console.error("Error fetching streets data:", error);
+            }
+        };
+
+        const fetchDataStreets = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`${API_URL}/ruasjalan`, {
+                    headers: { Authorization: `Bearer ${TOKEN}` },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch locations data");
+                }
+
+                const data = await response.json();
+
+                const streets: StreetWithCoordinatesInterface[] = (
+                    data.ruasjalan as StreetInterface[]
+                ).map((street) => {
+                    return {
+                        ...street,
+                        coordinates: decode(street.paths).map(([lat, lng]) => [
+                            lat,
+                            lng,
+                        ]),
+                    };
+                });
+
+                setStreets(streets);
+            } catch (error) {
+                console.error("Error fetching streets data:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -452,6 +494,7 @@ export default function MapEditStreetComponent() {
         };
 
         Promise.all([
+            fetchDataStreetById(),
             fetchDataStreets(),
             fetchDataLocations(),
             fetchDataEksisting(),
@@ -1114,6 +1157,7 @@ export default function MapEditStreetComponent() {
                                                 key={street!!.id}
                                                 positions={street!!.coordinates}
                                                 color={"blue"}
+                                                weight={5}
                                             >
                                                 <Popup>
                                                     <strong>
@@ -1139,6 +1183,76 @@ export default function MapEditStreetComponent() {
                                                 </Popup>
                                             </Polyline>
                                         </FeatureGroup>
+                                        {streets.map((street, idx) => {
+                                            let color = "gray";
+                                            let weight = 3;
+
+                                            return (
+                                                <div key={idx}>
+                                                    <Polyline
+                                                        key={street.id}
+                                                        positions={
+                                                            street.coordinates
+                                                        }
+                                                        color={color}
+                                                        weight={weight}
+                                                        dashArray={"10, 10"}
+                                                    >
+                                                        <Popup>
+                                                            <strong>
+                                                                {street.nama_ruas ||
+                                                                    "Jalan Tanpa Nama"}
+                                                            </strong>
+                                                            <br />
+                                                            <br />
+                                                            {street.keterangan ||
+                                                                "Tidak ada deskripsi"}
+                                                            <br />
+                                                            <br />
+                                                            Panjang:{" "}
+                                                            {roundToTwo(
+                                                                street.panjang
+                                                            ) || "-"}{" "}
+                                                            meter
+                                                            <br />
+                                                            <br />
+                                                            Lebar:{" "}
+                                                            {roundToTwo(
+                                                                street.lebar
+                                                            ) || "-"}{" "}
+                                                            meter
+                                                            <br />
+                                                            <br />
+                                                            Eksisting:{" "}
+                                                            {EksistingJalan.find(
+                                                                (item) =>
+                                                                    item.id ==
+                                                                    street.eksisting_id
+                                                            )?.eksisting || "-"}
+                                                            <br />
+                                                            <br />
+                                                            Jenis:{" "}
+                                                            {JenisJalan.find(
+                                                                (item) =>
+                                                                    item.id ==
+                                                                    street.jenisjalan_id
+                                                            )?.jenisjalan ||
+                                                                "-"}
+                                                            <br />
+                                                            <br />
+                                                            Kondisi:{" "}
+                                                            {KondisiJalan.find(
+                                                                (item) =>
+                                                                    item.id ==
+                                                                    street.kondisi_id
+                                                            )?.kondisi || "-"}
+                                                            <br />
+                                                            <br />
+                                                        </Popup>
+                                                    </Polyline>
+                                                </div>
+                                            );
+                                        })}
                                         <TemporaryMarker />
                                     </MapContainer>
                                 )}
